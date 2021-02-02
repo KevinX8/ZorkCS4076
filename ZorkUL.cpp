@@ -14,7 +14,7 @@ ZorkUL::ZorkUL() {
 }
 
 void ZorkUL::createRooms()  {
-	Room *a, *b, *c, *d, *e, *f, *g, *h, *i;
+	Room *a, *b, *c, *d, *e, *f, *g, *h, *i, *j;
 
 	a = new Room("a");
         a->addItem(new Item("x", 1, 11));
@@ -22,6 +22,9 @@ void ZorkUL::createRooms()  {
 	b = new Room("b");
         b->addItem(new Item("xx", 3, 33));
         b->addItem(new Item("yy", 4, 44));
+	j = new Room("j");
+		j->addItem(new Item("xxx", 5, 55));
+		j->addItem(new Item("yyy", 6, 66));
 	c = new Room("c");
 	d = new Room("d");
 	e = new Room("e");
@@ -36,10 +39,11 @@ void ZorkUL::createRooms()  {
 	c->setExits(NULL, a, NULL, NULL);
 	d->setExits(a, e, NULL, i);
 	e->setExits(NULL, NULL, NULL, d);
-	f->setExits(NULL, g, a, h);
+	f->setExits(j, g, a, h);
 	g->setExits(NULL, NULL, NULL, f);
 	h->setExits(NULL, f, NULL, NULL);
     i->setExits(NULL, d, NULL, NULL);
+	j->setExits(NULL, NULL, f, NULL);
 
         currentRoom = a;
 }
@@ -91,6 +95,9 @@ bool ZorkUL::processCommand(Command command) {
 
 	else if (commandWord.compare("map") == 0)
 		{
+		cout << "        [j]        " << endl;
+		cout << "         |         " << endl;
+        cout << "         |         " << endl;
         cout << "[h] --- [f] --- [g]" << endl;
 		cout << "         |         " << endl;
         cout << "         |         " << endl;
