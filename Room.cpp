@@ -1,5 +1,4 @@
 #include "Room.h"
-#include "Command.h"
 
 
 Room::Room(string description) {
@@ -66,25 +65,3 @@ string Room::displayItem() {
 int Room::numberOfItems() {
     return itemsInRoom.size();
 }
-
-int Room::isItemInRoom(string inString)
-{
-    int sizeItems = (itemsInRoom.size());
-    if (itemsInRoom.size() < 1) {
-        return false;
-        }
-    else if (itemsInRoom.size() > 0) {
-       int x = (0);
-        for (int n = sizeItems; n > 0; n--) {
-            // compare inString with short description
-            int tempFlag = inString.compare( itemsInRoom[x].getShortDescription());
-            if (tempFlag == 0) {
-                itemsInRoom.erase(itemsInRoom.begin()+x);
-                return x;
-            }
-            x++;
-            }
-        }
-    return -1;
-}
-
