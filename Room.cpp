@@ -1,19 +1,23 @@
 #include "Room.h"
 
 
-Room::Room(string description) {
+Room::Room(unordered_set<int> cells,string description = "This is just a room") {
+	Coordinate foo;
+	foo.x = 0;
+	foo.y = 0;
+	int count = 0;
+	for(int cellKey : cells){
+		Coordinate cell = Tools::getKeyCoordinate(cellKey);
+		foo.x += cell.x;
+		foo.y += cell.y;
+		count++;
+	}
+	foo.x /= count;
+	foo.y /= count;
+	this->coordinate = foo;
+	this->cells = cells;
 	this->description = description;
-}
-
-void Room::setExits(Room *north, Room *east, Room *south, Room *west) {
-	if (north != NULL)
-		exits["north"] = north;
-	if (east != NULL)
-		exits["east"] = east;
-	if (south != NULL)
-		exits["south"] = south;
-	if (west != NULL)
-		exits["west"] = west;
+	
 }
 
 string Room::shortDescription() {
@@ -64,4 +68,12 @@ string Room::displayItem() {
 
 int Room::numberOfItems() {
     return itemsInRoom.size();
+}
+
+bool Room::cellInRoom(Coordinate c){
+	return cells.find(Tools::getCoordinateKey(c)) != cells.end();
+}
+
+unordered_set<int> Room::getCells(){
+	return cells;
 }

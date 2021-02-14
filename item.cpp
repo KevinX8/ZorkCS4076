@@ -1,32 +1,24 @@
 #include "item.h"
 
-Item::Item (string inDescription, int inWeightGrams, float inValue/**, int weaponCheck*/) {
+Item::Item (string inDescription, int inValue, short rarity) {
 	description = inDescription;
-	setWeight(inWeightGrams);
 	value = inValue;
-	/**weaponCheck(isWeapon);*/
+    this->rarity = rarity;
+
 }
 
 Item::Item(string inDescription) {
 	description = inDescription;
+    value = 0;
+    rarity = 0;
 }
 
-void Item::setWeight(int inWeightGrams)
-{
-    if (inWeightGrams > 9999 || inWeightGrams < 0)
-       cout << "weight invalid, must be 0<weight<9999" ;
-    else
-	   weightGrams = inWeightGrams;
+inline short Item::getRarity() {
+    return rarity;
 }
-
-void Item::setValue(float inValue)
-{
-    if (inValue > 9999 || inValue < 0)
-       cout << "value invalid, must be 0<value<9999" ;
-    else
-	   value = inValue;
+inline int Item::getValue() {
+    return value;
 }
-
 /**void Item::setWeaponCheck(int isWeapon)
 {
     if(isWeapon > 0 || isWeapon < 0)

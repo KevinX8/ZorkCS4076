@@ -4,7 +4,9 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <unordered_set>
 #include "item.h"
+#include "Tools.h"
 using namespace std;
 using std::vector;
 
@@ -12,21 +14,21 @@ class Room {
 
 private:
 	string description;
-	map<string, Room*> exits;
 	string exitString();
     vector <Item> itemsInRoom;
-
-
+	unordered_set<int> cells;
+	Coordinate coordinate;
 public:
     int numberOfItems();
-	Room(string description);
-	void setExits(Room *north, Room *east, Room *south, Room *west);
+	Room(unordered_set <int> cells,string description);
 	string shortDescription();
 	string longDescription();
-	Room* nextRoom(string direction);
     void addItem(Item *inItem);
     string displayItem();
     void removeItemFromRoom(int location);
+	Coordinate getCoordinate();
+	bool cellInRoom(Coordinate c);
+	unordered_set<int> getCells();
 };
 
 #endif
