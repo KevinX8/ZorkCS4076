@@ -5,7 +5,7 @@ Seed bits:
 0000,-floorWidth
 0000,-floorHeight
 0000000000(floorWidth-1)Height bits-represents each vertical wall
-(floorHeight-1)Width bits-represents each horizontal wall (Use these bits to generate doors)
+(floorHeight-1)Width bits-represents each horizontal wall (Use these bits to generate door
 0000-x cell number of down ladder,
 0000-y coordinate of down ladder,
 0000-x cell number of up ladder,

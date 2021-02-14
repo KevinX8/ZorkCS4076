@@ -5,7 +5,6 @@ using namespace std;
 
 Floor::Floor(int number){
 width = 5;
-srand();
 }
 
 Coordinate Floor::getNextCell(Coordinate coord){
