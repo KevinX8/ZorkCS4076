@@ -8,7 +8,7 @@ using namespace std;
 class Player {
     private:
         vector<Item> inventory;
-
+        
     public:
         double stealth, strength, charisma;
 

@@ -22,13 +22,12 @@ public:
     int numberOfItems();
 	Room(unordered_set <int> cells,string description);
 	string shortDescription();
-	string longDescription();
     void addItem(Item *inItem);
-    string displayItem();
     void removeItemFromRoom(int location);
 	Coordinate getCoordinate();
 	bool cellInRoom(Coordinate c);
 	unordered_set<int> getCells();
+	operator Coordinate();
 };
 
 #endif

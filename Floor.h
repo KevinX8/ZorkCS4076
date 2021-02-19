@@ -3,6 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <memory>
+#include "Room.h"
 #include "Item.h"
 #include "Tools.h"
 
@@ -40,8 +41,9 @@ class Floor {
         Coordinate getRoomCoord(Coordinate foo);
         Room getRoom(Coordinate foo);
         Coordinate getNextCell(Coordinate coord);
-        void connectCells(Coordinate c1, Coordinate c2, short value);
-        unique_ptr<unique_ptr<Wall[]>[]> connections;
+        void connectCells(Coordinate c1, Coordinate c2);
+        void connectRooms(Coordinate c1, Coordinate c2);
+        vector<vector<Wall>> connections;
         int height;
         Coordinate upLadder;
         Coordinate downLadder;
@@ -49,5 +51,8 @@ class Floor {
         Floor(int number,int seed);
         vector<Room> rooms;
         vector<Door> doors;
+        int getWidth();
+        int getHeight();
+        vector<vector<Wall>> getConnections();
 };
 #endif
