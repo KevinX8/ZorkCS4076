@@ -4,7 +4,8 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:\\Qt\\5.15.2\\mingw81_64\\include\\**"
+                "C:\\Qt\\5.15.2\\mingw81_64\\include\\**",
+                "D:/Documents/build-ZorkUI-Desktop_Qt_5_15_2_MinGW_64_bit-Debug/*"
             ],
             "defines": [
                 "_DEBUG",

@@ -2,6 +2,7 @@
 #define ZORKGUI_H
 
 #include <QMainWindow>
+#include "Floor.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class ZorkGUI; }
@@ -14,6 +15,7 @@ class ZorkGUI : public QMainWindow
 public:
     ZorkGUI(QWidget *parent = nullptr);
     ~ZorkGUI();
+    void drawFloor(Floor *floor);
 
 private:
     Ui::ZorkGUI *ui;

@@ -1,6 +1,5 @@
 #include "zorkgui.h"
 #include "ui_zorkgui.h"
-#include "Floor.h"
 
 ZorkGUI::ZorkGUI(QWidget *parent)
     : QMainWindow(parent)
@@ -15,8 +14,10 @@ ZorkGUI::~ZorkGUI()
     delete ui;
 }
 
-ZorkGUI::drawFloow(Floor *floor){
+/*
+void ZorkGUI::drawFloor(Floor *floor){
     QPainter p;
     p.begin(this);
     for(int i = 0; i < )
 }
+*/
