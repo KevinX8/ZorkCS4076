@@ -24,7 +24,7 @@ class Floor {
         bool disconnectedCell(int x,int y);
         bool cellOutOfBounds(int x, int y);
         float rangeRand();
-        void generateRooms(vector<Coordinate> cells, int maxRoomSize);
+        void generateRooms(vector<int> cells, int maxRoomSize);
         void generateItems();
         void generateItems(Room room);
         void generateDoors();
@@ -33,8 +33,8 @@ class Floor {
         Coordinate getNextCell(Coordinate coord);
         void connectCells(Coordinate c1, Coordinate c2);
         void connectRooms(Coordinate c1, Coordinate c2);
-        vector<vector<Wall>> connections;
         int height;
+        vector<vector<Wall>> connections;
         Coordinate upLadder;
         Coordinate downLadder;
     public:
