@@ -13,14 +13,20 @@ Floor::Floor(int number, int seed = time(nullptr)){
     height = 10;
     srand(seed);
     vector<Coordinate> floorCells;
+    //vector<vector<Wall>> *tempConnections* = new vector<;
+    connections.resize(height);
     for(int r = 0; r < height; r++){
+        connections[r].resize(Tools::width);
         for(int c = 0; c < Tools::width; c++){
             Coordinate cell;
             cell.x = c;
             cell.y = r;
             floorCells.push_back(cell);
+            connections[r][c].down = 0;
+            connections[r][c].right = 0;
         }
     }
+    //connections = new vector(tempConnections.get_allocator());
     generateRooms(floorCells, 5);
     generateDoors();
 }
@@ -37,6 +43,7 @@ Coordinate Floor::getNextCell(Coordinate coord){
     vector<Coordinate> allowedCells;
     vector<Coordinate>::iterator it;
     it = allowedCells.begin();
+    int count = 0;
     for(int i = 0; i < 4; i++){
         int x = (i > 2)? coord.x + ((i+1)%2):coord.x + ((i+1)%2)*-1;
         int y = (i > 2)? coord.y + (i%2):coord.y + (i%2)*-1;
@@ -45,10 +52,12 @@ Coordinate Floor::getNextCell(Coordinate coord){
             foo.x = x;
             foo.y = y;
             allowedCells.insert(it, foo);
+            it++;
+            count++;
         }
     }
     if(allowedCells.size()>0){
-        it=allowedCells.begin() + (int)(rangeRand() * allowedCells.size());
+        it=allowedCells.begin() + (int)(rangeRand() * count);
         return *it;
     }else{
         Coordinate noValidCell;
@@ -59,10 +68,11 @@ Coordinate Floor::getNextCell(Coordinate coord){
 
 bool Floor::disconnectedCell(int x, int y){
     //method returns true if the cell at coordinates x,y is not connected to any other cell
-    return (!cellOutOfBounds(x-1, y) && connections[x-1][y].right == 0)
-        && (!cellOutOfBounds(x, y-1) && connections[x][y-1].down == 0)
-        && (!cellOutOfBounds(x+1, y) && connections[x][y].right == 0)
-        && (!cellOutOfBounds(x, y+1) && connections[x][y].down == 0);
+
+    return !((!cellOutOfBounds(x-1, y) && connections[x-1][y].right != 0)
+        || (!cellOutOfBounds(x, y-1) && connections[x][y-1].down != 0)
+        || (!cellOutOfBounds(x+1, y) && connections[x][y].right != 0)
+        || (!cellOutOfBounds(x, y+1) && connections[x][y].down != 0));
 }
 
 
