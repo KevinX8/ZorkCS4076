@@ -38,7 +38,7 @@ class Floor {
         Coordinate upLadder;
         Coordinate downLadder;
     public:
-        Floor(int number,int seed);
+        explicit Floor(int number,int seed);
         vector<Room> rooms;
         vector<Door> doors;
         int getWidth();

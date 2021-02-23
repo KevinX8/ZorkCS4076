@@ -15,7 +15,7 @@ class ZorkGUI : public QMainWindow
 public:
     ZorkGUI(QWidget *parent = nullptr);
     ~ZorkGUI();
-    void drawFloor(Floor *floor);
+    void paintEvent(QPaintEvent *, Floor *floor);
 
 private:
     Ui::ZorkGUI *ui;

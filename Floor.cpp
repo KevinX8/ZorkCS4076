@@ -9,8 +9,8 @@
 using namespace std;
 
 Floor::Floor(int number, int seed = time(nullptr)){
-    Tools::width = 12;
-    height = 10;
+    Tools::width = 6;
+    height = 5;
     srand(seed);
     vector<int> floorCells;
     //vector<vector<Wall>> *tempConnections* = new vector<;
@@ -89,6 +89,7 @@ void Floor::generateRooms(vector<int> unusedCells, int maxRoomSize = 7){
         for(int i = 0; i < roomSize-1; ++i){
             it = connectingCells.begin() + (int)(rangeRand() * connectingCells.size());
             Coordinate nextCell = getNextCell(Tools::getKeyCoordinate(*it));
+            Coordinate lastCell = Tools::getKeyCoordinate(*it);
             if(nextCell.x == -1){
                 connectingCells.erase(it);
                 if(connectingCells.empty()){
@@ -97,6 +98,18 @@ void Floor::generateRooms(vector<int> unusedCells, int maxRoomSize = 7){
                 }
             }else{
                 connectCells(Tools::getKeyCoordinate(*it), nextCell);
+                if (i>3) { //find cells in room next to each other and connect them
+                    Coordinate tempCell;
+                    tempCell.x = nextCell.x;
+                    tempCell.y = nextCell.y;
+                    for (int k = 0; k < 4; k++) {
+                        tempCell.x = tempCell.x + (k-1) * k+1%2;
+                        tempCell.y = tempCell.y + (k-2) * k%2;
+                        if (currentRoom.find(Tools::getCoordinateKey(tempCell)) != currentRoom.end()) {
+                            connectCells(tempCell,nextCell);
+                        }
+                    }
+                }
                 connectingCells.push_back(Tools::getCoordinateKey(nextCell));
                 currentRoom.insert(Tools::getCoordinateKey(nextCell));
                 unusedCells.erase(lower_bound(unusedCells.begin(), unusedCells.end(), Tools::getCoordinateKey(nextCell)));

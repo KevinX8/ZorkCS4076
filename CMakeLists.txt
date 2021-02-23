@@ -42,6 +42,8 @@ set(PROJECT_SOURCES
         room.h
         tools.cpp
         tools.h
+        mapWidget.cpp
+        MapWidget.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
