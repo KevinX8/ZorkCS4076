@@ -4,8 +4,6 @@
 #include <iostream>
 #include <memory>
 #include "Room.h"
-#include "Item.h"
-#include "Tools.h"
 
 using namespace std;
 #define MAX_DIMENSION 15;

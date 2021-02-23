@@ -4,6 +4,7 @@
 #include "Floor.h"
 #include <QPaintEvent>
 #include <QWidget>
+#include <QPainter>
 
 class MapWidget : public QWidget{
     Q_OBJECT

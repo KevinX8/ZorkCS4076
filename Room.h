@@ -7,15 +7,13 @@
 #include <unordered_set>
 #include "item.h"
 #include "Tools.h"
-using namespace std;
-using std::vector;
 
 class Room {
 
 private:
 	string description;
 	string exitString();
-    vector <Item> itemsInRoom;
+    vector<Item> itemsInRoom;
 	unordered_set<int> cells;
 	Coordinate coordinate;
 public:

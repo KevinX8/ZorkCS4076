@@ -1,8 +1,4 @@
-#include "Floor.h"
 #include "MapWidget.h"
-#include <QtGui>
-#include <QWidget>
-#include <QPainter>
 
 MapWidget::MapWidget() : f(0, 587){
     f = Floor(0, 587);
