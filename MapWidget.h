@@ -12,6 +12,7 @@ public:
     MapWidget();
 protected:
     void paintEvent(QPaintEvent *event);
+    void drawWalls(QPainter *qp);
 private:
     Floor f;
 };

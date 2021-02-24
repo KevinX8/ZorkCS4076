@@ -7,12 +7,13 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication program(argc, argv);
-    //ZorkGUI game;
-    //game.show();
-    QGridLayout *gridLayout = new QGridLayout;
-    MapWidget mapWidget = MapWidget();
-    //gridLayout->addWidget(mapWidget, 0, 0, 10, 10);
+    QApplication app(argc, argv);
 
-    return program.exec();
+      MapWidget window;
+
+      window.resize(500, 600);
+      window.setWindowTitle("Zork");
+      window.show();
+
+      return app.exec();
 }

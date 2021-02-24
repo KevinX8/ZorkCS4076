@@ -9,9 +9,9 @@
 using namespace std;
 
 Floor::Floor(int number, int seed = time(nullptr)){
-    Tools::width = 6;
-    height = 5;
     srand(seed);
+    Tools::width = rangeRand() * 4 + 7;
+    height = rangeRand() * 4 + 7;
     vector<int> floorCells;
     //vector<vector<Wall>> *tempConnections* = new vector<;
     connections.resize(height);
@@ -28,7 +28,7 @@ Floor::Floor(int number, int seed = time(nullptr)){
     }
     //connections = new vector(tempConnections.get_allocator());
     generateRooms(floorCells, 8);
-    //generateDoors();
+    generateDoors();
 }
 
 inline float Floor::rangeRand() {
@@ -89,7 +89,6 @@ void Floor::generateRooms(vector<int> unusedCells, int maxRoomSize = 7){
         for(int i = 0; i < roomSize-1; ++i){
             it = connectingCells.begin() + (int)(rangeRand() * connectingCells.size());
             Coordinate nextCell = getNextCell(Tools::getKeyCoordinate(*it));
-            Coordinate lastCell = Tools::getKeyCoordinate(*it);
             if(nextCell.x == -1){
                 connectingCells.erase(it);
                 if(connectingCells.empty()){
@@ -97,15 +96,14 @@ void Floor::generateRooms(vector<int> unusedCells, int maxRoomSize = 7){
                     break;
                 }
             }else{
+
                 connectCells(Tools::getKeyCoordinate(*it), nextCell);
-                if (i>3) { //find cells in room next to each other and connect them
+                if (i>=2) { //find cells in room next to each other and connect them
                     Coordinate tempCell;
-                    tempCell.x = nextCell.x;
-                    tempCell.y = nextCell.y;
                     for (int k = 0; k < 4; k++) {
-                        tempCell.x = tempCell.x + (k-1) * k+1%2;
-                        tempCell.y = tempCell.y + (k-2) * k%2;
-                        if (currentRoom.find(Tools::getCoordinateKey(tempCell)) != currentRoom.end()) {
+                        tempCell.x = nextCell.x + (k-1) * (k+1)%2; // -1 0 1 0
+                        tempCell.y = nextCell.y + (k-2) * k%2;     // 0 -1 0 1
+                        if (!cellOutOfBounds(tempCell.x, tempCell.y) && currentRoom.find(Tools::getCoordinateKey(tempCell)) != currentRoom.end()) {
                             connectCells(tempCell,nextCell);
                         }
                     }
