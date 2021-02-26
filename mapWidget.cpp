@@ -37,7 +37,7 @@ void MapWidget::drawWalls(QPainter *qp){
                     break;
                 }
                 case(2):{
-                    qp->fillRect(topRight.x-(wallWidth/2),topRight.y-(wallWidth/2), wallWidth,scale+wallWidth, doorBrush);
+                    qp->fillRect(topRight.x-(wallWidth/2),topRight.y+(wallWidth/2), wallWidth,scale-wallWidth, doorBrush);
                 }
             }
             switch(connections[r][c].down){
@@ -46,7 +46,7 @@ void MapWidget::drawWalls(QPainter *qp){
                     break;
                 }
                 case(2):{
-                    qp->fillRect(bottomLeft.x-(wallWidth/2),bottomLeft.y-(wallWidth/2), scale+wallWidth,wallWidth, doorBrush);
+                    qp->fillRect(bottomLeft.x+(wallWidth/2),bottomLeft.y-(wallWidth/2), scale-wallWidth,wallWidth, doorBrush);
                 }
             }
         }

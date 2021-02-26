@@ -121,12 +121,13 @@ void Floor::generateRooms(vector<int> unusedCells, int maxRoomSize = 7){
 
 void Floor::generateDoors(){
     vector<Room>::iterator it;
-    vector<int> connectedCells;
-    vector<int> deadCells;//cells that are connected, and can't connect to anything
+    vector<int> connectedCells;//cells that are connected excluding cells which have no more cells to connect to
+    vector<int> deadCells;//cells that are connected
     it = rooms.begin() + (int)(rangeRand() * rooms.size());
     Room r = *it;
     for(int cell : r.cells){
         connectedCells.insert(lower_bound(connectedCells.begin(),connectedCells.end(),cell),cell);
+        deadCells.insert(lower_bound(deadCells.begin(),deadCells.end(),cell),cell);
     }
     int count = rooms.size()-1;
     while(count > 0){
@@ -141,13 +142,11 @@ void Floor::generateDoors(){
                 int j = i%4;
                 outerCell.x = innerCell.x + (j-1) * (j+1)%2;
                 outerCell.y = innerCell.y + (j-2) * j%2;
-                if(!cellOutOfBounds(outerCell.x, outerCell.y) && !binary_search(connectedCells.begin(),connectedCells.end(),Tools::getCoordinateKey(outerCell))
-                && !binary_search(deadCells.begin(),deadCells.end(),Tools::getCoordinateKey(outerCell))){
+                if(!cellOutOfBounds(outerCell.x, outerCell.y) && !binary_search(deadCells.begin(),deadCells.end(),Tools::getCoordinateKey(outerCell))){
                     cellNotFound = false;
                 }else{
                     if(i == c +3){
                         //all surrounding cells are either already connected, or else out of bounds.
-                        deadCells.insert(lower_bound(deadCells.begin(),deadCells.end(),*it2),*it2);
                         connectedCells.erase(lower_bound(connectedCells.begin(),connectedCells.end(),*it2));
                     }
                 }
@@ -156,6 +155,7 @@ void Floor::generateDoors(){
         Room innerRoom = getRoom(Tools::getCoordinateKey(innerCell));
         Room outerRoom = getRoom(Tools::getCoordinateKey(outerCell));
         for(int cell : outerRoom.cells){
+            deadCells.insert(lower_bound(deadCells.begin(),deadCells.end(),cell),cell);
             connectedCells.insert(lower_bound(connectedCells.begin(),connectedCells.end(),cell),cell);
         }
         connectRooms(innerRoom, outerRoom, innerCell, outerCell);
