@@ -41,6 +41,7 @@
         "streambuf": "cpp",
         "typeinfo": "cpp",
         "qtgui": "cpp",
-        "xhash": "cpp"
+        "xhash": "cpp",
+        "xutility": "cpp"
     }
 }

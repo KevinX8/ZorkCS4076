@@ -1,7 +1,7 @@
 #include "MapWidget.h"
 #include <ctime>
 
-MapWidget::MapWidget() : f(0, 100){
+MapWidget::MapWidget() : f(0, time(nullptr)){
     this->setFixedSize(f.getWidth()*75+10,f.getHeight()*75+10);
 }
 

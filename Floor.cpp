@@ -25,7 +25,6 @@ Floor::Floor(int number, int seed = time(nullptr)){
             connections[r][c].right = 0;
         }
     }
-    //connections = new vector(tempConnections.get_allocator());
     generateRooms(floorCells, 8);
     generateDoors();
 }
@@ -121,47 +120,56 @@ void Floor::generateRooms(vector<int> unusedCells, int maxRoomSize = 7){
 }
 
 void Floor::generateDoors(){
-    vector <Room> connectedRooms;
     vector<Room>::iterator it;
-    unordered_set<int>::iterator it2;
+    vector<int> connectedCells;
+    vector<int> deadCells;//cells that are connected, and can't connect to anything
     it = rooms.begin() + (int)(rangeRand() * rooms.size());
-    while (rooms.size() > 0) {
-
-        Room r = *it;
-        bool roomConnected = false;
-
-        for(it2 = r.cells.begin();it2 != r.getCells().end() && !roomConnected; ++it2){
-            //go through all cells in a room until there is a cell that can
-            int cellKey = *it2;
-            Coordinate cell = Tools::getKeyCoordinate(cellKey);
+    Room r = *it;
+    for(int cell : r.cells){
+        connectedCells.insert(lower_bound(connectedCells.begin(),connectedCells.end(),cell),cell);
+    }
+    int count = rooms.size()-1;
+    while(count > 0){
+        vector<int>::iterator it2;
+        bool cellNotFound = true;
+        Coordinate outerCell, innerCell;
+        while(cellNotFound){
+            it2 = connectedCells.begin() + (int)(rangeRand() * connectedCells.size());
             int c = rangeRand() * 4;
-
-            for(int i = c; i < c+4 && !roomConnected; i++){
-                //check to see if any of the neighbouring cells can be joined with a door
-                Coordinate offset;
+            innerCell = Tools::getKeyCoordinate(*it2);
+            for(int i = c; i < c+4 && cellNotFound; i++){
                 int j = i%4;
-                offset.x = cell.x + (j-1) * (j+1)%2;
-                offset.y = cell.y + (j-2) * j%2;
-
-                if(!(*it).cellInRoom(offset) && !cellOutOfBounds(offset.x , offset.y)){
-                    //only connect if cell is not in current room or out of bounds
-                    for(Room room : rooms){
-                        if(room.cellInRoom(offset)){
-                            connectRooms(room, *it, offset, cell);
-                            rooms.erase(lower_bound(rooms.begin(), rooms.end(), room));
-                            connectedRooms.push_back(room);
-                            roomConnected = true;
-                            break;
-                        }
+                outerCell.x = innerCell.x + (j-1) * (j+1)%2;
+                outerCell.y = innerCell.y + (j-2) * j%2;
+                if(!cellOutOfBounds(outerCell.x, outerCell.y) && !binary_search(connectedCells.begin(),connectedCells.end(),Tools::getCoordinateKey(outerCell))
+                && !binary_search(deadCells.begin(),deadCells.end(),Tools::getCoordinateKey(outerCell))){
+                    cellNotFound = false;
+                }else{
+                    if(i == c +3){
+                        //all surrounding cells are either already connected, or else out of bounds.
+                        deadCells.insert(lower_bound(deadCells.begin(),deadCells.end(),*it2),*it2);
+                        connectedCells.erase(lower_bound(connectedCells.begin(),connectedCells.end(),*it2));
                     }
-    
                 }
             }
-
         }
-        it = connectedRooms.begin() + (int)(rangeRand() * connectedRooms.size());
+        Room innerRoom = getRoom(Tools::getCoordinateKey(innerCell));
+        Room outerRoom = getRoom(Tools::getCoordinateKey(outerCell));
+        for(int cell : outerRoom.cells){
+            connectedCells.insert(lower_bound(connectedCells.begin(),connectedCells.end(),cell),cell);
+        }
+        connectRooms(innerRoom, outerRoom, innerCell, outerCell);
+        count--;
     }
-    rooms = connectedRooms;
+        
+}
+
+Room Floor::getRoom(int cellKey){
+    for(Room r : rooms){
+        if(r.cells.find(cellKey) != r.cells.end()){
+            return r;
+        }
+    }
 }
 /*
 Coordinate Floor::getRoomCoord(Coordinate foo){
@@ -186,7 +194,7 @@ void Floor::connectRooms(Room r1, Room r2, Coordinate c1, Coordinate c2){
             connections[c2.y][c2.x].down = 2;
             d.doorLocation = c2;
         }
-        d.vertical = true;
+        d.vertical = false;
     }else{
         if(c1.x < c2.x){
             connections[c1.y][c1.x].right = 2;
@@ -195,7 +203,7 @@ void Floor::connectRooms(Room r1, Room r2, Coordinate c1, Coordinate c2){
             connections[c2.y][c2.x].right = 2;
             d.doorLocation = c2;
         }
-        d.vertical = false;
+        d.vertical = true;
     }
     d.roomKey1 = r1.getKey();
     d.roomKey2 = r2.getKey();

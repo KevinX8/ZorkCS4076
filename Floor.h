@@ -26,6 +26,7 @@ class Floor {
         vector<vector<Wall>> connections;
         Coordinate upLadder;
         Coordinate downLadder;
+        Room getRoom(int cellKey);
     public:
         explicit Floor(int number,int seed);
         vector<Room> rooms;
