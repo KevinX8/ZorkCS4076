@@ -4,7 +4,6 @@
 #include <exception>
 #include <unordered_set>
 #include "Floor.h"
-#include "Room.h"
 
 using namespace std;
 
@@ -44,8 +43,8 @@ Coordinate Floor::getNextCell(Coordinate coord){
     vector<Coordinate>::iterator it;
     int count = 0;
     for(int i = 0; i < 4; i++){
-        int x = (i > 1)? coord.x + ((i+1)%2):coord.x + ((i+1)%2)*-1;
-        int y = (i > 1)? coord.y + (i%2):coord.y + (i%2)*-1;
+        int x = coord.x + (i-1) * (i+1)%2;
+        int y = coord.y + (i-2) * i%2;
         if(!cellOutOfBounds(x, y) && disconnectedCell(x,y)){
             Coordinate foo;
             foo.x = x;
@@ -118,7 +117,7 @@ void Floor::generateRooms(vector<int> unusedCells, int maxRoomSize = 7){
         currentRoom.clear();             
     }
     //Maybe change to static cast rather than dynamic
-    sort(rooms.begin(), rooms.end(), Tools::compareCoordinates);
+    sort(rooms.begin(), rooms.end(), Tools::compareKeys);
 }
 
 void Floor::generateDoors(){
@@ -126,40 +125,45 @@ void Floor::generateDoors(){
     vector<Room>::iterator it;
     unordered_set<int>::iterator it2;
     it = rooms.begin() + (int)(rangeRand() * rooms.size());
-    while (connectedRooms.size() < rooms.size()) {
+    while (rooms.size() > 0) {
+
         Room r = *it;
-        for(it2 = r.getCells().begin();it2 != r.getCells().end(); it2++){
-            //go through all cells in a room
+        bool roomConnected = false;
+
+        for(it2 = r.cells.begin();it2 != r.getCells().end() && !roomConnected; ++it2){
+            //go through all cells in a room until there is a cell that can
             int cellKey = *it2;
             Coordinate cell = Tools::getKeyCoordinate(cellKey);
             int c = rangeRand() * 4;
-            for(int i = c; i < c+4; i++){
+
+            for(int i = c; i < c+4 && !roomConnected; i++){
                 //check to see if any of the neighbouring cells can be joined with a door
                 Coordinate offset;
                 int j = i%4;
-                offset.x += ((j) > 1)? cell.x + (j+1)%2 : cell.x + ((j+1)%2)*-1;
-                offset.y += ((j) > 1)? cell.x + (j%2) : cell.x + (j%2)*-1;
-                if(!(*it).cellInRoom(offset) && !cellOutOfBounds(cell.x , cell.y)){
+                offset.x = cell.x + (j-1) * (j+1)%2;
+                offset.y = cell.y + (j-2) * j%2;
+
+                if(!(*it).cellInRoom(offset) && !cellOutOfBounds(offset.x , offset.y)){
                     //only connect if cell is not in current room or out of bounds
-                    bool roomConnected = false;
-                    for(Room room : connectedRooms){
-                        if((getRoomCoord(offset)).x != -1){
+                    for(Room room : rooms){
+                        if(room.cellInRoom(offset)){
+                            connectRooms(room, *it, offset, cell);
+                            rooms.erase(lower_bound(rooms.begin(), rooms.end(), room));
+                            connectedRooms.push_back(room);
                             roomConnected = true;
-                            //don't connect to a room if it's already connected
+                            break;
                         }
                     }
-                    if (!roomConnected) {
-                        connectRooms(offset, cell);
-                        connectedRooms.push_back(getRoom(offset));
-                        return;
-                    }
+    
                 }
             }
+
         }
         it = connectedRooms.begin() + (int)(rangeRand() * connectedRooms.size());
     }
+    rooms = connectedRooms;
 }
-
+/*
 Coordinate Floor::getRoomCoord(Coordinate foo){
     for(Room room : rooms){
         if(room.cellInRoom(foo)){
@@ -170,18 +174,9 @@ Coordinate Floor::getRoomCoord(Coordinate foo){
     c.x = -1;
     return c;
 }
+*/
 
-Room Floor::getRoom(Coordinate foo){
-    //WARNING ADD THROWS EXCEPTION LATER!!!!!!
-    for(Room room : rooms){
-        if(room.cellInRoom(foo)){
-            return room;
-        }
-    }
-    throw "Invalid Coordinate";
-}
-
-void Floor::connectRooms(Coordinate c1, Coordinate c2){
+void Floor::connectRooms(Room r1, Room r2, Coordinate c1, Coordinate c2){
     Door d;
     if(c1.x == c2.x){
         if(c1.y < c2.y){
@@ -202,7 +197,11 @@ void Floor::connectRooms(Coordinate c1, Coordinate c2){
         }
         d.vertical = false;
     }
+    d.roomKey1 = r1.getKey();
+    d.roomKey2 = r2.getKey();
     doors.push_back(d);
+    r1.addDoor(d);
+    r2.addDoor(d);
 }
 
 void Floor::connectCells(Coordinate c1, Coordinate c2){
@@ -220,7 +219,7 @@ void Floor::connectCells(Coordinate c1, Coordinate c2){
         }
     }
 }
-
+/*
 void Floor::generateItems() {
     
 }
@@ -231,7 +230,7 @@ void Floor::generateItems(Room room){
         
     }
 }
-
+*/
 int Floor::getWidth(){
     return Tools::width;
 }

@@ -22,7 +22,7 @@ class Tools
         static int width;
         friend class Floor;
     public:
-        static bool compareCoordinates(Coordinate, Coordinate);
+        static bool compareKeys(int, int);
         static int getCoordinateKey(Coordinate c);
         static Coordinate getKeyCoordinate(int key);
         Tools() {};

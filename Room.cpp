@@ -1,22 +1,12 @@
 #include "Room.h"
 
 Room::Room(unordered_set<int> cells,string description = "This is just a room") {
-	Coordinate foo;
-	foo.x = 0;
-	foo.y = 0;
-	int count = 0;
+    this->key = 9999999;
 	for(int cellKey : cells){
-		Coordinate cell = Tools::getKeyCoordinate(cellKey);
-		foo.x += cell.x;
-		foo.y += cell.y;
-		count++;
+        this->key = min(cellKey, key);
 	}
-	foo.x /= count;
-	foo.y /= count;
-	this->coordinate = foo;
 	this->cells = cells;
 	this->description = description;
-	
 }
 
 string Room::shortDescription() {
@@ -37,14 +27,26 @@ bool Room::cellInRoom(Coordinate c){
 	return cells.find(Tools::getCoordinateKey(c)) != cells.end();
 }
 
-Coordinate Room::getCoordinate(){
-	return coordinate;
+int Room::getKey(){
+	return key;
 }
 
 unordered_set<int> Room::getCells(){
 	return cells;
 }
 
-Room::operator Coordinate() {
-	return coordinate;
+vector<Door> Room::getDoors(){
+	return doorsInRoom;
+}
+
+void Room::addDoor(Door door){
+	doorsInRoom.push_back(door);
+}
+
+Room::operator int() {
+	return key;
+}
+
+bool Room::operator<(Room r2){
+	return r2.getKey() >= this->getKey();
 }

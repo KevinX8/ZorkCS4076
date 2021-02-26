@@ -9,28 +9,19 @@ using namespace std;
 #define MAX_DIMENSION 15;
 #define MIN_DIMENSION 5;
 
-
-struct Door {
-    Coordinate doorLocation;
-    bool vertical;
-    Coordinate room1;
-    Coordinate room2;
-};
-
 class Floor {
     private:
         bool disconnectedCell(int x,int y);
         bool cellOutOfBounds(int x, int y);
         float rangeRand();
         void generateRooms(vector<int> cells, int maxRoomSize);
-        void generateItems();
-        void generateItems(Room room);
+        //void generateItems();
+        //void generateItems(Room room);
         void generateDoors();
         Coordinate getRoomCoord(Coordinate foo);
-        Room getRoom(Coordinate foo);
         Coordinate getNextCell(Coordinate coord);
         void connectCells(Coordinate c1, Coordinate c2);
-        void connectRooms(Coordinate c1, Coordinate c2);
+        void connectRooms(Room r1, Room r2, Coordinate c1, Coordinate c2);
         int height;
         vector<vector<Wall>> connections;
         Coordinate upLadder;
