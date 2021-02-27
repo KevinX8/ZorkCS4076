@@ -5,12 +5,13 @@
 #include <string>
 #include <vector>
 #include <unordered_set>
-#include "item.h"
+#include "..\interaction\item.h"
 #include "Tools.h"
 
-struct Door {
+struct Door { //replace with union maybe
     Coordinate doorLocation;
     bool vertical;
+	bool locked;
     int roomKey1;
     int roomKey2;
 };

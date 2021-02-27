@@ -1,7 +1,7 @@
 #ifndef MAPWIDGET_H
 #define MAPWIDGET_H
 
-#include "Floor.h"
+#include "..\GameWorld\Floor.h"
 #include <QPaintEvent>
 #include <QWidget>
 #include <QPainter>

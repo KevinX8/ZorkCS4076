@@ -1,5 +1,3 @@
-#include "zorkgui.h"
-
 #include <QApplication>
 #include <QGridLayout>
 #include "MapWidget.h"

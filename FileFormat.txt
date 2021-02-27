@@ -1,27 +1,32 @@
-(Individual File for each floor)
+(Individual line for each floor)
 
-Seed bits:
-
-0000,-floorWidth
-0000,-floorHeight
-0000000000(floorWidth-1)Height bits-represents each vertical wall
-(floorHeight-1)Width bits-represents each horizontal wall (Use these bits to generate door
-0000-x cell number of down ladder,
-0000-y coordinate of down ladder,
-0000-x cell number of up ladder,
-0000-y coordinate of up ladder,
-
+1st line is Game Seed
 ......
 
 Save bits:
 
+00000000-Number of rooms
+00000000-Room hashkey
+0(7 bit ) - visited
+0000(4 bit )-Number of items in room
+00000000-item hashkey
+00000000-item hashkey....
+0000(4 bit )-Number of NPCs in room
+000000-NPC hashcode
+0000(4 bit )-no.of items in NPC inventory
+00000000-item hashkey...
+00000000-item hashkey.....
+0000(4 bit )-number of locked doors
+000000-cell key of the door
+0(7 bit )-door vertical or horizontal
+
 0000-Number of Items
 000000-Item hashcode
-0000-item x,
-0000-item y,...
+00000000-room key which item is in.
 0000-Number of NPCS
 000000-NPC hashcode
-0000 - NPC state
-0000 - NPC x,
-0000 - NPC y,
+00000000 - NPC room key
+0000 - no. of items in NPCs inventory,
+00000000.. item hashcode
+00000000... item hashcode
 000000 - NPC item...
