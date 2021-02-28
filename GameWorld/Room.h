@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 #include <unordered_set>
-#include "..\interaction\item.h"
+#include "..\Interaction\item.h"
 #include "Tools.h"
 
 struct Door { //replace with union maybe

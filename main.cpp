@@ -1,6 +1,6 @@
 #include <QApplication>
 #include <QGridLayout>
-#include "MapWidget.h"
+#include "QTGUI\MapWidget.h"
 #include <QWidget>
 
 int main(int argc, char *argv[])

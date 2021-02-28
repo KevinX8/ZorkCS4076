@@ -28,22 +28,20 @@ find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 
 set(PROJECT_SOURCES
-        main.cpp
-        zorkgui.cpp
-        zorkgui.h
-        zorkgui.ui
-        floor.cpp
-        floor.h
-        item.cpp
-        item.h
-        player.cpp
-        player.h
-        room.cpp
-        room.h
-        tools.cpp
-        tools.h
-        mapWidget.cpp
-        MapWidget.h
+        main.cpp        
+        QTGUI/zorkgui.ui
+        GameWorld/floor.cpp
+        GameWorld/floor.h
+        Interaction/item.cpp
+        Interaction/item.h
+        Interaction/player.cpp
+        Interaction/player.h
+        GameWorld/room.cpp
+        GameWorld/room.h
+        GameWorld/tools.cpp
+        GameWorld/tools.h
+        QTGUI/mapWidget.cpp
+        QTGUI/MapWidget.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
