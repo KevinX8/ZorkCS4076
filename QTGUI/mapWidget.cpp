@@ -18,8 +18,9 @@ void MapWidget::drawWalls(QPainter *qp){
     int scale = 75;
     int wallWidth = 10;
     QPen pen(Qt::black, 2, Qt::SolidLine);
-    QBrush wallBrush(Qt::Dense3Pattern);
+    QBrush wallBrush(Qt::SolidPattern);
     QBrush doorBrush(Qt::Dense6Pattern);
+    QBrush lockedDoorBrush(Qt::Dense3Pattern);
     qp->setPen(pen);
 
     qp -> fillRect(0,0, scale*f.getWidth(),wallWidth, wallBrush);
@@ -38,6 +39,11 @@ void MapWidget::drawWalls(QPainter *qp){
                 }
                 case(2):{
                     qp->fillRect(topRight.x-(wallWidth/2),topRight.y+(wallWidth/2), wallWidth,scale-wallWidth, doorBrush);
+                    break;
+                }
+                case(3):{
+                    qp->fillRect(topRight.x-(wallWidth/2),topRight.y+(wallWidth/2), wallWidth,scale-wallWidth, lockedDoorBrush);
+                    break;
                 }
             }
             switch(connections[r][c].down){
@@ -47,6 +53,11 @@ void MapWidget::drawWalls(QPainter *qp){
                 }
                 case(2):{
                     qp->fillRect(bottomLeft.x+(wallWidth/2),bottomLeft.y-(wallWidth/2), scale-wallWidth,wallWidth, doorBrush);
+                    break;
+                }
+                case(3):{
+                    qp->fillRect(bottomLeft.x+(wallWidth/2),bottomLeft.y-(wallWidth/2), scale-wallWidth,wallWidth, lockedDoorBrush);
+                    break;
                 }
             }
         }
