@@ -8,9 +8,16 @@ using namespace std;
 class Player {
     private:
         vector<Item> inventory;
-        
+        int inventorySpace;
     public:
-        double stealth, strength, charisma;
+        int luck, strength, charisma;
+        void changeInventorySpace(int);
+        void changeLuck(int);
+        void changeStrength(int);
+        void changeCharisma(int);
+        void addItem();
+
+    
 
 };
 #endif /*PLAYER_H_*/

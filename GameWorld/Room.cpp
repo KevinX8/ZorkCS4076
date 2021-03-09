@@ -35,8 +35,8 @@ unordered_set<int> Room::getCells(){
 	return cells;
 }
 
-vector<Door> Room::getDoors(){
-	return doorsInRoom;
+vector<Door> &Room::getDoors(){{}
+	return &doorsInRoom;
 }
 
 void Room::addDoor(Door door){
@@ -49,4 +49,8 @@ Room::operator int() {
 
 bool Room::operator<(Room r2){
 	return r2.getKey() >= this->getKey();
+}
+
+void Room::addNPC(int NPCkey){
+
 }

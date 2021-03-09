@@ -29,7 +29,11 @@ class Floor {
         Room &getRoom(int cellKey);
         void generateLockedDoors();
     public:
-        explicit Floor(int number,int seed);
+        explicit Floor(int number,int seed = time(nullptr), bool previouslyGenerated = false);
+        Floor(int seed, int number, string floorToken);
+        template<typename T>
+        int byteHexStringToInt(T first,T second);
+        char nextChar(string s, int *i);
         vector<Room> rooms;
         vector<Door> doors;
         int getWidth();
