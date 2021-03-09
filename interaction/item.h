@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <iostream>
+#include <vector>
 using namespace std;
 
 class Item {
@@ -19,6 +20,8 @@ public:
     string getLongDescription();
 	short getRarity();
 	int getValue();
+	static const map<int,string> itemNameMap;
+	static const vector<vector<int>> itemRarity;
 };
 
 #endif /*ITEM_H_*/

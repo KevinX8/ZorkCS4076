@@ -1,16 +1,27 @@
-#ifndef PLAYER_H_
-#define PLAYER_H_
+#ifndef NPC_H_
+#define NPC_H_
 #include <vector>
 #include <iostream>
-#include "Item.h"
 using namespace std;
 
-class NPC {
-    private:
-        vector<Item> inventory;
-    public:
-        getDialogue();
-        addItem(int key);
-
+struct dialogueOption{
+    string text;
+    string reply;
+    vector<dialogueOption> nextOptions;
 };
-#endif /*PLAYER_H_*/
+
+class NPC {
+    protected:
+        bool hasKey;
+        int likedItem;
+        vector<int> inventoryItems;
+    public:
+        NPC();
+        vector<int> getKillItems();
+        int getSpareItem();
+        int giveItem(int giftItem);
+        static const map<int,float> strengthMap;
+        static const map<int,int> giftItemMap;
+        static const map<int,int> likedItemMap;
+};
+#endif /*NPC_H_*/

@@ -42,6 +42,7 @@
         "typeinfo": "cpp",
         "qtgui": "cpp",
         "xhash": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "xstring": "cpp"
     }
 }

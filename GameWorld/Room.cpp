@@ -7,17 +7,17 @@ Room::Room(unordered_set<int> cells,string description = "This is just a room"){
 	}
 	this->cells = cells;
 	this->description = description;
-    this->itemsInRoom = vector<Item>();
+    this->itemsInRoom = vector<int>();
 }
 
 string Room::shortDescription() {
 	return description;
 }
 
-void Room::addItem(Item *inItem) {
+void Room::addItem(int i) {
     //cout <<endl;
     //cout << "Just added" + inItem->getLongDescription();
-    itemsInRoom.push_back(*inItem);
+    itemsInRoom.push_back(i);
 }
 
 int Room::numberOfItems() {

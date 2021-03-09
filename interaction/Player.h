@@ -16,8 +16,12 @@ class Player {
         void changeStrength(int);
         void changeCharisma(int);
         void addItem();
-
-    
+        int getStrength();
+        int getLuck();
+        int getCharisma();
+        void addItem(int key);
+        int takeRandomItem();
+        int takeItem(int i);
 
 };
 #endif /*PLAYER_H_*/

@@ -10,15 +10,15 @@ using namespace std;
 
 class File {
     private:
-        string floorToken,playerToken;
+        string playerToken,filePath;
         int gameSeed;
     public:
         File();
-        File(string filePath = DEFAULT_PATH, int floor = -1);
-        string getFloorToken();
+        File(string filePath = DEFAULT_PATH, int gameSeed = 0);
+        string getPlayerToken();
         string readFloor(int);
         void writeFloor(string floorToken,int floorNumber);
-
+        void close(string playerToken);
         int getGameSeed();
 };
 #endif

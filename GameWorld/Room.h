@@ -21,7 +21,7 @@ class Room {
 private:
 	string description;
 	string exitString();
-    vector<Item> itemsInRoom;
+    vector<int> itemsInRoom;
     vector<NPC> npcsInRoom;
     vector<Door> doorsInRoom;
 	unordered_set<int> cells;
@@ -32,7 +32,7 @@ public:
     int numberOfItems();
 	Room(unordered_set <int> cells,string description);
 	string shortDescription();
-    void addItem(Item *inItem);
+    void addItem(int i);
     void removeItemFromRoom(int location);
 	int getKey();
 	bool cellInRoom(Coordinate c);
