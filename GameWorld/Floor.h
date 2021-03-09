@@ -21,12 +21,13 @@ class Floor {
         Coordinate getRoomCoord(Coordinate foo);
         Coordinate getNextCell(Coordinate coord);
         void connectCells(Coordinate c1, Coordinate c2);
-        void connectRooms(Room r1, Room r2, Coordinate c1, Coordinate c2);
+        void connectRooms(Room &r1, Room &r2, Coordinate c1, Coordinate c2);
         int height;
         vector<vector<Wall>> connections;
         Coordinate upLadder;
         Coordinate downLadder;
-        Room getRoom(int cellKey);
+        Room &getRoom(int cellKey);
+        void generateLockedDoors();
     public:
         explicit Floor(int number,int seed);
         vector<Room> rooms;

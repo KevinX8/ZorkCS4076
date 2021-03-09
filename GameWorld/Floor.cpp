@@ -27,6 +27,7 @@ Floor::Floor(int number, int seed = time(nullptr)){
     }
     generateRooms(floorCells, 8);
     generateDoors();
+    generateLockedDoors();
 }
 
 inline float Floor::rangeRand() {
@@ -152,8 +153,8 @@ void Floor::generateDoors(){
                 }
             }
         }
-        Room innerRoom = getRoom(Tools::getCoordinateKey(innerCell));
-        Room outerRoom = getRoom(Tools::getCoordinateKey(outerCell));
+        Room &innerRoom = getRoom(Tools::getCoordinateKey(innerCell));
+        Room &outerRoom = getRoom(Tools::getCoordinateKey(outerCell));
         for(int cell : outerRoom.cells){
             deadCells.insert(lower_bound(deadCells.begin(),deadCells.end(),cell),cell);
             connectedCells.insert(lower_bound(connectedCells.begin(),connectedCells.end(),cell),cell);
@@ -164,8 +165,33 @@ void Floor::generateDoors(){
         
 }
 
-Room Floor::getRoom(int cellKey){
-    for(Room r : rooms){
+void Floor::generateLockedDoors(){
+    //Average number of 1 door rooms per floor is 8.6
+    vector<Room> lockedRooms;
+    unordered_set<int> lockedRoomKeys;
+    const float averageLockedDoor = 0.15;
+    for(Room &r : rooms){
+        if(r.getDoors().size() == 1 && (rangeRand() < averageLockedDoor)){
+            lockedRooms.push_back(r);
+            lockedRoomKeys.insert(r.getKey());
+        }
+    }
+
+    for(Room &r : lockedRooms){
+        Door d = *r.getDoors().begin();
+        d.locked = true;
+        if(d.vertical){
+            connections[d.doorLocation.y][d.doorLocation.x].right = 3;
+        }else{
+            connections[d.doorLocation.y][d.doorLocation.x].down = 3;
+        }
+        //MUST EITHER PLACE KEY IN ROOM< OR IN NPC INVENTORY IN A DIFFERENT ROOM HERE
+    }
+
+}
+
+Room &Floor::getRoom(int cellKey){
+    for(Room &r : rooms){
         if(r.cells.find(cellKey) != r.cells.end()){
             return r;
         }
@@ -184,7 +210,7 @@ Coordinate Floor::getRoomCoord(Coordinate foo){
 }
 */
 
-void Floor::connectRooms(Room r1, Room r2, Coordinate c1, Coordinate c2){
+void Floor::connectRooms(Room &r1, Room &r2, Coordinate c1, Coordinate c2){
     Door d;
     if(c1.x == c2.x){
         if(c1.y < c2.y){
@@ -205,6 +231,7 @@ void Floor::connectRooms(Room r1, Room r2, Coordinate c1, Coordinate c2){
         }
         d.vertical = true;
     }
+    d.locked = false;
     d.roomKey1 = r1.getKey();
     d.roomKey2 = r2.getKey();
     doors.push_back(d);
