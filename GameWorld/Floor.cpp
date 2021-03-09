@@ -8,7 +8,18 @@
 
 using namespace std;
 
-Floor::Floor(int number, int seed = time(nullptr), bool previouslyGenerated = false){
+template<typename T>
+inline int byteHexStringToInt(T first,T second) {
+    stringstream ss;
+    string number = "";
+    ss << first;
+    ss << second;
+    ss << std::hex << ss.str();
+    ss >> number;
+    return stoi(number);
+}
+
+Floor::Floor(int number, int seed, bool previouslyGenerated){
     srand(seed+number);
     Tools::width = rangeRand() * 4 + 7;
     height = rangeRand() * 4 + 7;
@@ -42,7 +53,7 @@ Floor::Floor(int number,int seed, string floorToken) {
         int size = byteHexStringToInt(nextChar(floorToken, offset),nextChar(floorToken, offset));//Number of items
         //offset += 2;
         if (size != 0) {
-            rooms[roomNo].itemsInRoom.resize(size);
+            //rooms[roomNo].itemsInRoom.resize(size);
             for(int i = 0; i < size; i++){
                 //rooms[roomNo].addItem(byteHexStringToInt(nextChar(floorToken, offset),nextChar(floorToken, offset)));             
                 }
@@ -57,7 +68,7 @@ Floor::Floor(int number,int seed, string floorToken) {
                 rooms[roomNo].getNPCs().resize(noItems);
                 //offset += 2;
                 for(int i = 0; i < noItems; ++i){
-                    rooms[roomNo].getNPCs()[i].addItem(byteHexStringToInt(nextChar(floorToken, offset),nextChar(floorToken, offset)));
+                    //rooms[roomNo].getNPCs()[i].addItem(byteHexStringToInt(nextChar(floorToken, offset),nextChar(floorToken, offset)));
                     //offset += 2;      
                 }
             }
@@ -80,15 +91,6 @@ inline char Floor::nextChar(string s, int *i) {
     char val = s.at(*i);
     ++*i;
     return val;
-}
-
-template<typename T>
-inline int byteHexStringToInt(T first,T second) {
-    stringstream ss;
-    string number = "";
-    ss << std::hex << (first << second);
-    ss >> number;
-    return stoi(number);
 }
 
 inline float Floor::rangeRand() {
@@ -253,25 +255,6 @@ Room &Floor::getRoom(int cellKey){
         }
     }
 
-    for(Room &r : lockedRooms){
-        Door d = *r.getDoors().begin();
-        d.locked = true;
-        if(d.vertical){
-            connections[d.doorLocation.y][d.doorLocation.x].right = 3;
-        }else{
-            connections[d.doorLocation.y][d.doorLocation.x].down = 3;
-        }
-        //MUST EITHER PLACE KEY IN ROOM< OR IN NPC INVENTORY IN A DIFFERENT ROOM HERE
-    }
-
-}
-
-Room &Floor::getRoom(int cellKey){
-    for(Room &r : rooms){
-        if(r.cells.find(cellKey) != r.cells.end()){
-            return r;
-        }
-    }
 }
 
 void Floor::connectRooms(Room &r1, Room &r2, Coordinate c1, Coordinate c2){

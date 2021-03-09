@@ -1,12 +1,13 @@
 #include "Room.h"
 
-Room::Room(unordered_set<int> cells,string description = "This is just a room") {
+Room::Room(unordered_set<int> cells,string description = "This is just a room"){
     this->key = 9999999;
 	for(int cellKey : cells){
         this->key = min(cellKey, key);
 	}
 	this->cells = cells;
 	this->description = description;
+    this->itemsInRoom = vector<Item>();
 }
 
 string Room::shortDescription() {
@@ -36,11 +37,11 @@ unordered_set<int> Room::getCells(){
 }
 
 vector<Door> &Room::getDoors(){{}
-	return &doorsInRoom;
+    return doorsInRoom;
 }
 
 void Room::addDoor(Door door){
-	doorsInRoom.push_back(door);
+    doorsInRoom.push_back(door);
 }
 
 Room::operator int() {
@@ -51,6 +52,12 @@ bool Room::operator<(Room r2){
 	return r2.getKey() >= this->getKey();
 }
 
-void Room::addNPC(int NPCkey){
-
+void Room::addNPC(int NPCKey){
+    //npcsInRoom.push_back(new NPC(NPCKey));
 }
+
+vector<NPC> &Room::getNPCs(){
+    return npcsInRoom;
+}
+
+

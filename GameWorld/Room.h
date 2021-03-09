@@ -22,8 +22,8 @@ private:
 	string description;
 	string exitString();
     vector<Item> itemsInRoom;
-	vector<NPC> npcsInRoom;
-	vector<Door> doorsInRoom;
+    vector<NPC> npcsInRoom;
+    vector<Door> doorsInRoom;
 	unordered_set<int> cells;
 	void addDoor(Door door);
     int key;
@@ -40,6 +40,8 @@ public:
 	vector<Door> &getDoors();
 	operator int();
 	bool operator<(Room r2);
+    void addNPC(int);
+    vector<NPC> &getNPCs();
 };
 
 #endif
