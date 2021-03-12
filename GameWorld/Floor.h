@@ -10,6 +10,30 @@ using namespace std;
 #define MAX_DIMENSION 15;
 #define MIN_DIMENSION 5;
 
+template<typename T>
+inline int byteHexStringToInt(T first,T second) {
+    stringstream ss;
+    string number = "";
+    ss << first;
+    ss << second;
+    ss << std::hex << ss.str();
+    ss >> number;
+    return stoi(number);
+}
+
+inline char Floor::nextChar(string s, int *i) {
+    char val = s.at(*i);
+    ++*i;
+    return val;
+}
+
+inline float Floor::rangeRand() {
+    return static_cast <float> (rand()) / static_cast <float> (RAND_MAX+1);
+}
+
+inline bool Floor::cellOutOfBounds(int x, int y) {
+    return (x < 0 || x >= Tools::width || y >= height || y < 0);
+}
 class Floor {
     private:
         bool disconnectedCell(int x,int y);

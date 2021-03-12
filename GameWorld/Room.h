@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 #include <unordered_set>
-#include "..\Interaction\item.h"
+#include "..\Interaction\Item\item.h"
 #include "..\Interaction\NPC.h"
 #include "Tools.h"
 

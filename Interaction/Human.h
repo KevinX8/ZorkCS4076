@@ -5,7 +5,6 @@ using namespace std;
 #include "NPC.h"
 #include "Player.h"
 #include "..\GameWorld\Room.h"
-#include "item.h"
 
 class Human : public NPC {
     private:
@@ -23,6 +22,5 @@ class Human : public NPC {
         string giveItem(int, Player &p);
         dialogueOption converse(dialogueOption, int subOption = -1);
         string spareOrKill(bool spare, Player &p);
-        void addItem(int i);
 };
 #endif /*HUMAN_H_*/

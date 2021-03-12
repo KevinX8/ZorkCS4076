@@ -6,7 +6,7 @@ template <class T> class DiaglogueOption
     private:
     T option;
     T reply;
-    vector<dialogueOption> nextOptions;
+    vector<DialogueOption> nextOptions;
     public:
     template <class T> T DialogueOption::getOption() {
         return option;
@@ -14,7 +14,7 @@ template <class T> class DiaglogueOption
     template <class T> T DiaglogueOption::getReply() {
         return reply;
     }
-    template <class T> T DiaglogueOption::&getNextOption() {
+    template <class T> vector<DiaglogueOption> DiaglogueOption::&getNextOption() {
         return nextOptions;
     }
 };

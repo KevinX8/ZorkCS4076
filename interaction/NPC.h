@@ -16,12 +16,13 @@ class NPC {
         int likedItem;
         vector<int> inventoryItems;
     public:
-        NPC();
         vector<int> getKillItems();
         int getSpareItem();
         int giveItem(int giftItem);
+        /*
         static const map<int,float> strengthMap;
         static const map<int,int> giftItemMap;
         static const map<int,int> likedItemMap;
+        */
 };
 #endif /*NPC_H_*/

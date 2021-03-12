@@ -59,5 +59,3 @@ void Room::addNPC(int NPCKey){
 vector<NPC> &Room::getNPCs(){
     return npcsInRoom;
 }
-
-

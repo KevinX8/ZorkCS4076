@@ -36,6 +36,9 @@ set(PROJECT_SOURCES
         Interaction/item.h
         Interaction/player.cpp
         Interaction/player.h
+        Interaction/Human.cpp
+        Interaction/Human.h
+        Interaction/NPC.h
         GameWorld/room.cpp
         GameWorld/room.h
         GameWorld/tools.cpp

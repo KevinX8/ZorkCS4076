@@ -12,6 +12,7 @@ class File {
     private:
         string playerToken,filePath;
         int gameSeed;
+        int playerFloor;
     public:
         File();
         File(string filePath = DEFAULT_PATH, int gameSeed = 0);
@@ -20,5 +21,7 @@ class File {
         void writeFloor(string floorToken,int floorNumber);
         void close(string playerToken);
         int getGameSeed();
+        int getPlayerToken();
+        int getPlayerFloor();
 };
 #endif

@@ -1,6 +1,7 @@
 (Individual line for each floor)
 
 1st line is Game Seed
+2nd line floor player is on
 ......
 
 Save bits:
@@ -19,3 +20,13 @@ Save bits:
 0000(4 bit )-number of locked doors
 000000-cell key of the door
 0(7 bit )-door vertical
+
+Player bits:
+
+8 bits - Number of items in inventory
+8 bits - item hashcode
+... ...
+8 bits - weapon equipped
+8 bits - wearable 1
+8 bits - wearable 2
+n

@@ -24,12 +24,14 @@ File::File(string filePath,int gameSeed) {
         if (line == 0) {
             gameSeed = stoi(saveObject);
         } else if (line == 1) {
+            playerFloor = stoi(saveObject);
+        } else if (line == 2) {
             playerToken = saveObject;
         } else if (line == -1) {
             break;
         }
         ++line;
-    }
+        }
     } else {
         saveFile << gameSeed << "\n";
     }
@@ -66,6 +68,7 @@ void File::close(string playerToken) {
     ofstream saveFile (filePath + "game.dat" );
     if (saveFile.is_open()) {
         saveFile << gameSeed;
+        saveFile << playerFloor;
         saveFile << playerToken;
     }
     saveFile.close();
@@ -76,4 +79,7 @@ string File::getPlayerToken() {
 }
 int File::getGameSeed() {
     return gameSeed;
+}
+int File::getPlayerFloor() {
+    return playerFloor;
 }

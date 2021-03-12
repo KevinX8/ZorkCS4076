@@ -6,18 +6,9 @@
 #include <unordered_set>
 #include "Floor.h"
 
-using namespace std;
+#define NEXT_HEX byteHexStringToInt(nextChar(floorToken, offset),nextChar(floorToken, offset))
 
-template<typename T>
-inline int byteHexStringToInt(T first,T second) {
-    stringstream ss;
-    string number = "";
-    ss << first;
-    ss << second;
-    ss << std::hex << ss.str();
-    ss >> number;
-    return stoi(number);
-}
+using namespace std;
 
 Floor::Floor(int number, int seed, bool previouslyGenerated){
     srand(seed+number);
@@ -48,36 +39,38 @@ Floor::Floor(int number, int seed, bool previouslyGenerated){
 Floor::Floor(int number,int seed, string floorToken) {
     Floor(number,seed,true);
     int *offset = 0;
-    for (int roomNo = 0; roomNo < byteHexStringToInt(nextChar(floorToken, offset),nextChar(floorToken, offset)); roomNo++) {
+    for (int roomNo = 0; roomNo < NEXT_HEX; roomNo++) {
         /*rooms[roomNo]. set visited 2 3*/
-        int size = byteHexStringToInt(nextChar(floorToken, offset),nextChar(floorToken, offset));//Number of items
+        int size = NEXT_HEX;//Number of items
         //offset += 2;
         if (size != 0) {
             //rooms[roomNo].itemsInRoom.resize(size);
             for(int i = 0; i < size; i++){
-                //rooms[roomNo].addItem(byteHexStringToInt(nextChar(floorToken, offset),nextChar(floorToken, offset)));             
+                //rooms[roomNo].addItem(NEXT_HEX);             
                 }
             //offset = offset + size * 2;
         }
-        size = byteHexStringToInt(nextChar(floorToken, offset),nextChar(floorToken, offset));//Number of NPCs
+        size = NEXT_HEX;//Number of NPCs
         //offset += 2
+
         if (size != 0) {
             rooms[roomNo].npcsInRoom.resize(size);
             for(int npc = 0; npc < size; ++npc){
-                int noItems = byteHexStringToInt(nextChar(floorToken, offset),nextChar(floorToken, offset));
+                int noItems = NEXT_HEX;
                 rooms[roomNo].getNPCs().resize(noItems);
                 //offset += 2;
                 for(int i = 0; i < noItems; ++i){
-                    //rooms[roomNo].getNPCs()[i].addItem(byteHexStringToInt(nextChar(floorToken, offset),nextChar(floorToken, offset)));
+                    //rooms[roomNo].getNPCs()[i].addItem(NEXT_HEX);
                     //offset += 2;      
                 }
             }
         }
-        size = byteHexStringToInt(nextChar(floorToken, offset),nextChar(floorToken, offset));//Number of Locked Doors
+
+        size = NEXT_HEX;//Number of Locked Doors
         if(size != 0){
             for(int i = 0; i < size; ++i){
-                Coordinate c = Tools::getKeyCoordinate(byteHexStringToInt(nextChar(floorToken, offset),nextChar(floorToken, offset)));
-                if(byteHexStringToInt(nextChar(floorToken, offset),nextChar(floorToken, offset))){
+                Coordinate c = Tools::getKeyCoordinate(NEXT_HEX);
+                if(NEXT_HEX){
                     connections[c.y][c.x].right = 3;
                 }else{
                     connections[c.y][c.x].down = 3;
@@ -85,20 +78,6 @@ Floor::Floor(int number,int seed, string floorToken) {
             }
         }
     }
-}
-
-inline char Floor::nextChar(string s, int *i) {
-    char val = s.at(*i);
-    ++*i;
-    return val;
-}
-
-inline float Floor::rangeRand() {
-    return static_cast <float> (rand()) / static_cast <float> (RAND_MAX+1);
-}
-
-inline bool Floor::cellOutOfBounds(int x, int y) {
-    return (x < 0 || x >= Tools::width || y >= height || y < 0);
 }
 
 Coordinate Floor::getNextCell(Coordinate coord){

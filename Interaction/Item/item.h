@@ -12,14 +12,13 @@ private:
 	string description;
 	string longDescription;
 	short rarity;
-	int value;
 public:
-    Item (string description, int inValue, short rarity);
-    Item (string description);
+	Item (short itemHashcode);
 	string getShortDescription();
     string getLongDescription();
 	short getRarity();
 	int getValue();
+	const short hashCode;
 	static const map<int,string> itemNameMap;
 	static const vector<vector<int>> itemRarity;
 };
