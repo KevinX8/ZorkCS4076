@@ -4,7 +4,26 @@
 using namespace std;
 #include "NPC.h"
 #include "Player.h"
-#include "..\GameWorld\Room.h"
+
+const unordered_map<short,double> strengthCharismaRatio = {
+   {0, 0.4},
+   {1, 0.5},
+   {2, 1},
+   {3, 0.5},
+   {4, 0.2},
+   {5, 0.3},
+   {6, 0.1}
+};
+
+const unordered_map<short,double> usefulInfo = {
+   {0, "Paulis Gributs likes "},
+   {1, "Thomas Greaney likes "},
+   {2, " likes "},
+   {3, " likes "},
+   {4, " likes "},
+   {5, " likes "},
+   {6, " likes "}
+};
 
 class Human : public NPC {
     private:

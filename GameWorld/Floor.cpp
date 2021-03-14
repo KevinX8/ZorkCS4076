@@ -31,8 +31,10 @@ Floor::Floor(int number, int seed, bool previouslyGenerated){
     generateRooms(floorCells, 8);
     generateDoors();
     if(!previouslyGenerated){
+        generateNPCs();
         generateLockedDoors();
-        //generate Items
+        generateItems();
+        generateLadders(number == 0);
     }
 }
 
@@ -202,6 +204,21 @@ void Floor::generateDoors(){
     }     
 }
 
+void Floor::generateNPCs(){
+    int numberOfNPCs = (rooms.size() / 4);
+    numberOfNPCs *= 1 + ((rand()%11)-5)/50;
+    for(int i = 0; i< numberOfNPCs; i++){
+        vector<Room>::iterator it;
+        it = rooms.begin() + (int)(rand() % rooms.size());
+        int key = rand() % NUM_NPCS;
+        if(*it.getNPCs().size() < *it.getCells().size()){
+            *it.addNPC(key);
+        }else{
+            i--;
+        }
+    }
+}
+
 void Floor::generateLockedDoors(){
     //Average number of 1 door rooms per floor is 8.6
     vector<Room> lockedRooms;
@@ -222,9 +239,46 @@ void Floor::generateLockedDoors(){
         }else{
             connections[d.doorLocation.y][d.doorLocation.x].down = 3;
         }
-        //MUST EITHER PLACE KEY IN ROOM< OR IN NPC INVENTORY IN A DIFFERENT ROOM HERE
+        Room keyRoom = rooms.begin() + (int)(rand() % rooms.size());
+        while(keyRoom.getDoors().size() < 2){
+            keyRoom = rooms.begin() + (int)(rand() % rooms.size());
+        }
+        if(keyRoom.getNPCs().size() > 0){
+            NPC keyNPC = keyRoom.getNPCs().begin() + (int)(rand() % keyRoom.getNPCs().size())
+            keyNPC.giveKey();
+        }else{
+            keyRoom.addItem(0);
+        }
     }
 
+}
+
+void Floor::generateItems(){
+    int numberOfItems = (rooms.size() / 2);
+    numberOfItems *= 1 + ((rand()%11)-5)/50;
+    for(int i = 0; i < numberOfItems; i++){
+        Room itemRoom = rooms.begin() + (int)(rand() % rooms.size());
+        int rarity = rand() % 7;
+        rarity /= 2;
+        rarity = max(rarity, 1);
+        if(itemRoom.getDoors().size() == 1){
+            rarity += 1;
+        }
+        vector<short> possibleItems = itemRarity[rarity];
+        itemRoom.addItem(possibleItems[rand() % possibleItems.size()]);
+    }
+}
+
+void Floor::generateLadders(bool firstFloor = false){
+    Room upRoom = rooms.begin() + (int)(rand() % rooms.size());
+    upRoom.giveLadder(true);
+    if(!firstFloor){
+        Room downRoom = rooms.begin() + (int)(rand() % rooms.size());
+        while(downRoom.getDoors().size() < 2 && (int)downRoom == (int)upRoom){
+            downRoom = rooms.begin() + (int)(rand() % rooms.size());
+        }
+        downRoom.giveLadder(false);
+    }
 }
 
 Room &Floor::getRoom(int cellKey){
@@ -280,18 +334,7 @@ void Floor::connectCells(Coordinate c1, Coordinate c2){
         }
     }
 }
-/*
-void Floor::generateItems() {
-    
-}
 
-void Floor::generateItems(Room room){
-    int amount_of_items = rand() % 3;
-    for (int i = 0; i < amount_of_items; i++) {
-        
-    }
-}
-*/
 int Floor::getWidth(){
     return Tools::width;
 }

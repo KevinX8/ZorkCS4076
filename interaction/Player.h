@@ -2,9 +2,12 @@
 #define PLAYER_H_
 #include <vector>
 #include <iostream>
-#include "Item\Item.h"
-#include "Item\Weapon.h"
-#include "Item\Wearable.h"
+#include <algorithm>
+#include "item\Item.h"
+#include "item\Weapon.h"
+#include "item\Wearable.h"
+
+#define STARTING_ATRRIBUTE_POINTS 4
 
 using namespace std;
 
@@ -29,9 +32,9 @@ class Player {
     private:
         vector<Item> inventory;
         int inventorySpace;
-        //Weapon activeWeapon;
-        //Wearable activeWearable1;
-        //Wearable activeWearable2;
+        Weapon activeWeapon;
+        Wearable activeWearable1;
+        Wearable activeWearable2;
         int luck, strength, charisma;
         void changeLuck(int);
         void changeStrength(int);

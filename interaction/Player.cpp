@@ -13,7 +13,9 @@ Player::Player(string playerToken){
     for (int item=0; item < NEXT_HEX; item++) {
         inventory.push_back(Item(NEXT_HEX));
     }
-    
+    this->equip(Item(NEXT_HEX), 0);
+    this->equip(Item(NEXT_HEX), 1);
+    this->equip(Item(NEXT_HEX), 2);
 }
 
 void Player::changeInventorySpace(int amount){
@@ -95,27 +97,27 @@ bool Player::equip(Item item, int slot){
 3: Inventory Space Modifier
 */
 int modifiers[4];
-    switch(slot){
-        case(0):{
-            if(Weapon* weapon = dynamic_cast<Weapon*>(item) && activeWeapon == 0){
-                activeWeapon = weapon;
-                std::copy(modifiers, 4,weapon->modifiers());
-            }
-            break;
+switch(slot){
+    case(0):{
+        if(Weapon* weapon = dynamic_cast<Weapon*>(item) && activeWeapon == 0){
+            activeWeapon = weapon;
+            std::copy(modifiers, 4,weapon->modifiers());
         }
-        case(1):{
-            if(Wearable* wearable = dynamic_cast<Wearable*>(item) && activeWearable1 == 0){
-                activeWearable1 = wearable;
-                std::copy(modifiers, 4,wearable->modifiers());
-            }
-            break;
-        }
-        case(2):{
-            if(Wearable* wearable = dynamic_cast<Wearable*>(item) && activeWearable2 == 0){
-                activeWearable2 = wearable;
-                std::copy(modifiers, 4,wearable->modifiers());
-            }
-            break;
-        }
+        break;
     }
+    case(1):{
+        if(Wearable* wearable = dynamic_cast<Wearable*>(item) && activeWearable1 == 0){
+            activeWearable1 = wearable;
+            std::copy(modifiers, 4,wearable->modifiers());
+        }
+        break;
+    }
+    case(2):{
+        if(Wearable* wearable = dynamic_cast<Wearable*>(item) && activeWearable2 == 0){
+            activeWearable2 = wearable;
+            std::copy(modifiers, 4,wearable->modifiers());
+        }
+        break;
+    }
+}
 }

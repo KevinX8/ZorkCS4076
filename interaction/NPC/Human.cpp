@@ -1,8 +1,9 @@
 #include "Human.h"
 
 Human::Human(int floorNumber, const int key){
-    //this->charisma = floorNumber * (1-(strengthMap[key]));
-    this->strength = floorNumber * strengthCharismaRatio;
+    this->charisma = (floorNumber + STARTING_ATRRIBUTE_POINTS) * (1-strengthCharismaRatio[key]);
+    this->strength = (floorNumber + STARTING_ATRRIBUTE_POINTS) * strengthCharismaRatio[key];
+    this->usefulInfo = usefulInfo[key];
 }
 
 bool Human::fight(Player &p){
@@ -23,8 +24,8 @@ string Human::spareOrKill(bool spare, Player &p){
             return "Thanks for your mercy. Here is this key I found.";
         }else{
             float itemValue = (strengthCharismaRatio) * (p.getLuck() / (this->strength + this->charisma)) * Item::itemRarity.size();
-            vector<int> possibleItems = Item::itemRarity[itemValue];
-            vector<int>::iterator it;
+            vector<short> possibleItems = itemRarity[itemValue];
+            vector<short>::iterator it;
             it = possibleItems.begin() + (int)(rand() % possibleItems.size());
             p.addItem(*it);
             return "Thanks for your mercy. Here is a token for you.";
@@ -43,9 +44,9 @@ string Human::spareOrKill(bool spare, Player &p){
 string Human::giveItem(int i, Player &p){
     if(i == likedItem){
         float itemValue = (1-strengthCharismaRatio) * (p.getLuck() / (this->strength + this->charisma)) * Item::itemRarity.size();
-        vector<int> possibleItems = Item::itemRarity[itemValue];
-        vector<int>::iterator it;
-        it = possibleItems.begin() + (int)(rand() % possibleItems.size());
+        vector<short> possibleItems = itemRarity[itemValue];
+        vector<short>::iterator it;
+        it = possibleItems.begin() + (short)(rand() % possibleItems.size());
         p.addItem(*it);
         inventoryItems.push_back(i);
          p.takeItem(i);
@@ -64,6 +65,10 @@ string Human::askInfo(Player &p){
     
         return name + " persuaded you to give them an item.";
     }
+}
+
+void giveKey(){
+    hasKey = true;
 }
 
 dialogueOption Human::converse(dialogueOption d, int subOption){

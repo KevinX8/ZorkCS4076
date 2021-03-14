@@ -5,6 +5,8 @@
 #include <ctime>
 #include <memory>
 #include "Room.h"
+#include "Interation/NPC/NPC.h"
+#include "Interaction/item/item.h"
 
 using namespace std;
 #define MAX_DIMENSION 15;
@@ -21,28 +23,30 @@ inline int byteHexStringToInt(T first,T second) {
     return stoi(number);
 }
 
-inline char Floor::nextChar(string s, int *i) {
+inline char nextChar(string s, int *i) {
     char val = s.at(*i);
     ++*i;
     return val;
 }
 
-inline float Floor::rangeRand() {
+inline float rangeRand() {
     return static_cast <float> (rand()) / static_cast <float> (RAND_MAX+1);
 }
 
 inline bool Floor::cellOutOfBounds(int x, int y) {
     return (x < 0 || x >= Tools::width || y >= height || y < 0);
 }
+
 class Floor {
     private:
         bool disconnectedCell(int x,int y);
         bool cellOutOfBounds(int x, int y);
         float rangeRand();
         void generateRooms(vector<int> cells, int maxRoomSize);
-        //void generateItems();
-        //void generateItems(Room room);
+        void generateNPCs();
+        void generateItems();
         void generateDoors();
+        void generateLadders(bool firstFloor);
         Coordinate getRoomCoord(Coordinate foo);
         Coordinate getNextCell(Coordinate coord);
         void connectCells(Coordinate c1, Coordinate c2);

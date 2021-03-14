@@ -32,8 +32,8 @@ set(PROJECT_SOURCES
         QTGUI/zorkgui.ui
         GameWorld/floor.cpp
         GameWorld/floor.h
-        Interaction/item.cpp
-        Interaction/item.h
+        Interaction/item/item.cpp
+        Interaction/item/item.h
         Interaction/player.cpp
         Interaction/player.h
         Interaction/Human.cpp

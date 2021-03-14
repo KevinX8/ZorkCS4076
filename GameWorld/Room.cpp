@@ -8,6 +8,8 @@ Room::Room(unordered_set<int> cells,string description = "This is just a room"){
 	this->cells = cells;
 	this->description = description;
     this->itemsInRoom = vector<int>();
+    this->hasDownLadder = false;
+    this->hasUpLadder = false;
 }
 
 string Room::shortDescription() {
@@ -53,9 +55,17 @@ bool Room::operator<(Room r2){
 }
 
 void Room::addNPC(int NPCKey){
-    //npcsInRoom.push_back(new NPC(NPCKey));
+    npcsInRoom.push_back(new NPC(NPCKey));
 }
 
 vector<NPC> &Room::getNPCs(){
     return npcsInRoom;
+}
+
+void giveLadder(bool up){
+    if(up){
+        this.hasUpLadder = true;
+    }else{
+        this.hasDownLadder = true;
+    }
 }

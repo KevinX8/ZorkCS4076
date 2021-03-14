@@ -29,4 +29,3 @@ Player bits:
 8 bits - weapon equipped
 8 bits - wearable 1
 8 bits - wearable 2
-n

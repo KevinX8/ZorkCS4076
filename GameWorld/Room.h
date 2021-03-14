@@ -6,7 +6,7 @@
 #include <vector>
 #include <unordered_set>
 #include "..\Interaction\Item\item.h"
-#include "..\Interaction\NPC.h"
+#include "..\Interaction\NPC\NPC.h"
 #include "Tools.h"
 
 struct Door { //replace with union maybe
@@ -28,6 +28,8 @@ private:
 	void addDoor(Door door);
     int key;
 	friend class Floor;
+	bool hasUpLadder;
+	bool hasDownLadder;
 public:
     int numberOfItems();
 	Room(unordered_set <int> cells,string description);
@@ -42,6 +44,7 @@ public:
 	bool operator<(Room r2);
     void addNPC(int);
     vector<NPC> &getNPCs();
+	void giveLadder(bool up);
 };
 
 #endif

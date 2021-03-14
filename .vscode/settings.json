@@ -43,6 +43,22 @@
         "qtgui": "cpp",
         "xhash": "cpp",
         "xutility": "cpp",
-        "xstring": "cpp"
+        "xstring": "cpp",
+        "chrono": "cpp",
+        "codecvt": "cpp",
+        "condition_variable": "cpp",
+        "ctime": "cpp",
+        "list": "cpp",
+        "unordered_set": "cpp",
+        "functional": "cpp",
+        "iterator": "cpp",
+        "numeric": "cpp",
+        "random": "cpp",
+        "ratio": "cpp",
+        "future": "cpp",
+        "mutex": "cpp",
+        "thread": "cpp",
+        "cinttypes": "cpp",
+        "variant": "cpp"
     }
 }
