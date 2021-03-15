@@ -2,7 +2,7 @@
 #define WEAPON_H_
 #include "item.h"
 
-#define changeToStruct(a,b,c) {a + NUM_STD_ITEMS, weaponMod{.damage = b, .invSpace = c}}
+#define changeToWeaponStruct(a,b,c) {a + NUM_STD_ITEMS, weaponMod{.damage = b, .invSpace = c}}
 
 struct weaponMod {
     short damage;
@@ -10,8 +10,8 @@ struct weaponMod {
 };
 
 const unordered_map<short,weaponMod> weaponModMap = {
-   changeToStruct(0,3,1),
-   changeToStruct(1,1,1)
+   changeToWeaponStruct(0,3,1),
+   changeToWeaponStruct(1,1,1)
 };
 
 class Weapon : public Item {
@@ -21,6 +21,7 @@ class Weapon : public Item {
     Weapon(const short hashkey);
     short getDamage();
     short getInvSpace();
+    array<int,4> modifiers();
 };
 
 #endif /*WEAPON_H_*/

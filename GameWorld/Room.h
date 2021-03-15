@@ -6,7 +6,7 @@
 #include <vector>
 #include <unordered_set>
 #include "..\Interaction\Item\item.h"
-#include "..\Interaction\NPC\NPC.h"
+#include "..\Interaction\NPC\Human.h"
 #include "Tools.h"
 
 struct Door { //replace with union maybe
@@ -42,7 +42,7 @@ public:
 	vector<Door> &getDoors();
 	operator int();
 	bool operator<(Room r2);
-    void addNPC(int);
+    void addNPC(int key, int floorNumber);
     vector<NPC> &getNPCs();
 	void giveLadder(bool up);
 };

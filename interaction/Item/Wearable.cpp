@@ -12,3 +12,8 @@ short Wearable::getCharisma() {
 short Wearable::getInvSpace() {
     return wearableMods.invSpace;
 }
+
+array<int,4> Wearable::modifiers() {
+    std::array<int,4> mods = {0, wearableMods.charisma, 0, wearableMods.invSpace};
+    return mods;
+}

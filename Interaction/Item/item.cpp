@@ -5,7 +5,7 @@ Item::Item(const short key){
     this->description = itemNameMap.at(key);
     int index = 0;
     for (std::vector<std::vector<short>>::const_iterator rarityvectorit = itemRarity.begin(); rarityvectorit != itemRarity.end(); ++rarityvectorit) {
-        if (std::find(*rarityvectorit->begin(),*rarityvectorit->end(),key) != *rarityvectorit->end()) {
+        if (std::find(rarityvectorit->begin(),rarityvectorit->end(),key) != rarityvectorit->end()) {
             this->rarity = index;
             break;
         }
@@ -25,6 +25,11 @@ string Item::getShortDescription()
 string Item::getLongDescription()
 {
 	return " item(s), " + description + ".\n";
+}
+
+array<int,4> Item::modifiers() {
+    array<int,4> mods = {0,0,0,0};
+    return mods;
 }
 
 bool Item::operator==(const int& key)

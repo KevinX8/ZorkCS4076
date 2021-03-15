@@ -2,10 +2,12 @@
 #define NPC_H_
 #include <vector>
 #include <iostream>
+#include <unordered_map>
+
 using namespace std;
 
-#define NUM_HUMANS 12
-#define NUM_NPCS 25
+#define NUM_HUMANS 7
+#define NUM_NPCS 12
 
 const unordered_map<short,string> nameMap = {
    {0, "Thomas Greaney"},
@@ -14,7 +16,7 @@ const unordered_map<short,string> nameMap = {
    {3, "Gandalf"},
    {4, "Leonardo di Caprio"},
    {5, "Shaggy"},
-   {6, "Santa Claus"}
+   {6, "Santa Claus"},
 
     {0 + NUM_HUMANS, "Scooby-Doo"},
     {1 + NUM_HUMANS, "Garfield"},
@@ -34,10 +36,11 @@ class NPC {
         int likedItem;
         vector<int> inventoryItems;
     public:
-        vector<int> getKillItems();
-        int getSpareItem();
-        int giveItem(int giftItem);
-        void giveKey();
+        virtual vector<int> getKillItems() = 0;
+        virtual int getSpareItem() = 0;
+        virtual int giveItem(int giftItem)  = 0;
+        virtual void giveKey() = 0;
+        virtual int getLikedItem() = 0;
         /*
         static const map<int,float> strengthMap;
         static const map<int,int> giftItemMap;

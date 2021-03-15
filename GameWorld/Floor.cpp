@@ -10,6 +10,10 @@
 
 using namespace std;
 
+inline float Floor::rangeRand() {
+    return static_cast <float> (rand()) / static_cast <float> (RAND_MAX+1);
+}
+
 Floor::Floor(int number, int seed, bool previouslyGenerated){
     srand(seed+number);
     Tools::width = rangeRand() * 4 + 7;
@@ -31,7 +35,7 @@ Floor::Floor(int number, int seed, bool previouslyGenerated){
     generateRooms(floorCells, 8);
     generateDoors();
     if(!previouslyGenerated){
-        generateNPCs();
+        generateNPCs(number);
         generateLockedDoors();
         generateItems();
         generateLadders(number == 0);
@@ -80,6 +84,10 @@ Floor::Floor(int number,int seed, string floorToken) {
             }
         }
     }
+}
+
+inline bool Floor::cellOutOfBounds(int x, int y) {
+    return (x < 0 || x >= Tools::width || y >= height || y < 0);
 }
 
 Coordinate Floor::getNextCell(Coordinate coord){
@@ -204,15 +212,15 @@ void Floor::generateDoors(){
     }     
 }
 
-void Floor::generateNPCs(){
+void Floor::generateNPCs(int floorNumber){
     int numberOfNPCs = (rooms.size() / 4);
     numberOfNPCs *= 1 + ((rand()%11)-5)/50;
     for(int i = 0; i< numberOfNPCs; i++){
         vector<Room>::iterator it;
         it = rooms.begin() + (int)(rand() % rooms.size());
         int key = rand() % NUM_NPCS;
-        if(*it.getNPCs().size() < *it.getCells().size()){
-            *it.addNPC(key);
+        if((*it).getNPCs().size() < (*it).getCells().size()){
+            (*it).addNPC(key, floorNumber);
         }else{
             i--;
         }
@@ -230,22 +238,30 @@ void Floor::generateLockedDoors(){
             lockedRoomKeys.insert(r.getKey());
         }
     }
-
     for(Room &r : lockedRooms){
-        Door d = *r.getDoors().begin();
+        Door d;
+        d = *r.getDoors().begin();
         d.locked = true;
         if(d.vertical){
             connections[d.doorLocation.y][d.doorLocation.x].right = 3;
         }else{
             connections[d.doorLocation.y][d.doorLocation.x].down = 3;
         }
-        Room keyRoom = rooms.begin() + (int)(rand() % rooms.size());
+        Room keyRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
         while(keyRoom.getDoors().size() < 2){
-            keyRoom = rooms.begin() + (int)(rand() % rooms.size());
+            keyRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
         }
         if(keyRoom.getNPCs().size() > 0){
-            NPC keyNPC = keyRoom.getNPCs().begin() + (int)(rand() % keyRoom.getNPCs().size())
-            keyNPC.giveKey();
+            NPC *keyNPCp;
+
+            keyNPCp = *(keyRoom.getNPCs().begin() + (int)(rand() % keyRoom.getNPCs().size()));
+            keyNPCc->giveKey();
+            int likedItem = keyNPC.getLikedItem();
+            Room likedItemRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
+            while((int)likedItemRoom == ((int)keyRoom) || likedItemRoom.getDoors().size() < 2){
+                likedItemRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
+            }
+            likedItemRoom.addItem(likedItem);
         }else{
             keyRoom.addItem(0);
         }
@@ -257,7 +273,7 @@ void Floor::generateItems(){
     int numberOfItems = (rooms.size() / 2);
     numberOfItems *= 1 + ((rand()%11)-5)/50;
     for(int i = 0; i < numberOfItems; i++){
-        Room itemRoom = rooms.begin() + (int)(rand() % rooms.size());
+        Room itemRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
         int rarity = rand() % 7;
         rarity /= 2;
         rarity = max(rarity, 1);
@@ -265,17 +281,17 @@ void Floor::generateItems(){
             rarity += 1;
         }
         vector<short> possibleItems = itemRarity[rarity];
-        itemRoom.addItem(possibleItems[rand() % possibleItems.size()]);
+        itemRoom.addItem(possibleItems.at(rand() % possibleItems.size()));
     }
 }
 
 void Floor::generateLadders(bool firstFloor = false){
-    Room upRoom = rooms.begin() + (int)(rand() % rooms.size());
+    Room upRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
     upRoom.giveLadder(true);
     if(!firstFloor){
-        Room downRoom = rooms.begin() + (int)(rand() % rooms.size());
+        Room downRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
         while(downRoom.getDoors().size() < 2 && (int)downRoom == (int)upRoom){
-            downRoom = rooms.begin() + (int)(rand() % rooms.size());
+            downRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
         }
         downRoom.giveLadder(false);
     }
@@ -287,7 +303,6 @@ Room &Floor::getRoom(int cellKey){
             return r;
         }
     }
-
 }
 
 void Floor::connectRooms(Room &r1, Room &r2, Coordinate c1, Coordinate c2){

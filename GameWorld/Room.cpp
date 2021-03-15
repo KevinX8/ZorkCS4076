@@ -54,18 +54,20 @@ bool Room::operator<(Room r2){
 	return r2.getKey() >= this->getKey();
 }
 
-void Room::addNPC(int NPCKey){
-    npcsInRoom.push_back(new NPC(NPCKey));
+void Room::addNPC(int NPCKey, int floorNumber){
+    if(NPCKey < NUM_HUMANS){
+        npcsInRoom.push_back(Human(NPCKey, floorNumber));
+    }
 }
 
 vector<NPC> &Room::getNPCs(){
     return npcsInRoom;
 }
 
-void giveLadder(bool up){
+void Room::giveLadder(bool up){
     if(up){
-        this.hasUpLadder = true;
+        hasUpLadder = true;
     }else{
-        this.hasDownLadder = true;
+        hasDownLadder = true;
     }
 }

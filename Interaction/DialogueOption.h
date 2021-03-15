@@ -1,20 +1,22 @@
 #ifndef DIALOGUEOPTION_H_
 #define DIALOGUEOPTION_H_
 
-template <class T> class DiaglogueOption
+#include <vector>
+
+template <class T> class DialogueOption
 {
     private:
     T option;
     T reply;
-    vector<DialogueOption> nextOptions;
+    vector<DialogueOption<T>> nextOptions;
     public:
-    template <class T> T DialogueOption::getOption() {
+    T getOption() {
         return option;
     }
-    template <class T> T DiaglogueOption::getReply() {
+    T getReply() {
         return reply;
     }
-    template <class T> vector<DiaglogueOption> DiaglogueOption::&getNextOption() {
+    vector<DialogueOption<T>> getNextOption() {
         return nextOptions;
     }
 };

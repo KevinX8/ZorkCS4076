@@ -3,6 +3,8 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include <sstream>
+#include <array>
 #include "item\Item.h"
 #include "item\Weapon.h"
 #include "item\Wearable.h"
@@ -32,9 +34,9 @@ class Player {
     private:
         vector<Item> inventory;
         int inventorySpace;
-        Weapon activeWeapon;
-        Wearable activeWearable1;
-        Wearable activeWearable2;
+        Weapon *activeWeapon;
+        Wearable *activeWearable1;
+        Wearable *activeWearable2;
         int luck, strength, charisma;
         void changeLuck(int);
         void changeStrength(int);
@@ -47,11 +49,11 @@ class Player {
         int getStrength();
         int getLuck();
         int getCharisma();
-        bool equip(Item item, int slot);
+        bool equip(Item *item, int slot);
         void unequip(int slot);
         void addItem(int key);
         int takeRandomItem();
-        int takeItem(int i);
-        bool Player::canMove();
+        void takeItem(int i);
+        bool canMove();
 };
 #endif /*PLAYER_H_*/

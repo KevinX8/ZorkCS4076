@@ -3,7 +3,8 @@
 #include <vector>
 using namespace std;
 #include "NPC.h"
-#include "Player.h"
+#include "../Player.h"
+#include "../DialogueOption.h"
 
 const unordered_map<short,double> strengthCharismaRatio = {
    {0, 0.4},
@@ -15,7 +16,7 @@ const unordered_map<short,double> strengthCharismaRatio = {
    {6, 0.1}
 };
 
-const unordered_map<short,double> usefulInfo = {
+const unordered_map<short,string> usefulInfo = {
    {0, "Paulis Gributs likes "},
    {1, "Thomas Greaney likes "},
    {2, " likes "},
@@ -29,17 +30,17 @@ class Human : public NPC {
     private:
         int strength;
         int charisma;
-        double strengthCharismaRatio;
         string name;
         string usefulInfo;
-        dialogueOption baseOption;
+        DialogueOption<string> baseOption;
+        short key;
     public:
-        Human(int FloorNumber, int key);
+        Human(int FloorNumber, const short key);
         ~Human();
         bool fight(Player &p);
         string askInfo(Player &p);
         string giveItem(int, Player &p);
-        dialogueOption converse(dialogueOption, int subOption = -1);
+        DialogueOption<string> converse(DialogueOption<string>, int subOption = -1);
         string spareOrKill(bool spare, Player &p);
 };
 #endif /*HUMAN_H_*/

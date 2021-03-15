@@ -1,15 +1,15 @@
 #ifndef ITEM_H_
 #define ITEM_H_
 
-#include <map>
 #include <string>
 #include <iostream>
+#include <array>
 #include <vector>
 #include <unordered_set>
 #include <unordered_map>
 #include <algorithm>
 
-#define NUM_STD_ITEMS 10
+#define NUM_STD_ITEMS 3
 #define NUM_WEAPONS 10
 #define TOTAL_ITEMS 30
 
@@ -38,7 +38,7 @@ const vector<vector<short>> itemRarity = {
     index 3: very rare item which spawns in room/uncommon item which spawns in locked room (2/15 items are in here)
     index 4: item only spawns in locked room (1/15 items are in here)
     */
-   {0},{1,2},{50},{51},{}
+   {0},{1,2},{50},{51},{51}
 };
 
 class Item {
@@ -51,6 +51,7 @@ public:
 	string getShortDescription();
 	string getLongDescription();
 	short getRarity();
+   virtual array<int,4> modifiers();
 	short hashCode;
 	bool operator==(const int& key);
 };
