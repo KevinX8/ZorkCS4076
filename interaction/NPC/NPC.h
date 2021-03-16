@@ -3,11 +3,12 @@
 #include <vector>
 #include <iostream>
 #include <unordered_map>
+#include "../Player.h"
 
 using namespace std;
 
 #define NUM_HUMANS 7
-#define NUM_NPCS 12
+#define NUM_NPCS 7
 
 const unordered_map<short,string> nameMap = {
    {0, "Thomas Greaney"},
@@ -36,11 +37,13 @@ class NPC {
         int likedItem;
         vector<int> inventoryItems;
     public:
-        virtual vector<int> getKillItems() = 0;
         virtual int getSpareItem() = 0;
-        virtual int giveItem(int giftItem)  = 0;
+        virtual string giveItem(int giftItem,Player &p)  = 0;
         virtual void giveKey() = 0;
         virtual int getLikedItem() = 0;
+        virtual void addItem(int code) = 0;
+        virtual int getCode() = 0;
+        virtual vector<int> getInventory() = 0;
         /*
         static const map<int,float> strengthMap;
         static const map<int,int> giftItemMap;

@@ -1,6 +1,12 @@
 #ifndef TOOLS_H_
 #define TOOLS_H_
 
+#include <iostream>
+#include <algorithm>
+#include <sstream>
+
+using namespace std;
+
 struct Coordinate {
     int x;
     int y;
@@ -26,5 +32,9 @@ class Tools
         static int getCoordinateKey(Coordinate c);
         static Coordinate getKeyCoordinate(int key);
         Tools() {};
+        template<typename T>
+        static int byteHexStringToInt(T first,T second);
+        static string intToByteHexString(int i);
+        static char nextChar(string s, int *i);
 };
 #endif

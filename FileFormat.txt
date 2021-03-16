@@ -6,8 +6,7 @@
 
 Save bits:
 
-00000000-Number of rooms
-00000000-Room hashkey
+(Per room)
 0(7 bit ) - visited
 0000(4 bit )-Number of items in room
 00000000-item hashkey
@@ -17,9 +16,7 @@ Save bits:
 0000(4 bit )-no.of items in NPC inventory
 00000000-item hashkey...
 00000000-item hashkey.....
-0000(4 bit )-number of locked doors
-000000-cell key of the door
-0(7 bit )-door vertical
+00000000-roomIsLocked
 
 Player bits:
 

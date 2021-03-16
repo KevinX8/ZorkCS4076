@@ -7,7 +7,6 @@ Room::Room(unordered_set<int> cells,string description = "This is just a room"){
 	}
 	this->cells = cells;
 	this->description = description;
-    this->itemsInRoom = vector<int>();
     this->hasDownLadder = false;
     this->hasUpLadder = false;
 }
@@ -54,13 +53,15 @@ bool Room::operator<(Room r2){
 	return r2.getKey() >= this->getKey();
 }
 
-void Room::addNPC(int NPCKey, int floorNumber){
+NPC* Room::addNPC(int NPCKey, int floorNumber, bool emptyNPC){
     if(NPCKey < NUM_HUMANS){
-        npcsInRoom.push_back(Human(NPCKey, floorNumber));
+        NPC* npc = new Human(NPCKey, floorNumber, emptyNPC);
+        npcsInRoom.push_back(npc);
+        return npc;
     }
 }
 
-vector<NPC> &Room::getNPCs(){
+vector<NPC*> &Room::getNPCs(){
     return npcsInRoom;
 }
 

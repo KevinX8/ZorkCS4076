@@ -16,6 +16,7 @@ class Floor {
         bool disconnectedCell(int x,int y);
         bool cellOutOfBounds(int x, int y);
         float rangeRand();
+        void lockDoor(Door& d);
         void generateRooms(vector<int> cells, int maxRoomSize);
         void generateNPCs(int floorNumber);
         void generateItems();
@@ -34,6 +35,7 @@ class Floor {
     public:
         Floor(int number,int seed = time(nullptr), bool previouslyGenerated = false);
         Floor(int seed, int number, string floorToken);
+        string floorToken();
         vector<Room> rooms;
         vector<Door> doors;
         int getWidth();

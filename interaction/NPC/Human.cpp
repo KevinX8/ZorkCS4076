@@ -1,10 +1,34 @@
 #include "Human.h"
 
-Human::Human(int floorNumber, const short key){
+const unordered_map<short,double> Human::strengthCharismaRatio = {
+   {0, 0.4},
+   {1, 0.5},
+   {2, 1},
+   {3, 0.5},
+   {4, 0.2},
+   {5, 0.3},
+   {6, 0.1}
+};
+
+const unordered_map<short,string> Human::usefulInfoMap = {
+   {0, "Paulis Gributs likes "},
+   {1, "Thomas Greaney likes "},
+   {2, " likes "},
+   {3, " likes "},
+   {4, " likes "},
+   {5, " likes "},
+   {6, " likes "}
+};
+
+Human::Human(int floorNumber, const short key, bool inventoryEmpty){
     this->key = key;
     this->charisma = (floorNumber + STARTING_ATRRIBUTE_POINTS) * (1-(strengthCharismaRatio.at(key)));
     this->strength = (floorNumber + STARTING_ATRRIBUTE_POINTS) * strengthCharismaRatio.at(key);
-    this->usefulInfo = usefulInfo[key];
+    this->usefulInfo = usefulInfoMap.at(key);
+    this->name = nameMap.at(key);
+    if(!inventoryEmpty){
+        ;
+    }
 }
 
 bool Human::fight(Player &p){
@@ -24,8 +48,8 @@ string Human::spareOrKill(bool spare, Player &p){
             hasKey = false;
             return "Thanks for your mercy. Here is this key I found.";
         }else{
-            float itemValue = strengthCharismaRatio.at(key) * (p.getLuck() / (this->strength + this->charisma)) * itemRarity.size();
-            vector<short> possibleItems = itemRarity[itemValue];
+            float itemValue = strengthCharismaRatio.at(key) * (p.getLuck() / (this->strength + this->charisma)) * Item::itemRarity.size();
+            vector<short> possibleItems = Item::itemRarity[itemValue];
             vector<short>::iterator it;
             it = possibleItems.begin() + (int)(rand() % possibleItems.size());
             p.addItem(*it);
@@ -44,8 +68,8 @@ string Human::spareOrKill(bool spare, Player &p){
 
 string Human::giveItem(int i, Player &p){
     if(i == likedItem){
-        float itemValue = (1-strengthCharismaRatio.at(key)) * (p.getLuck() / (this->strength + this->charisma)) * itemRarity.size();
-        vector<short> possibleItems = itemRarity[itemValue];
+        float itemValue = (1-strengthCharismaRatio.at(key)) * (p.getLuck() / (this->strength + this->charisma)) * Item::itemRarity.size();
+        vector<short> possibleItems = Item::itemRarity[itemValue];
         vector<short>::iterator it;
         it = possibleItems.begin() + (short)(rand() % possibleItems.size());
         p.addItem(*it);
@@ -68,16 +92,32 @@ string Human::askInfo(Player &p){
     }
 }
 
-void NPC::giveKey(){
+void Human::giveKey(){
     hasKey = true;
+}
+
+void Human::addItem(int code){
+    inventoryItems.push_back(code);
 }
 
 DialogueOption<string> Human::converse(DialogueOption<string> d, int subOption){
     return d.getNextOption().at(subOption);
 }
 
-int NPC::getLikedItem(){
+int Human::getLikedItem(){
     return likedItem;
+}
+
+int Human::getSpareItem(){
+    return 0;
+}
+
+int Human::getCode(){
+    return (int)(key);
+}
+
+vector<int> Human::getInventory(){
+    return inventoryItems;
 }
 
 Human::~Human(){

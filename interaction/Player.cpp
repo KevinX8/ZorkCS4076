@@ -1,7 +1,7 @@
 #include "Player.h"
 
 #define space 20
-#define NEXT_HEX byteHexStringToInt(nextChar(playerToken, offset),nextChar(playerToken, offset))
+#define NEXT_HEX Tools::byteHexStringToInt(Tools::nextChar(playerToken, offset),Tools::nextChar(playerToken, offset))
 
 Player::Player(){
     this->inventorySpace = space;

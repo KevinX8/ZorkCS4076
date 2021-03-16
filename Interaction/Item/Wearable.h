@@ -2,18 +2,10 @@
 #define WEARABLE_H_
 #include "item.h"
 
-#define changeToWearableStruct(a,b,c,d) {a + NUM_STD_ITEMS + NUM_WEAPONS, wearableMod{.charisma = b, .luck = c, .invSpace = d}}
-
 struct wearableMod {
     short charisma;
     short luck;
     short invSpace;
-};
-
-const unordered_map<short,wearableMod> wearableModMap = {
-    /*charisma luck invSpace */
-   changeToWearableStruct(0, 0, 3, 0), 
-   changeToWearableStruct(1, 3, 0 ,0)
 };
 
 class Wearable : public Item {
@@ -25,6 +17,7 @@ class Wearable : public Item {
     short getLuck();
     short getInvSpace();
     array<int,4> modifiers();
+    static const unordered_map<short,wearableMod> wearableModMap;
 };
 
 #endif /*WEARABLE_H_*/

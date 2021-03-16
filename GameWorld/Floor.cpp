@@ -3,15 +3,25 @@
 #include <algorithm>
 #include <exception>
 #include <sstream>
+#include <iostream>
 #include <unordered_set>
 #include "Floor.h"
 
-#define NEXT_HEX byteHexStringToInt(nextChar(floorToken, offset),nextChar(floorToken, offset))
+#define NEXT_HEX Tools::byteHexStringToInt(Tools::nextChar(floorToken, offset),Tools::nextChar(floorToken, offset))
 
 using namespace std;
 
 inline float Floor::rangeRand() {
     return static_cast <float> (rand()) / static_cast <float> (RAND_MAX+1);
+}
+
+inline void Floor::lockDoor(Door& d){
+    d.locked = true;
+    if(d.vertical){
+        connections[d.doorLocation.y][d.doorLocation.x].right = 3;
+    }else{
+        connections[d.doorLocation.y][d.doorLocation.x].down = 3;
+    }
 }
 
 Floor::Floor(int number, int seed, bool previouslyGenerated){
@@ -34,56 +44,61 @@ Floor::Floor(int number, int seed, bool previouslyGenerated){
     }
     generateRooms(floorCells, 8);
     generateDoors();
+    generateLadders(number == 0);
     if(!previouslyGenerated){
+        generateItems();
         generateNPCs(number);
         generateLockedDoors();
-        generateItems();
-        generateLadders(number == 0);
     }
 }
 
+//USE A UNION HERE
 Floor::Floor(int number,int seed, string floorToken) {
     Floor(number,seed,true);
     int *offset = 0;
-    for (int roomNo = 0; roomNo < NEXT_HEX; roomNo++) {
-        /*rooms[roomNo]. set visited 2 3*/
-        int size = NEXT_HEX;//Number of items
-        //offset += 2;
-        if (size != 0) {
-            //rooms[roomNo].itemsInRoom.resize(size);
-            for(int i = 0; i < size; i++){
-                //rooms[roomNo].addItem(NEXT_HEX);             
-                }
-            //offset = offset + size * 2;
+    for (Room room : rooms) {
+        bool visited = (NEXT_HEX != 0); // does nothing at the moment
+        int numItemsInRoom = NEXT_HEX;
+        for (int i =0; i < numItemsInRoom; ++i) { //add items to the room
+            room.addItem(NEXT_HEX);
         }
-        size = NEXT_HEX;//Number of NPCs
-        //offset += 2
-
-        if (size != 0) {
-            rooms[roomNo].npcsInRoom.resize(size);
-            for(int npc = 0; npc < size; ++npc){
-                int noItems = NEXT_HEX;
-                rooms[roomNo].getNPCs().resize(noItems);
-                //offset += 2;
-                for(int i = 0; i < noItems; ++i){
-                    //rooms[roomNo].getNPCs()[i].addItem(NEXT_HEX);
-                    //offset += 2;      
-                }
+        int numNPCsInRoom = NEXT_HEX;
+        for (int i =0; i < numNPCsInRoom; ++i) {
+            
+            NPC* npc = room.addNPC(NEXT_HEX,number, true);
+            int numItems = NEXT_HEX;
+            for (int j=0; j < numItems; ++j) {
+                npc->addItem(NEXT_HEX);
             }
         }
-
-        size = NEXT_HEX;//Number of Locked Doors
-        if(size != 0){
-            for(int i = 0; i < size; ++i){
-                Coordinate c = Tools::getKeyCoordinate(NEXT_HEX);
-                if(NEXT_HEX){
-                    connections[c.y][c.x].right = 3;
-                }else{
-                    connections[c.y][c.x].down = 3;
-                }
-            }
+        if(NEXT_HEX){//door is locked in room
+            Door& d = room.getDoors().at(0);
+            lockDoor(d);
         }
+
     }
+}
+
+string Floor::floorToken() {
+    stringstream sstream;
+    string token = "";
+    for (Room room : rooms) {
+        //sstream << room.visited();
+        sstream << Tools::intToByteHexString(room.itemsInRoom.size());
+        for (int items : room.itemsInRoom) {
+            sstream << Tools::intToByteHexString(items);
+        }
+        sstream << Tools::intToByteHexString(room.npcsInRoom.size());
+        for (NPC *npc : room.getNPCs()) {
+            sstream << Tools::intToByteHexString(npc->getCode());
+            for (int items : npc->getInventory()) {
+                sstream << Tools::intToByteHexString(items);
+            }
+        }
+        sstream << Tools::intToByteHexString(room.getDoors().at(0).locked);
+    }
+    sstream >> token;
+    return token;
 }
 
 inline bool Floor::cellOutOfBounds(int x, int y) {
@@ -239,25 +254,19 @@ void Floor::generateLockedDoors(){
         }
     }
     for(Room &r : lockedRooms){
-        Door d;
-        d = *r.getDoors().begin();
-        d.locked = true;
-        if(d.vertical){
-            connections[d.doorLocation.y][d.doorLocation.x].right = 3;
-        }else{
-            connections[d.doorLocation.y][d.doorLocation.x].down = 3;
-        }
+        Door &d = *r.getDoors().begin();
+        lockDoor(d);
         Room keyRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
         while(keyRoom.getDoors().size() < 2){
             keyRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
         }
         if(keyRoom.getNPCs().size() > 0){
-            NPC *keyNPCp;
-
-            keyNPCp = *(keyRoom.getNPCs().begin() + (int)(rand() % keyRoom.getNPCs().size()));
-            keyNPCc->giveKey();
-            int likedItem = keyNPC.getLikedItem();
-            Room likedItemRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
+            int likedItem = 0;
+            Room likedItemRoom = *(rooms.begin());
+            NPC* npc = dynamic_cast<NPC*>(*(keyRoom.getNPCs().begin() + (int)(rand() % keyRoom.getNPCs().size())));
+            npc->giveKey();
+            likedItem = npc->getLikedItem();
+            likedItemRoom = *(rooms.begin() + (int)(rand() % rooms.size()));            
             while((int)likedItemRoom == ((int)keyRoom) || likedItemRoom.getDoors().size() < 2){
                 likedItemRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
             }
@@ -273,23 +282,23 @@ void Floor::generateItems(){
     int numberOfItems = (rooms.size() / 2);
     numberOfItems *= 1 + ((rand()%11)-5)/50;
     for(int i = 0; i < numberOfItems; i++){
-        Room itemRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
+        Room& itemRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
         int rarity = rand() % 7;
         rarity /= 2;
         rarity = max(rarity, 1);
         if(itemRoom.getDoors().size() == 1){
             rarity += 1;
         }
-        vector<short> possibleItems = itemRarity[rarity];
+        vector<short> possibleItems = Item::itemRarity.at(rarity);
         itemRoom.addItem(possibleItems.at(rand() % possibleItems.size()));
     }
 }
 
 void Floor::generateLadders(bool firstFloor = false){
-    Room upRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
+    Room& upRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
     upRoom.giveLadder(true);
     if(!firstFloor){
-        Room downRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
+        Room& downRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
         while(downRoom.getDoors().size() < 2 && (int)downRoom == (int)upRoom){
             downRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
         }

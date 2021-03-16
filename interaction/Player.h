@@ -8,27 +8,11 @@
 #include "item\Item.h"
 #include "item\Weapon.h"
 #include "item\Wearable.h"
+#include "..\GameWorld\Tools.h"
 
 #define STARTING_ATRRIBUTE_POINTS 4
 
 using namespace std;
-
-template<typename T>
-inline int byteHexStringToInt(T first,T second) {
-    stringstream ss;
-    string number = "";
-    ss << first;
-    ss << second;
-    ss << std::hex << ss.str();
-    ss >> number;
-    return stoi(number);
-}
-
-inline char nextChar(string s, int *i) {
-    char val = s.at(*i);
-    ++*i;
-    return val;
-}
 
 class Player {
     private:
