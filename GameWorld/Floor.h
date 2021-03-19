@@ -28,18 +28,18 @@ class Floor {
         void connectRooms(Room &r1, Room &r2, Coordinate c1, Coordinate c2);
         int height;
         vector<vector<Wall>> connections;
-        Coordinate upLadder;
-        Coordinate downLadder;
         Room &getRoom(int cellKey);
+        Door& getOuterLockedDoor(Room& r);
         void generateLockedDoors();
     public:
         Floor(int number,int seed = time(nullptr), bool previouslyGenerated = false);
         Floor(int seed, int number, string floorToken);
         string floorToken();
         vector<Room> rooms;
-        vector<Door> doors;
         int getWidth();
         int getHeight();
-        vector<vector<Wall>> getConnections();
+        vector<vector<Wall>>& getConnections();
+        template<typename T>
+        static int byteHexStringToInt(T first,T second);
 };
 #endif

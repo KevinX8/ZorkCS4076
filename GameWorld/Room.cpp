@@ -1,18 +1,13 @@
 #include "Room.h"
 
-Room::Room(unordered_set<int> cells,string description = "This is just a room"){
+Room::Room(unordered_set<int> cells){
     this->key = 9999999;
 	for(int cellKey : cells){
         this->key = min(cellKey, key);
 	}
 	this->cells = cells;
-	this->description = description;
     this->hasDownLadder = false;
     this->hasUpLadder = false;
-}
-
-string Room::shortDescription() {
-	return description;
 }
 
 void Room::addItem(int i) {
@@ -71,4 +66,16 @@ void Room::giveLadder(bool up){
     }else{
         hasDownLadder = true;
     }
+}
+
+bool Room::getKiosk() {
+    return hasKiosk;
+}
+
+int* Room::upgradeStats(short statToUpgrade) {
+//strength charisma luck invSpace
+    int params[4] = {0,0,0,0};
+    params[statToUpgrade] = 1;
+    hasKiosk = false;
+    return params;
 }

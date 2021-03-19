@@ -54,6 +54,7 @@ string Item::getLongDescription()
 }
 
 array<int,4> Item::modifiers() {
+    //strength, charisma, luck, invSpace
     array<int,4> mods = {0,0,0,0};
     return mods;
 }

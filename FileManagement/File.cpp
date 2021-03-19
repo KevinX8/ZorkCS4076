@@ -44,8 +44,7 @@ string File::readFloor(int floorNumber) {
     try {
         saveFile.open(filePath + to_string(floorNumber) + ".dat" , std::ios::in | std::ios::out | std::ios::app);
     } catch (std::ifstream::failure e) {
-        qDebug() << "Exception opening file\n";
-        return "";
+        throw FloorFileException();
     }
     while (getline (saveFile, saveObject)) {
         return saveObject;
@@ -63,12 +62,12 @@ void File::writeFloor(string floorToken,int floorNumber) {
     saveFile.close();
 }
 
-void File::close(string playerToken) {
+void File::close(string playerToken, int floor) {
     std::filesystem::remove(filePath + "game.dat");
     ofstream saveFile (filePath + "game.dat" );
     if (saveFile.is_open()) {
         saveFile << gameSeed;
-        saveFile << playerFloor;
+        saveFile << floor;
         saveFile << playerToken;
     }
     saveFile.close();
@@ -82,4 +81,9 @@ int File::getGameSeed() {
 }
 int File::getPlayerFloor() {
     return playerFloor;
+}
+
+void File::deleteSaves(string filePath) {
+    std::filesystem::remove(filePath + "game.dat");
+    std::filesystem::remove(filePath + "\\floor\\");
 }

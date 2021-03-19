@@ -17,17 +17,6 @@ Coordinate Tools::getKeyCoordinate(int key){
     return c;
 }
 
-template<typename T>
-int Tools::byteHexStringToInt(T first,T second) {
-    stringstream ss;
-    string number = "";
-    ss << first;
-    ss << second;
-    ss << std::hex << ss.str();
-    ss >> number;
-    return stoi(number);
-}
-
 string Tools::intToByteHexString(int i){
     int first = i & 0b00001111;
     int second = (i & 0b11110000) >> 4;
@@ -40,7 +29,7 @@ string Tools::intToByteHexString(int i){
 }
 
 char Tools::nextChar(string s, int *i) {
-    char val = s.at(*i);
+    char& val = s.at(*i);
     ++*i;
     return val;
 }

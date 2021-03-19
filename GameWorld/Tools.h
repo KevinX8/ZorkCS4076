@@ -32,9 +32,7 @@ class Tools
         static int getCoordinateKey(Coordinate c);
         static Coordinate getKeyCoordinate(int key);
         Tools() {};
-        template<typename T>
-        static int byteHexStringToInt(T first,T second);
         static string intToByteHexString(int i);
-        static char nextChar(string s, int *i);
+        static char nextChar(string s, int *i); 
 };
 #endif

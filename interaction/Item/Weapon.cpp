@@ -20,6 +20,6 @@ short Weapon::getInvSpace() {
 }
 
 array<int,4> Weapon::modifiers() {
-    std::array<int,4> modsnt mods [4] = {weaponMods.damage, 0, 0, weaponMods.invSpace};
+    std::array<int,4> mods = {weaponMods.damage, 0, 0, weaponMods.invSpace};
     return mods;
 }

@@ -16,15 +16,13 @@ using namespace std;
 
 class Player {
     private:
+        friend class GameInstance;
         vector<Item> inventory;
         int inventorySpace;
         Weapon *activeWeapon;
         Wearable *activeWearable1;
         Wearable *activeWearable2;
         int luck, strength, charisma;
-        void changeLuck(int);
-        void changeStrength(int);
-        void changeCharisma(int);
         void changeInventorySpace(int);
         void changeParams(int params[], bool equip);
     public:
@@ -39,5 +37,7 @@ class Player {
         int takeRandomItem();
         void takeItem(int i);
         bool canMove();
+        template<typename T>
+        static int byteHexStringToInt(T first,T second);
 };
 #endif /*PLAYER_H_*/

@@ -7,7 +7,7 @@
 #include <unordered_set>
 #include "Floor.h"
 
-#define NEXT_HEX Tools::byteHexStringToInt(Tools::nextChar(floorToken, offset),Tools::nextChar(floorToken, offset))
+#define NEXT_HEX byteHexStringToInt(Tools::nextChar(floorToken, offset),Tools::nextChar(floorToken, offset))
 
 using namespace std;
 
@@ -22,6 +22,27 @@ inline void Floor::lockDoor(Door& d){
     }else{
         connections[d.doorLocation.y][d.doorLocation.x].down = 3;
     }
+}
+
+inline Door& Floor::getOuterLockedDoor(Room& r){
+    Door& innerDoor = *r.getDoors().begin();
+    Room& outerRoom = *(innerDoor.room);
+    for(Door& d : outerRoom.getDoors()){
+        if(*(d.room) == r){
+            return d;
+        }
+    }
+}
+
+template<typename T>
+int Floor::byteHexStringToInt(T first,T second) {
+    stringstream ss;
+    string number = "";
+    ss << first;
+    ss << second;
+    ss << std::hex << ss.str();
+    ss >> number;
+    return stoi(number);
 }
 
 Floor::Floor(int number, int seed, bool previouslyGenerated){
@@ -56,7 +77,7 @@ Floor::Floor(int number, int seed, bool previouslyGenerated){
 Floor::Floor(int number,int seed, string floorToken) {
     Floor(number,seed,true);
     int *offset = 0;
-    for (Room room : rooms) {
+    for (Room& room : rooms) {       
         bool visited = (NEXT_HEX != 0); // does nothing at the moment
         int numItemsInRoom = NEXT_HEX;
         for (int i =0; i < numItemsInRoom; ++i) { //add items to the room
@@ -72,7 +93,7 @@ Floor::Floor(int number,int seed, string floorToken) {
             }
         }
         if(NEXT_HEX){//door is locked in room
-            Door& d = room.getDoors().at(0);
+            Door& d = getOuterLockedDoor(room);
             lockDoor(d);
         }
 
@@ -177,7 +198,7 @@ void Floor::generateRooms(vector<int> unusedCells, int maxRoomSize = 7){
                 unusedCells.erase(lower_bound(unusedCells.begin(), unusedCells.end(), Tools::getCoordinateKey(nextCell)));
             }
         }
-        rooms.push_back(Room(currentRoom,"this is a room"));
+        rooms.push_back(Room(currentRoom));
         connectingCells.clear();   
         currentRoom.clear();             
     }
@@ -254,7 +275,7 @@ void Floor::generateLockedDoors(){
         }
     }
     for(Room &r : lockedRooms){
-        Door &d = *r.getDoors().begin();
+        Door &d = getOuterLockedDoor(r);
         lockDoor(d);
         Room keyRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
         while(keyRoom.getDoors().size() < 2){
@@ -297,11 +318,16 @@ void Floor::generateItems(){
 void Floor::generateLadders(bool firstFloor = false){
     Room& upRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
     upRoom.giveLadder(true);
+    vector<Room>::iterator it = (rooms.begin() + (int)(rand() % rooms.size()));
+    Room& downRoom = *it;
+    while(downRoom.getDoors().size() < 2 && (int)downRoom == (int)upRoom){
+        it = (rooms.begin() + (int)(rand() % rooms.size()));
+        downRoom = *it;
+    }
+    
+    rooms.erase(it);
+    rooms.insert(rooms.begin(), downRoom);
     if(!firstFloor){
-        Room& downRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
-        while(downRoom.getDoors().size() < 2 && (int)downRoom == (int)upRoom){
-            downRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
-        }
         downRoom.giveLadder(false);
     }
 }
@@ -336,11 +362,11 @@ void Floor::connectRooms(Room &r1, Room &r2, Coordinate c1, Coordinate c2){
         d.vertical = true;
     }
     d.locked = false;
-    d.roomKey1 = r1.getKey();
-    d.roomKey2 = r2.getKey();
-    doors.push_back(d);
+    d.room = &r2;
+    Door d2 = d;
+    d2.room = &r1;
     r1.addDoor(d);
-    r2.addDoor(d);
+    r2.addDoor(d2);
 }
 
 void Floor::connectCells(Coordinate c1, Coordinate c2){
@@ -367,6 +393,6 @@ int Floor::getHeight(){
     return height;
 }
 
-vector<vector<Wall>> Floor::getConnections(){
+vector<vector<Wall>>& Floor::getConnections(){
     return connections;
 }

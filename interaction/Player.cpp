@@ -1,7 +1,18 @@
 #include "Player.h"
 
 #define space 20
-#define NEXT_HEX Tools::byteHexStringToInt(Tools::nextChar(playerToken, offset),Tools::nextChar(playerToken, offset))
+#define NEXT_HEX byteHexStringToInt(Tools::nextChar(playerToken, offset),Tools::nextChar(playerToken, offset))
+
+template<typename T>
+int Player::byteHexStringToInt(T first,T second) {
+    stringstream ss;
+    string number = "";
+    ss << first;
+    ss << second;
+    ss << std::hex << ss.str();
+    ss >> number;
+    return stoi(number);
+}
 
 Player::Player(){
     this->inventorySpace = space;
@@ -16,22 +27,6 @@ Player::Player(string playerToken){
     this->equip(new Item(NEXT_HEX), 0);
     this->equip(new Item(NEXT_HEX), 1);
     this->equip(new Item(NEXT_HEX), 2);
-}
-
-void Player::changeInventorySpace(int amount){
-    inventorySpace += amount;
-}
-
-void Player::changeLuck(int amount){
-    luck += amount;
-}
-
-void Player::changeStrength(int amount){
-    strength += amount;
-}
-
-void Player::changeCharisma(int amount){
-    charisma += amount;
 }
 
 int Player::getLuck(){

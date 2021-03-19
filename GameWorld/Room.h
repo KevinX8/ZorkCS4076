@@ -9,33 +9,35 @@
 #include "..\Interaction\NPC\Human.h"
 #include "Tools.h"
 
-struct Door { //replace with union maybe
+class Room;
+
+struct Door {
     Coordinate doorLocation;
     bool vertical;
 	bool locked;
-    int roomKey1;
-    int roomKey2;
+    Room* room;
 };
+
 class Room {
 
 private:
-	string description;
-	string exitString();
+	friend class Floor;
     vector<int> itemsInRoom;
     vector<NPC*> npcsInRoom;
     vector<Door> doorsInRoom;
 	unordered_set<int> cells;
 	void addDoor(Door door);
     int key;
-	friend class Floor;
 	bool hasUpLadder;
 	bool hasDownLadder;
+	bool hasKiosk;
 public:
     int numberOfItems();
-	Room(unordered_set <int> cells,string description);
-	string shortDescription();
+	Room(unordered_set <int> cells = {});
     void addItem(int i);
     void removeItemFromRoom(int location);
+	int* upgradeStats(short statToUpgrade);
+	bool getKiosk();
 	int getKey();
 	bool cellInRoom(Coordinate c);
 	unordered_set<int> getCells();
