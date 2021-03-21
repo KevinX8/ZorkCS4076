@@ -36,7 +36,7 @@ vector<Door> &Room::getDoors(){{}
     return doorsInRoom;
 }
 
-void Room::addDoor(Door door){
+void Room::addDoor(Door& door){
     doorsInRoom.push_back(door);
 }
 
@@ -46,6 +46,10 @@ Room::operator int() {
 
 bool Room::operator<(Room r2){
 	return r2.getKey() >= this->getKey();
+}
+
+bool Room::operator==(Room * const r2){
+    return r2->getKey() == this->getKey();
 }
 
 NPC* Room::addNPC(int NPCKey, int floorNumber, bool emptyNPC){

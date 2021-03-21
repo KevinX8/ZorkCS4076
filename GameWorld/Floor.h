@@ -4,12 +4,28 @@
 #include <iostream>
 #include <ctime>
 #include <memory>
+#include <cmath>
+#include <algorithm>
+#include <exception>
+#include <sstream>
+#include <iostream>
+#include <unordered_set>
+#include <iterator>
+#include<QDebug>
 #include "Room.h"
 #include "../Interaction/item/item.h"
 
 using namespace std;
 #define MAX_DIMENSION 15;
 #define MIN_DIMENSION 5;
+
+struct LockedDoorException : public std::exception
+{
+	const char * what () const throw ()
+    {
+    	return "seed could not complete locked door generation!";
+    }
+};
 
 class Floor {
     private:
@@ -29,8 +45,9 @@ class Floor {
         int height;
         vector<vector<Wall>> connections;
         Room &getRoom(int cellKey);
-        Door& getOuterLockedDoor(Room& r);
+        Door& getOuterLockedDoor(int index);
         void generateLockedDoors();
+        int getRoomIndex(Room& r);
     public:
         Floor(int number,int seed = time(nullptr), bool previouslyGenerated = false);
         Floor(int seed, int number, string floorToken);
@@ -38,6 +55,7 @@ class Floor {
         vector<Room> rooms;
         int getWidth();
         int getHeight();
+        int downRoomIndex;
         vector<vector<Wall>>& getConnections();
         template<typename T>
         static int byteHexStringToInt(T first,T second);

@@ -1,7 +1,21 @@
 #include "MapWidget.h"
 #include <ctime>
 
-MapWidget::MapWidget() : f(0, time(nullptr)){
+MapWidget::MapWidget() : f(0, 19){
+    f = Floor(0, 19);
+
+    for(int j = 1; j < 20; j++){
+        for(int i =0; i<1000; i++){
+            try{
+                Floor f = Floor(0, i);
+            }catch(LockedDoorException e){
+                qDebug() << "Falied at " << i << " try on seed " << j << "haha";
+            }
+
+        }
+    }
+
+    qDebug() << "success";
     this->setFixedSize(f.getWidth()*75+10,f.getHeight()*75+10);
 }
 

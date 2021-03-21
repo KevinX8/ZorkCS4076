@@ -15,7 +15,16 @@ struct Door {
     Coordinate doorLocation;
     bool vertical;
 	bool locked;
-    Room* room;
+    int roomIndex;
+	Door(const Door& d) {
+		doorLocation = d.doorLocation;
+		vertical = d.vertical;
+		locked = d.locked;
+		roomIndex = d.roomIndex;
+	}
+	Door(){
+		
+	}
 };
 
 class Room {
@@ -26,7 +35,7 @@ private:
     vector<NPC*> npcsInRoom;
     vector<Door> doorsInRoom;
 	unordered_set<int> cells;
-	void addDoor(Door door);
+    void addDoor(Door& door);
     int key;
 	bool hasUpLadder;
 	bool hasDownLadder;
@@ -44,6 +53,7 @@ public:
 	vector<Door> &getDoors();
 	operator int();
 	bool operator<(Room r2);
+	bool operator==(Room * const r2);
     NPC* addNPC(int key, int floorNumber, bool emptyNPC = false);
     vector<NPC*> &getNPCs();
 	void giveLadder(bool up);

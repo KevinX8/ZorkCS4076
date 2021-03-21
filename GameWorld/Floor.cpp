@@ -1,19 +1,8 @@
-#include <cmath>
-#include <ctime>
-#include <algorithm>
-#include <exception>
-#include <sstream>
-#include <iostream>
-#include <unordered_set>
 #include "Floor.h"
 
 #define NEXT_HEX byteHexStringToInt(Tools::nextChar(floorToken, offset),Tools::nextChar(floorToken, offset))
 
 using namespace std;
-
-inline float Floor::rangeRand() {
-    return static_cast <float> (rand()) / static_cast <float> (RAND_MAX+1);
-}
 
 inline void Floor::lockDoor(Door& d){
     d.locked = true;
@@ -24,14 +13,15 @@ inline void Floor::lockDoor(Door& d){
     }
 }
 
-inline Door& Floor::getOuterLockedDoor(Room& r){
-    Door& innerDoor = *r.getDoors().begin();
-    Room& outerRoom = *(innerDoor.room);
+inline Door& Floor::getOuterLockedDoor(int innerRoomIndex) {
+    Door& innerDoor = *rooms.at(innerRoomIndex).getDoors().begin();
+    Room& outerRoom = rooms.at(innerDoor.roomIndex);
     for(Door& d : outerRoom.getDoors()){
-        if(*(d.room) == r){
+        if(d.roomIndex == innerRoomIndex){
             return d;
         }
     }
+    throw LockedDoorException();
 }
 
 template<typename T>
@@ -47,8 +37,8 @@ int Floor::byteHexStringToInt(T first,T second) {
 
 Floor::Floor(int number, int seed, bool previouslyGenerated){
     srand(seed+number);
-    Tools::width = rangeRand() * 4 + 7;
-    height = rangeRand() * 4 + 7;
+    Tools::width = (rand() % 4) + 7;
+    height = (rand() % 4) + 7;
     vector<int> floorCells;
     //vector<vector<Wall>> *tempConnections* = new vector<;
     connections.resize(height);
@@ -65,12 +55,16 @@ Floor::Floor(int number, int seed, bool previouslyGenerated){
     }
     generateRooms(floorCells, 8);
     generateDoors();
-    generateLadders(number == 0);
     if(!previouslyGenerated){
-        generateItems();
-        generateNPCs(number);
+        //generateItems();
+        //generateNPCs(number);
+        try {
         generateLockedDoors();
+        } catch (LockedDoorException E) {
+            throw E;
+        }
     }
+    generateLadders(number == 0);
 }
 
 //USE A UNION HERE
@@ -93,7 +87,7 @@ Floor::Floor(int number,int seed, string floorToken) {
             }
         }
         if(NEXT_HEX){//door is locked in room
-            Door& d = getOuterLockedDoor(room);
+            Door& d = getOuterLockedDoor(getRoomIndex(room));
             lockDoor(d);
         }
 
@@ -129,7 +123,6 @@ inline bool Floor::cellOutOfBounds(int x, int y) {
 Coordinate Floor::getNextCell(Coordinate coord){
     vector<Coordinate> allowedCells;
     vector<Coordinate>::iterator it;
-    int count = 0;
     for(int i = 0; i < 4; i++){
         int x = coord.x + (i-1) * (i+1)%2;
         int y = coord.y + (i-2) * i%2;
@@ -138,11 +131,10 @@ Coordinate Floor::getNextCell(Coordinate coord){
             foo.x = x;
             foo.y = y;
             allowedCells.insert(allowedCells.end(), foo);
-            count++;
         }
     }
     if(allowedCells.size()>0){
-        it=allowedCells.begin() + (int)(rangeRand() * count);
+        it=allowedCells.begin() + (int)(rand() % allowedCells.size());
         return *it;
     }else{
         Coordinate noValidCell;
@@ -165,14 +157,14 @@ void Floor::generateRooms(vector<int> unusedCells, int maxRoomSize = 7){
     vector<int> connectingCells;
     unordered_set<int> currentRoom;
     while(!unusedCells.empty()){
-        int roomSize = (int)(rangeRand() * (maxRoomSize - 4)) + 4;
+        int roomSize = (int)(rand() % (maxRoomSize - 4)) + 4;
         vector<int>::iterator it;
-        it = unusedCells.begin() + (int)(rangeRand() * unusedCells.size());
+        it = unusedCells.begin() + (int)(rand() % unusedCells.size());
         connectingCells.push_back(*it);
         currentRoom.insert(currentRoom.end(), *it);
         unusedCells.erase(it);
         for(int i = 0; i < roomSize-1; ++i){
-            it = connectingCells.begin() + (int)(rangeRand() * connectingCells.size());
+            it = connectingCells.begin() + (int)(rand() % connectingCells.size());
             Coordinate nextCell = getNextCell(Tools::getKeyCoordinate(*it));
             if(nextCell.x == -1){
                 connectingCells.erase(it);
@@ -208,7 +200,7 @@ void Floor::generateDoors(){
     vector<Room>::iterator it;
     vector<int> connectedCells;//cells that are connected excluding cells which have no more cells to connect to
     vector<int> deadCells;//cells that are connected
-    it = rooms.begin() + (int)(rangeRand() * rooms.size());
+    it = rooms.begin() + (int)(rand() % rooms.size());
     Room r = *it;
     for(int cell : r.cells){
         connectedCells.insert(lower_bound(connectedCells.begin(),connectedCells.end(),cell),cell);
@@ -220,8 +212,8 @@ void Floor::generateDoors(){
         bool cellNotFound = true;
         Coordinate outerCell, innerCell;
         while(cellNotFound){
-            it2 = connectedCells.begin() + (int)(rangeRand() * connectedCells.size());
-            int c = rangeRand() * 4;
+            it2 = connectedCells.begin() + (int)(rand() % connectedCells.size());
+            int c = rand() % 4;
             innerCell = Tools::getKeyCoordinate(*it2);
             for(int i = c; i < c+4 && cellNotFound; i++){
                 int j = i%4;
@@ -245,7 +237,7 @@ void Floor::generateDoors(){
         }
         connectRooms(innerRoom, outerRoom, innerCell, outerCell);
         count--;
-    }     
+    }    
 }
 
 void Floor::generateNPCs(int floorNumber){
@@ -265,25 +257,27 @@ void Floor::generateNPCs(int floorNumber){
 
 void Floor::generateLockedDoors(){
     //Average number of 1 door rooms per floor is 8.6
-    vector<Room> lockedRooms;
-    unordered_set<int> lockedRoomKeys;
-    const float averageLockedDoor = 0.15;
+    vector<Room*> lockedRooms;
     for(Room &r : rooms){
-        if(r.getDoors().size() == 1 && (rangeRand() < averageLockedDoor)){
-            lockedRooms.push_back(r);
-            lockedRoomKeys.insert(r.getKey());
+        if(r.getDoors().size() == 1 && (rand() % 20 < 3)){
+            lockedRooms.push_back(&r);
         }
     }
-    for(Room &r : lockedRooms){
-        Door &d = getOuterLockedDoor(r);
-        lockDoor(d);
-        Room keyRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
+    for(Room *r : lockedRooms){
+        try{
+            Door &d = getOuterLockedDoor(getRoomIndex(*r));
+            lockDoor(d);
+        }catch(LockedDoorException E){
+            throw E;
+        }
+
+        Room& keyRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
         while(keyRoom.getDoors().size() < 2){
             keyRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
         }
         if(keyRoom.getNPCs().size() > 0){
             int likedItem = 0;
-            Room likedItemRoom = *(rooms.begin());
+            Room& likedItemRoom = *(rooms.begin());
             NPC* npc = dynamic_cast<NPC*>(*(keyRoom.getNPCs().begin() + (int)(rand() % keyRoom.getNPCs().size())));
             npc->giveKey();
             likedItem = npc->getLikedItem();
@@ -315,6 +309,20 @@ void Floor::generateItems(){
     }
 }
 
+int Floor::getRoomIndex(Room& r){
+    vector<Room>::iterator it = rooms.begin();
+    int count = 0;
+    while(it != rooms.end()){
+        if((*it) == r){
+            return count;
+        }
+        count++;
+        it++;
+    }
+    qDebug() << "returning index -1";
+    return -1;
+}
+
 void Floor::generateLadders(bool firstFloor = false){
     Room& upRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
     upRoom.giveLadder(true);
@@ -325,22 +333,23 @@ void Floor::generateLadders(bool firstFloor = false){
         downRoom = *it;
     }
     
-    rooms.erase(it);
-    rooms.insert(rooms.begin(), downRoom);
+    downRoomIndex = getRoomIndex(downRoom);
     if(!firstFloor){
         downRoom.giveLadder(false);
     }
 }
 
-Room &Floor::getRoom(int cellKey){
+Room& Floor::getRoom(int cellKey){
     for(Room &r : rooms){
         if(r.cells.find(cellKey) != r.cells.end()){
             return r;
         }
     }
+    qDebug() << "no matching room";
 }
 
 void Floor::connectRooms(Room &r1, Room &r2, Coordinate c1, Coordinate c2){
+    
     Door d;
     if(c1.x == c2.x){
         if(c1.y < c2.y){
@@ -362,9 +371,18 @@ void Floor::connectRooms(Room &r1, Room &r2, Coordinate c1, Coordinate c2){
         d.vertical = true;
     }
     d.locked = false;
-    d.room = &r2;
-    Door d2 = d;
-    d2.room = &r1;
+    vector<Room>::iterator it = rooms.begin();
+    Door d2 = Door(d);
+    int count = 0;
+    while(it != rooms.end()){
+        if((*it) == r2){
+            d.roomIndex = count;
+        }else if((*it) == r1){
+            d2.roomIndex = count;
+        }
+        count++;
+        it++;
+    }
     r1.addDoor(d);
     r2.addDoor(d2);
 }
