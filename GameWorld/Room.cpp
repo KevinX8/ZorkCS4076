@@ -52,15 +52,15 @@ bool Room::operator==(Room * const r2){
     return r2->getKey() == this->getKey();
 }
 
-NPC* Room::addNPC(int NPCKey, int floorNumber, bool emptyNPC){
+shared_ptr<NPC> Room::addNPC(int NPCKey, int floorNumber, bool emptyNPC){
     if(NPCKey < NUM_HUMANS){
-        NPC* npc = new Human(NPCKey, floorNumber, emptyNPC);
+        shared_ptr<NPC> npc(new Human(NPCKey, floorNumber, emptyNPC));
         npcsInRoom.push_back(npc);
         return npc;
     }
 }
 
-vector<NPC*> &Room::getNPCs(){
+vector<shared_ptr<NPC>> &Room::getNPCs(){
     return npcsInRoom;
 }
 

@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <unordered_set>
+#include <memory>
 #include "..\Interaction\Item\item.h"
 #include "..\Interaction\NPC\Human.h"
 #include "Tools.h"
@@ -32,7 +33,7 @@ class Room {
 private:
 	friend class Floor;
     vector<int> itemsInRoom;
-    vector<NPC*> npcsInRoom;
+    vector<shared_ptr<NPC>> npcsInRoom;
     vector<Door> doorsInRoom;
 	unordered_set<int> cells;
     void addDoor(Door& door);
@@ -54,8 +55,8 @@ public:
 	operator int();
 	bool operator<(Room r2);
 	bool operator==(Room * const r2);
-    NPC* addNPC(int key, int floorNumber, bool emptyNPC = false);
-    vector<NPC*> &getNPCs();
+    shared_ptr<NPC> addNPC(int key, int floorNumber, bool emptyNPC = false);
+    vector<shared_ptr<NPC>> &getNPCs();
 	void giveLadder(bool up);
 };
 

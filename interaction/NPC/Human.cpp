@@ -27,7 +27,6 @@ Human::Human(int floorNumber, const short key, bool inventoryEmpty){
     this->usefulInfo = usefulInfoMap.at(key);
     this->name = nameMap.at(key);
     if(!inventoryEmpty){
-        ;
     }
 }
 

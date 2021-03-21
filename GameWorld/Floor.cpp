@@ -35,6 +35,24 @@ int Floor::byteHexStringToInt(T first,T second) {
     return stoi(number);
 }
 
+bool Floor::roomsUnitTest() {
+    for (Room& room : rooms) {
+        for (Door& door : room.getDoors()) {
+            bool found = false;
+            for (Door& innerDoor : rooms.at(door.roomIndex).getDoors()) {
+                if (innerDoor.roomIndex == getRoomIndex(room)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 Floor::Floor(int number, int seed, bool previouslyGenerated){
     srand(seed+number);
     Tools::width = (rand() % 4) + 7;
@@ -55,15 +73,17 @@ Floor::Floor(int number, int seed, bool previouslyGenerated){
     }
     generateRooms(floorCells, 8);
     generateDoors();
+    qDebug() << roomsUnitTest();
     if(!previouslyGenerated){
-        //generateItems();
-        //generateNPCs(number);
+        generateItems();
+        generateNPCs(number);
         try {
         generateLockedDoors();
         } catch (LockedDoorException E) {
             throw E;
         }
     }
+    qDebug() << roomsUnitTest();
     generateLadders(number == 0);
 }
 
@@ -80,7 +100,7 @@ Floor::Floor(int number,int seed, string floorToken) {
         int numNPCsInRoom = NEXT_HEX;
         for (int i =0; i < numNPCsInRoom; ++i) {
             
-            NPC* npc = room.addNPC(NEXT_HEX,number, true);
+            shared_ptr<NPC> npc = room.addNPC(NEXT_HEX,number, true);
             int numItems = NEXT_HEX;
             for (int j=0; j < numItems; ++j) {
                 npc->addItem(NEXT_HEX);
@@ -104,7 +124,7 @@ string Floor::floorToken() {
             sstream << Tools::intToByteHexString(items);
         }
         sstream << Tools::intToByteHexString(room.npcsInRoom.size());
-        for (NPC *npc : room.getNPCs()) {
+        for (shared_ptr<NPC> npc : room.getNPCs()) {
             sstream << Tools::intToByteHexString(npc->getCode());
             for (int items : npc->getInventory()) {
                 sstream << Tools::intToByteHexString(items);
@@ -242,13 +262,13 @@ void Floor::generateDoors(){
 
 void Floor::generateNPCs(int floorNumber){
     int numberOfNPCs = (rooms.size() / 4);
-    numberOfNPCs *= 1 + ((rand()%11)-5)/50;
+    numberOfNPCs *= 1 + ((rand()%11)-5)/float(50);
     for(int i = 0; i< numberOfNPCs; i++){
         vector<Room>::iterator it;
         it = rooms.begin() + (int)(rand() % rooms.size());
         int key = rand() % NUM_NPCS;
-        if((*it).getNPCs().size() < (*it).getCells().size()){
-            (*it).addNPC(key, floorNumber);
+        if(it->getNPCs().size() < it->getCells().size()){
+            it->addNPC(key, floorNumber);
         }else{
             i--;
         }
@@ -271,23 +291,23 @@ void Floor::generateLockedDoors(){
             throw E;
         }
 
-        Room& keyRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
-        while(keyRoom.getDoors().size() < 2){
-            keyRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
+        auto keyRoom = (rooms.begin() + (int)(rand() % rooms.size()));
+        while(keyRoom->getDoors().size() < 2){
+            keyRoom = (rooms.begin() + (int)(rand() % rooms.size()));
         }
-        if(keyRoom.getNPCs().size() > 0){
+        if(keyRoom->getNPCs().size() > 0){
             int likedItem = 0;
-            Room& likedItemRoom = *(rooms.begin());
-            NPC* npc = dynamic_cast<NPC*>(*(keyRoom.getNPCs().begin() + (int)(rand() % keyRoom.getNPCs().size())));
+            auto likedItemRoom = rooms.begin();
+            shared_ptr<NPC> npc = dynamic_pointer_cast<NPC>(*(keyRoom->getNPCs().begin() + (int)(rand() % keyRoom->getNPCs().size())));
             npc->giveKey();
             likedItem = npc->getLikedItem();
-            likedItemRoom = *(rooms.begin() + (int)(rand() % rooms.size()));            
-            while((int)likedItemRoom == ((int)keyRoom) || likedItemRoom.getDoors().size() < 2){
-                likedItemRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
+            likedItemRoom = (rooms.begin() + (int)(rand() % rooms.size()));            
+            while((int)*likedItemRoom == ((int)*keyRoom) || likedItemRoom->getDoors().size() < 2){
+                likedItemRoom = (rooms.begin() + (int)(rand() % rooms.size()));
             }
-            likedItemRoom.addItem(likedItem);
+            likedItemRoom->addItem(likedItem);
         }else{
-            keyRoom.addItem(0);
+            keyRoom->addItem(0);
         }
     }
 
@@ -297,15 +317,15 @@ void Floor::generateItems(){
     int numberOfItems = (rooms.size() / 2);
     numberOfItems *= 1 + ((rand()%11)-5)/50;
     for(int i = 0; i < numberOfItems; i++){
-        Room& itemRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
+        auto itemRoom = (rooms.begin() + (int)(rand() % rooms.size()));
         int rarity = rand() % 7;
         rarity /= 2;
         rarity = max(rarity, 1);
-        if(itemRoom.getDoors().size() == 1){
+        if(itemRoom->getDoors().size() == 1){
             rarity += 1;
         }
         vector<short> possibleItems = Item::itemRarity.at(rarity);
-        itemRoom.addItem(possibleItems.at(rand() % possibleItems.size()));
+        itemRoom->addItem(possibleItems.at(rand() % possibleItems.size()));
     }
 }
 

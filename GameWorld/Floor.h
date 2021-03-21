@@ -59,5 +59,6 @@ class Floor {
         vector<vector<Wall>>& getConnections();
         template<typename T>
         static int byteHexStringToInt(T first,T second);
+        bool roomsUnitTest();
 };
 #endif
