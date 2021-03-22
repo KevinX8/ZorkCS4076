@@ -79,12 +79,12 @@ Floor::Floor(int number, int seed, bool previouslyGenerated){
         generateNPCs(number);
         try {
         generateLockedDoors();
-        } catch (LockedDoorException E) {
-            throw E;
+        } catch (LockedDoorException &e) {
+            throw e;
         }
     }
-    qDebug() << roomsUnitTest();
     generateLadders(number == 0);
+    qDebug() << roomsUnitTest();
 }
 
 //USE A UNION HERE
@@ -291,8 +291,8 @@ void Floor::generateLockedDoors(){
         try{
             Door &d = getOuterLockedDoor(getRoomIndex(*r));
             lockDoor(d);
-        }catch(LockedDoorException E){
-            throw E;
+        }catch(LockedDoorException &e){
+            throw e;
         }
 
         auto keyRoom = (rooms.begin() + (int)(rand() % rooms.size()));
