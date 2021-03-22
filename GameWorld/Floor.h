@@ -27,6 +27,14 @@ struct LockedDoorException : public std::exception
     }
 };
 
+struct GetRoomException : public std::exception
+{
+	const char * what () const throw ()
+    {
+    	return "Failed to get room by cell key!";
+    }
+};
+
 class Floor {
     private:
         bool disconnectedCell(int x,int y);

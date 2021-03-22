@@ -14,8 +14,8 @@ inline void Floor::lockDoor(Door& d){
 }
 
 inline Door& Floor::getOuterLockedDoor(int innerRoomIndex) {
-    Door& innerDoor = *rooms.at(innerRoomIndex).getDoors().begin();
-    Room& outerRoom = rooms.at(innerDoor.roomIndex);
+    auto innerDoor = rooms.at(innerRoomIndex).getDoors().begin();
+    Room& outerRoom = rooms.at(innerDoor->roomIndex);
     for(Door& d : outerRoom.getDoors()){
         if(d.roomIndex == innerRoomIndex){
             return d;
@@ -249,6 +249,7 @@ void Floor::generateDoors(){
                 }
             }
         }
+        try {
         Room &innerRoom = getRoom(Tools::getCoordinateKey(innerCell));
         Room &outerRoom = getRoom(Tools::getCoordinateKey(outerCell));
         for(int cell : outerRoom.cells){
@@ -257,6 +258,9 @@ void Floor::generateDoors(){
         }
         connectRooms(innerRoom, outerRoom, innerCell, outerCell);
         count--;
+        } catch (GetRoomException e) {
+            continue;
+        }
     }    
 }
 
@@ -344,18 +348,18 @@ int Floor::getRoomIndex(Room& r){
 }
 
 void Floor::generateLadders(bool firstFloor = false){
-    Room& upRoom = *(rooms.begin() + (int)(rand() % rooms.size()));
-    upRoom.giveLadder(true);
+    auto upRoom = (rooms.begin() + (int)(rand() % rooms.size()));
+    upRoom->giveLadder(true);
     vector<Room>::iterator it = (rooms.begin() + (int)(rand() % rooms.size()));
-    Room& downRoom = *it;
-    while(downRoom.getDoors().size() < 2 && (int)downRoom == (int)upRoom){
+    auto downRoom = it;
+    while(downRoom->getDoors().size() < 2 && (int)*downRoom == (int)*upRoom){
         it = (rooms.begin() + (int)(rand() % rooms.size()));
-        downRoom = *it;
+        downRoom = it;
     }
     
-    downRoomIndex = getRoomIndex(downRoom);
+    downRoomIndex = getRoomIndex(*downRoom);
     if(!firstFloor){
-        downRoom.giveLadder(false);
+        downRoom->giveLadder(false);
     }
 }
 
@@ -365,7 +369,7 @@ Room& Floor::getRoom(int cellKey){
             return r;
         }
     }
-    qDebug() << "no matching room";
+    throw GetRoomException();
 }
 
 void Floor::connectRooms(Room &r1, Room &r2, Coordinate c1, Coordinate c2){
