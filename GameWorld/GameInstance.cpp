@@ -18,7 +18,7 @@ GameInstance::GameInstance(bool loadGame, int seed = time(nullptr)){
         File::deleteSaves();
     }
     
-    this-> playerRoom = &(floor->rooms[0]);
+    this-> playerRoomIndex = 0;
 }
 
 void GameInstance::changeFloor(bool up){
@@ -53,7 +53,7 @@ int GameInstance::changeRoom(Door& d){
         }
         return 2;
     }else{
-        this->playerRoom = d.room;
+        this->playerRoomIndex = d.roomIndex;
         return 0;
     }
 }
@@ -74,6 +74,6 @@ void GameInstance::useKey(Door& d){
 }
 
 void GameInstance::useKiosk(int toUpgrade){
-    int* mods = playerRoom->upgradeStats(toUpgrade);
-    player.changeParams(mods, true);    
+    int* mods = floor->rooms[playerRoomIndex].upgradeStats(toUpgrade);
+    player.changeParams(mods, true);
 }

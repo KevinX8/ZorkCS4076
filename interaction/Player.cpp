@@ -24,9 +24,9 @@ Player::Player(string playerToken){
     for (int item=0; item < NEXT_HEX; item++) {
         inventory.push_back(Item(NEXT_HEX));
     }
-    this->equip(new Item(NEXT_HEX), 0);
-    this->equip(new Item(NEXT_HEX), 1);
-    this->equip(new Item(NEXT_HEX), 2);
+    this->equip(shared_ptr<Item>(new Item(NEXT_HEX)), 0);
+    this->equip(shared_ptr<Item>(new Item(NEXT_HEX)), 1);
+    this->equip(shared_ptr<Item>(new Item(NEXT_HEX)), 2);
 }
 
 int Player::getLuck(){
@@ -90,7 +90,7 @@ bool Player::canMove(){
     return inventory.size() <= inventorySpace;
 }
 
-bool Player::equip(Item *item, int slot){
+bool Player::equip(shared_ptr<Item> item, int slot){
 
 /*
 0: Strength Modifier
@@ -101,7 +101,7 @@ bool Player::equip(Item *item, int slot){
     std::array<int,4> modifiers;
     switch(slot){
         case(0):{
-            if(Weapon *weapon = dynamic_cast<Weapon*>(item)){
+            if(shared_ptr<Weapon> weapon = dynamic_pointer_cast<Weapon>(item)){
                 if (!activeWeapon) {
                     activeWeapon = weapon;
                     copy(modifiers.begin(), modifiers.end(),weapon->modifiers().begin());
@@ -110,7 +110,7 @@ bool Player::equip(Item *item, int slot){
             break;
         }
         case(1):{
-            if(Wearable* wearable = dynamic_cast<Wearable*>(item)){
+            if(shared_ptr<Wearable> wearable = dynamic_pointer_cast<Wearable>(item)){
                 if (activeWearable1 == 0) {
                     activeWearable1 = wearable;
                     copy(modifiers.begin(), modifiers.end(),wearable->modifiers().begin());
@@ -119,7 +119,7 @@ bool Player::equip(Item *item, int slot){
             break;
         }
         case(2):{
-            if(Wearable* wearable = dynamic_cast<Wearable*>(item)){
+            if(shared_ptr<Wearable> wearable = dynamic_pointer_cast<Wearable>(item)){
                 if (activeWearable2 == 0) {
                     activeWearable2 = wearable;
                     copy(modifiers.begin(), modifiers.end(),wearable->modifiers().begin());

@@ -1,6 +1,8 @@
-#include "Player.h"
+#include "../interaction/Player.h"
 #include "Floor.h"
 #include "../FileManagement/File.h"
+#include "..\QtGui\mainWindow.h"
+#include <memory>
 
 class GameInstance {
     private:
@@ -9,7 +11,8 @@ class GameInstance {
         int floorNumber;
         int seed;
         File gameState;
-        Room* playerRoom;
+        int playerRoomIndex;
+        MainWindow gui;
     public:
         GameInstance(bool loadGame, int seed);
         void changeFloor(bool up);

@@ -26,6 +26,19 @@ const vector<vector<short>> Item::itemRarity = {
    {0},{1,2},{50},{51},{51}
 };
 
+string Item::getType(int hashCode) {
+    if (hashCode < NUM_STD_ITEMS) {
+        return "Item: ";
+    } else if (hashCode < NUM_WEAPONS + NUM_STD_ITEMS) {
+        return "Weapon: ";
+    } else if (hashCode < NUM_WEAPONS + NUM_STD_ITEMS + NUM_WEARABLES) {
+        return "Wearable: ";
+    } else {
+        return "Wearable Weapon: ";
+    }
+    return "Null type: ";
+}
+
 Item::Item(const short key){
     this->hashCode = key;
     this->description = itemNameMap.at(key);

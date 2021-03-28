@@ -1,6 +1,7 @@
 #include "Floor.h"
 
 #define NEXT_HEX byteHexStringToInt(Tools::nextChar(floorToken, offset),Tools::nextChar(floorToken, offset))
+#define DEBUG true
 
 using namespace std;
 
@@ -73,7 +74,9 @@ Floor::Floor(int number, int seed, bool previouslyGenerated){
     }
     generateRooms(floorCells, 8);
     generateDoors();
+    if (DEBUG) {
     qDebug() << roomsUnitTest();
+    }
     if(!previouslyGenerated){
         generateItems();
         generateNPCs(number);
@@ -84,7 +87,9 @@ Floor::Floor(int number, int seed, bool previouslyGenerated){
         }
     }
     generateLadders(number == 0);
+    if (DEBUG) {
     qDebug() << roomsUnitTest();
+    }
 }
 
 //USE A UNION HERE
@@ -271,7 +276,7 @@ void Floor::generateNPCs(int floorNumber){
         vector<Room>::iterator it;
         it = rooms.begin() + (int)(rand() % rooms.size());
         int key = rand() % NUM_NPCS;
-        if(it->getNPCs().size() < it->getCells().size()){
+        if(it->getNPCs().size() + 1 < it->getCells().size()){
             it->addNPC(key, floorNumber);
         }else{
             i--;

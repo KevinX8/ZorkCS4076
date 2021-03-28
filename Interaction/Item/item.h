@@ -10,8 +10,10 @@
 #include <algorithm>
 
 #define NUM_STD_ITEMS 3
-#define NUM_WEAPONS 10
-#define TOTAL_ITEMS 30
+#define NUM_WEAPONS 3
+#define NUM_WEARABLES 1
+#define NUM_WEARABLEWEAPONS 1
+#define TOTAL_ITEMS NUM_STD_ITEMS + NUM_WEAPONS + NUM_WEARABLES + NUM_WEARABLEWEAPONS
 
 using namespace std;
 
@@ -30,6 +32,7 @@ public:
 	bool operator==(const int& key);
    static const vector<vector<short>> itemRarity;
    static const unordered_map<short,string> itemNameMap;
+   static string getType(int hashCode);
 };
 
 #endif /*ITEM_H_*/

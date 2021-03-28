@@ -59,6 +59,8 @@
         "mutex": "cpp",
         "thread": "cpp",
         "cinttypes": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "qlistview": "cpp",
+        "qlabel": "cpp"
     }
 }

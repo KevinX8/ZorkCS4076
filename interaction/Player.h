@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <sstream>
 #include <array>
+#include <memory>
 #include "item\Item.h"
 #include "item\Weapon.h"
 #include "item\Wearable.h"
@@ -19,9 +20,9 @@ class Player {
         friend class GameInstance;
         vector<Item> inventory;
         int inventorySpace;
-        Weapon *activeWeapon;
-        Wearable *activeWearable1;
-        Wearable *activeWearable2;
+        shared_ptr<Weapon> activeWeapon;
+        shared_ptr<Wearable> activeWearable1;
+        shared_ptr<Wearable> activeWearable2;
         int luck, strength, charisma;
         void changeInventorySpace(int);
         void changeParams(int params[], bool equip);
@@ -31,7 +32,7 @@ class Player {
         int getStrength();
         int getLuck();
         int getCharisma();
-        bool equip(Item *item, int slot);
+        bool equip(shared_ptr<Item> item, int slot);
         void unequip(int slot);
         void addItem(int key);
         int takeRandomItem();
