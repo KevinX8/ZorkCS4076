@@ -5,6 +5,7 @@
 #include "RoomItemWidget.h"
 #include "TextBoxWidget.h"
 #include "..\GameWorld\GameInstance.h"
+#include <QWidget>
 
 class MainWindow {
   private:

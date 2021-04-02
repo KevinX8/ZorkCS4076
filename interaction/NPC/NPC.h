@@ -44,6 +44,10 @@ class NPC {
         virtual void addItem(int code) = 0;
         virtual int getCode() = 0;
         virtual vector<int> getInventory() = 0;
+        virtual string getName() = 0;
+        virtual string spareOrKill(bool spare, Player &p) = 0;
+        virtual bool fight(Player &p) = 0;
+        virtual string askInfo(Player &p) = 0;
         /*
         static const map<int,float> strengthMap;
         static const map<int,int> giftItemMap;

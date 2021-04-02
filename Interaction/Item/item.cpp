@@ -39,7 +39,7 @@ string Item::getType(int hashCode) {
     return "Null type: ";
 }
 
-Item::Item(const short key){
+Item::Item(const short key) {
     this->hashCode = key;
     this->description = itemNameMap.at(key);
     int index = 0;

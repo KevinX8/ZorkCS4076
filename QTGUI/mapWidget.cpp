@@ -1,35 +1,42 @@
 #include "MapWidget.h"
 #include <ctime>
 
-MapWidget::MapWidget() : f(0, 19){
-    f = Floor(0, 19);
+#define SCALE 75;
 
-    for(int j = 1; j < 20; j++){
-        for(int i =0; i<1000; i++){
-            try{
-                Floor f = Floor(0, i);
-            }catch(LockedDoorException e){
-                qDebug() << "Falied at " << i << " try on seed " << j << "haha";
-            }
+MapWidget::MapWidget(int startIndex, GameInstance& g, QObject *parent) :QGraphicsScene(parent), f(0, 19), current(f.rooms.at(startIndex)){
+    this->resetButtons();
 
-        }
+}
+
+void MapWidget::resetButtons(){
+    game.resetButtons();
+    npcButtons.clear();
+    vector<int>::iterator it = current.getCells().begin();
+    for(shared_ptr<NPC> n : current.getNPCs()){
+        Coordinate c = Tools::getKeyCoordinate((*it));
+        it++;
+        QPushButton button = QPushButton("NPC", this);
+        button->setGeometry(c.x * SCALE,c.y * SCALE,SCALE,SCALE);
+        npcButtons.push_back(button);
+        connect(button, QPushButton::released, this, game.interactNPC(n));
     }
-
-    qDebug() << "success";
-    this->setFixedSize(f.getWidth()*75+10,f.getHeight()*75+10);
 }
 
 void MapWidget::paintEvent(QPaintEvent *event){
+    /*
     Q_UNUSED(event);
-
       QPainter qp(this);
       drawWalls(&qp);
+      */
+}
+
+void MapWidget::changeRoom(int roomIndex){
+    
 }
 
 void MapWidget::drawWalls(QPainter *qp){
     vector<vector<Wall>> connections;
     connections = f.getConnections();
-    int scale = 75;
     int wallWidth = 10;
     QPen pen(Qt::black, 2, Qt::SolidLine);
     QBrush wallBrush(Qt::SolidPattern);
@@ -37,40 +44,40 @@ void MapWidget::drawWalls(QPainter *qp){
     QBrush lockedDoorBrush(Qt::Dense3Pattern);
     qp->setPen(pen);
 
-    qp -> fillRect(0,0, scale*f.getWidth(),wallWidth, wallBrush);
-    qp -> fillRect(0,0, wallWidth,scale*f.getHeight(), wallBrush);
+    qp -> fillRect(0,0, SCALE*f.getWidth(),wallWidth, wallBrush);
+    qp -> fillRect(0,0, wallWidth,SCALE*f.getHeight(), wallBrush);
     for(int r = 0; r < f.getHeight(); r++){
         for(int c = 0; c < f.getWidth(); c++){
             Coordinate topRight, bottomLeft;
-            topRight.x = scale*(c+1)+wallWidth/2;
-            topRight.y = scale*(r)+wallWidth/2;
-            bottomLeft.y = topRight.y + scale;
-            bottomLeft.x = topRight.x - scale;
+            topRight.x = SCALE*(c+1)+wallWidth/2;
+            topRight.y = SCALE*(r)+wallWidth/2;
+            bottomLeft.y = topRight.y + SCALE;
+            bottomLeft.x = topRight.x - SCALE;
             switch(connections[r][c].right){
                 case(0):{
-                    qp->fillRect(topRight.x-(wallWidth/2),topRight.y-(wallWidth/2), wallWidth,scale+wallWidth, wallBrush);
+                    qp->fillRect(topRight.x-(wallWidth/2),topRight.y-(wallWidth/2), wallWidth,SCALE+wallWidth, wallBrush);
                     break;
                 }
                 case(2):{
-                    qp->fillRect(topRight.x-(wallWidth/2),topRight.y+(wallWidth/2), wallWidth,scale-wallWidth, doorBrush);
+                    qp->fillRect(topRight.x-(wallWidth/2),topRight.y+(wallWidth/2), wallWidth,SCALE-wallWidth, doorBrush);
                     break;
                 }
                 case(3):{
-                    qp->fillRect(topRight.x-(wallWidth/2),topRight.y+(wallWidth/2), wallWidth,scale-wallWidth, lockedDoorBrush);
+                    qp->fillRect(topRight.x-(wallWidth/2),topRight.y+(wallWidth/2), wallWidth,SCALE-wallWidth, lockedDoorBrush);
                     break;
                 }
             }
             switch(connections[r][c].down){
                 case(0):{
-                    qp->fillRect(bottomLeft.x-(wallWidth/2),bottomLeft.y-(wallWidth/2), scale+wallWidth,wallWidth, wallBrush);
+                    qp->fillRect(bottomLeft.x-(wallWidth/2),bottomLeft.y-(wallWidth/2), SCALE+wallWidth,wallWidth, wallBrush);
                     break;
                 }
                 case(2):{
-                    qp->fillRect(bottomLeft.x+(wallWidth/2),bottomLeft.y-(wallWidth/2), scale-wallWidth,wallWidth, doorBrush);
+                    qp->fillRect(bottomLeft.x+(wallWidth/2),bottomLeft.y-(wallWidth/2), SCALE-wallWidth,wallWidth, doorBrush);
                     break;
                 }
                 case(3):{
-                    qp->fillRect(bottomLeft.x+(wallWidth/2),bottomLeft.y-(wallWidth/2), scale-wallWidth,wallWidth, lockedDoorBrush);
+                    qp->fillRect(bottomLeft.x+(wallWidth/2),bottomLeft.y-(wallWidth/2), SCALE-wallWidth,wallWidth, lockedDoorBrush);
                     break;
                 }
             }

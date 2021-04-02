@@ -26,8 +26,11 @@ class Human : public NPC {
         int getLikedItem();
         void addItem(int code);
         int getCode();
+        int getStrength();
+        int getCharisma();
         const static unordered_map<short,string> usefulInfoMap;
         const static unordered_map<short,double> strengthCharismaRatio;
         vector<int> getInventory();
+        string getName();
 };
 #endif /*HUMAN_H_*/

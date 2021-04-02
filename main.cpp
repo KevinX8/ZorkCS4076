@@ -3,6 +3,8 @@
 #include "QTGUI\MapWidget.h"
 #include <QWidget>
 
+int versionCODEALPHAOMEGABETA = 1;
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);

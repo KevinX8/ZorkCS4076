@@ -18,7 +18,7 @@ struct FloorFileException : public std::exception
 
 class File {
     private:
-        string playerToken,filePath;
+        string playerToken, filePath;
         int gameSeed;
         int playerFloor;
     public:
@@ -28,7 +28,6 @@ class File {
         void writeFloor(string floorToken,int floorNumber);
         void close(string playerToken, int floor);
         int getGameSeed();
-        int getPlayerToken();
         int getPlayerFloor();
         static void deleteSaves(string filePath = DEFAULT_PATH);
 };

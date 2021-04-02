@@ -4,14 +4,22 @@
 #include <QList>
 #include <vector>
 #include <QLabel>
+#include <QMenu>
+#include <QAction>
+#include <QListView>
 
-class InventoryWidget {
+class InventoryWidget : public QWidget {
+    Q_OBJECT
     private:
     friend class Player;
     Player* player;
     QList<QAction> playerItems;
     QList<QAction> equipedItems;
     QLabel playerStats;
+    QMenu wearableWeaponSubMenu;
+    QMenu itemMenu;
+    QAction use;
+    void setItemInteraction(int itemCode);
     public:
     QListView rightInventoryView;
     QListView rightEquipmentView;
@@ -20,6 +28,7 @@ class InventoryWidget {
     void updateEquipment();
     void updateInventory();
     void changeDisplay(bool showInventory = true);
+    
 }
 
 #endif // __INVENTORYWIDGET_H__

@@ -61,7 +61,7 @@ string Human::spareOrKill(bool spare, Player &p){
         for(int i : inventoryItems){
             p.addItem(i);
         }
-        return name + " is dead.";
+        return name + " is dead. You took all their items.";
     }
 }
 
@@ -87,7 +87,7 @@ string Human::askInfo(Player &p){
     }else{
         inventoryItems.push_back(p.takeRandomItem());
     
-        return name + " persuaded you to give them an item.";
+        return "You failed to persuade " + name + ". " + name + " persuaded you to give them an item!";
     }
 }
 
@@ -115,8 +115,20 @@ int Human::getCode(){
     return (int)(key);
 }
 
+int Human::getStrength(){
+    return strength;
+}
+
+int Human::getCharisma(){
+    return charisma;
+}
+
 vector<int> Human::getInventory(){
     return inventoryItems;
+}
+
+string Human::getName(){
+    return name;
 }
 
 Human::~Human(){
