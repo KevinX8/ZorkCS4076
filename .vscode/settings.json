@@ -61,6 +61,7 @@
         "cinttypes": "cpp",
         "variant": "cpp",
         "qlistview": "cpp",
-        "qlabel": "cpp"
+        "qlabel": "cpp",
+        "qwidget": "cpp"
     }
 }

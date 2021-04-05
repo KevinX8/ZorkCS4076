@@ -27,26 +27,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 
+FILE(GLOB_RECURSE FILEMGMTSOURCES FileManagement/**.cpp FileManagement/**.h)
+FILE(GLOB_RECURSE INTERACTIONSOURCES interaction/**.cpp interaction/**.h)
+FILE(GLOB_RECURSE GAMEWORLDSOURCES GameWorld/**.cpp GameWorld/**.h)
+FILE(GLOB_RECURSE QTGUISOURCES QTGUI/**.cpp QTGUI/**.h)
+
 set(PROJECT_SOURCES
         main.cpp        
         QTGUI/zorkgui.ui
-        GameWorld/floor.cpp
-        GameWorld/floor.h
-        GameWorld/GameInstance.cpp
-        GameWorld/GameInstance.h
-        Interaction/item/item.cpp
-        Interaction/item/item.h
-        Interaction/player.cpp
-        Interaction/player.h
-        Interaction/NPC/Human.cpp
-        Interaction/NPC/Human.h
-        Interaction/NPC/NPC.h
-        GameWorld/room.cpp
-        GameWorld/room.h
-        GameWorld/tools.cpp
-        GameWorld/tools.h
-        QTGUI/mapWidget.cpp
-        QTGUI/MapWidget.h
+        ${FILEMGMTSOURCES}
+        ${INTERACTIONSOURCES}
+        ${GAMEWORLDSOURCES}
+        ${QTGUISOURCES}
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

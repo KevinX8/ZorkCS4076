@@ -16,13 +16,17 @@ int Player::byteHexStringToInt(T first,T second) {
 
 Player::Player(){
     this->inventorySpace = space;
-    this->inventory = vector<Item>();
+    this->inventory = vector<shared_ptr<Item>>();
+}
+
+void Player::unequip(){
+
 }
 
 Player::Player(string playerToken){
     int *offset = 0;
     for (int item=0; item < NEXT_HEX; item++) {
-        inventory.push_back(Item(NEXT_HEX));
+        inventory.push_back(shared_ptr<Item>(new Item(NEXT_HEX)));
     }
     this->equip(shared_ptr<Item>(new Item(NEXT_HEX)), 0);
     this->equip(shared_ptr<Item>(new Item(NEXT_HEX)), 1);
@@ -52,20 +56,19 @@ int Player::getCharisma(){
 }
 
 void Player::addItem(int item){
-    inventory.push_back(Item(item));
+    inventory.push_back(shared_ptr<Item>(new Item(item)));
 }
 
 int Player::takeRandomItem(){
-    vector<Item>::iterator it;
-    it = inventory.begin() + (int)(rand() % inventory.size());
-    int item = (*it).hashCode;
+    auto it = inventory.begin() + (int)(rand() % inventory.size());
+    int item = (*it)->hashCode;
     inventory.erase(it);
     return item;
 }
 
 void Player::takeItem(int item){    
     for(auto it = inventory.begin(); it != inventory.end(); ++it){
-        if((*it).hashCode == item){
+        if((*it)->hashCode == item){
             inventory.erase(it);
             return;
         }
@@ -107,25 +110,33 @@ bool Player::equip(shared_ptr<Item> item, int slot){
                     copy(modifiers.begin(), modifiers.end(),weapon->modifiers().begin());
                 }
             }
-            break;
+            return true;
         }
         case(1):{
             if(shared_ptr<Wearable> wearable = dynamic_pointer_cast<Wearable>(item)){
-                if (activeWearable1 == 0) {
+                if (!activeWearable1) {
                     activeWearable1 = wearable;
                     copy(modifiers.begin(), modifiers.end(),wearable->modifiers().begin());
+                } else if (!activeWearable2) {
+                    activeWearable2 = wearable;
+                    copy(modifiers.begin(), modifiers.end(),wearable->modifiers().begin());
+                } else {
+                    return false;
                 }
             }
-            break;
+            return true;
         }
         case(2):{
             if(shared_ptr<Wearable> wearable = dynamic_pointer_cast<Wearable>(item)){
-                if (activeWearable2 == 0) {
+                if (!activeWearable2) {
                     activeWearable2 = wearable;
                     copy(modifiers.begin(), modifiers.end(),wearable->modifiers().begin());
+                } else {
+                    return false;
                 }
             }
-            break;
+            return true;
         }
     }
+    return false;
 }

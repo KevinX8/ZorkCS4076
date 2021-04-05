@@ -63,22 +63,58 @@ int GameInstance::changeRoom(Door& d){
     */
     resetButtons();
     if(d.locked){
-        for(Item item : player.inventory){
-            if(item.hashCode == 0){
-                return 1;
+        for(shared_ptr<Item> item : player.inventory){
+            if(item->hashCode == 0){
+                gui.text.updateTextBox("The Door is locked. Use key?");
+                vector<string> options;
+                options.push_back("Yes");
+                options.push_back("No");
+                options.push_back("");
+                options.push_back("");
+                gui.text.updateInteractions(options);
+                funcBox1 = std::bind(&GameInstance::unlockDoor,this , d, item);
+                funcBox2 = [&](){resetButtons();};
+                funcBox3 = []() {};
+                funcBox4 = []() {};
+                return;
             }
         }
-        return 2;
+        gui.text.updateTextBox("The Door is locked.");
     }else{
-        this->playerRoomIndex = d.roomIndex;
-        return 0;
+        if(player.inventorySpace >= player.inventory.size()){
+            resetButtons();
+            Room& r = (*floor).rooms.at(d.roomIndex);
+            gui.map.changeRoom(r);
+            if(r.getKiosk()){
+                gui.text.updateTextBox("You reached the end of the Floor! Choose an ability to upgrade:");
+                vector<string> options;
+                options.push_back("⚔️");
+                options.push_back("🗣️");
+                options.push_back("☘️");
+                options.push_back("");
+                gui.text.updateInteractions(options);
+                funcBox1 = [&](){resetButtons(); player.strength++; gui.inv.updateStats();};
+                funcBox2 = [&](){resetButtons(); player.charisma++; gui.inv.updateStats();};
+                funcBox3 = [&](){resetButtons(); player.luck++; gui.inv.updateStats();};
+                funcBox4 = []() {};
+            }
+        }else{
+            gui.text.updateTextBox("You can't move because you're carrying too many items!");
+            resetButtons();
+        }
     }
 }
 
+void GameInstance::unlockDoor(Door& d, shared_ptr<Item> key) {
+    resetButtons();
+    this->interactDropPlayerInv(key);
+    d.locked = false;
+    gui.map.resetButtons();
+}
+
 void GameInstance::useKey(Door& d){
-    vector<Item>::iterator it;
-    for(it = player.inventory.begin(); it < player.inventory.end(); it++){
-        if((*it).hashCode == 0){
+    for(auto it = player.inventory.begin(); it < player.inventory.end(); it++){
+        if((*it)->hashCode == 0){
             player.inventory.erase(it);
         }
     }
@@ -159,5 +195,12 @@ void GameInstance::chatNPC(shared_ptr<NPC> npc){
 
 void GameInstance::interactRoomItem(int itemCode) //user clicked pick it up
 {
-    
+    //not implemented
+    gui.inv.updateStats();
+}
+
+void GameInstance::interactDropPlayerInv(shared_ptr<Item> item) //find item in player inventory and remove it, then add to room inventory
+{
+    //not implemented
+    gui.inv.updateStats();
 }

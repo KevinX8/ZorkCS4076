@@ -1,9 +1,15 @@
 #ifndef __ROOMITEMWIDGET_H__
 #define __ROOMITEMWIDGET_H__
-#include "..\GameWorld\GameInstance.h"
 #include <QListView>
 #include <QMenu>
+#include <QList>
 #include <QAction>
+#include <vector>
+#include <QWidget>
+
+using namespace std;
+
+class GameInstance;
 
 class RoomItemWidget : public QWidget {
     Q_OBJECT
@@ -15,8 +21,8 @@ class RoomItemWidget : public QWidget {
     public:
     QListView listView;
     RoomItemWidget(vector<int> itemCodes, GameInstance &instance);
-    void updateItems(int roomIndex);
-}
+    void updateItems(vector<int> itemCodes);
+};
 
 
 

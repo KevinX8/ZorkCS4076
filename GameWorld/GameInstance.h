@@ -1,13 +1,12 @@
 #ifndef GAMEINSTANCE_H_
 #define GAMEINSTANCE_H_
 
-#include "../interaction/Player.h"
 #include "Floor.h"
 #include "../FileManagement/File.h"
-#include "..\QtGui\mainWindow.h"
 #include <memory>
 #include <functional>
 #include <string>
+#include "../QTGUI/mainWindow.h"
 
 class GameInstance {
     private:
@@ -25,6 +24,7 @@ class GameInstance {
         void setNPCButtons(shared_ptr<NPC> npc);
         void resetButtons();
         void spareOrKill(shared_ptr<NPC> npc, bool spare);
+        void unlockDoor(Door& d, shared_ptr<Item> key);
     public:
         std::function<void()> funcBox1;
         std::function<void()> funcBox2;
@@ -37,8 +37,7 @@ class GameInstance {
         void useKiosk(int toUpgrade);
         void interactNPC(shared_ptr<NPC> npc);
         void interactRoomItem(int itemCode);
-        void interactPlayerInv(Item item);
-        void interactPlayerEquipment(int slot);
+        void interactDropPlayerInv(shared_ptr<Item> item);
 };
 
 #endif

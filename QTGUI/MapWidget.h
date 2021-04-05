@@ -2,7 +2,6 @@
 #define MAPWIDGET_H
 
 #include "../GameWorld/Floor.h"
-#include "../GameWorld/GameInstance.h"
 #include "../GameWorld/Tools.h"
 #include <QPaintEvent>
 #include <QWidget>
@@ -11,20 +10,23 @@
 #include <QPushButton>
 #include <QGraphicsScene>
 
+class GameInstance;
+
 class MapWidget : public QGraphicsScene{
     Q_OBJECT
 public:
-    MapWidget(int startIndex, GameInstance& g, QObject *parent = nullptr);;
+    MapWidget(int startIndex, GameInstance& g, QObject *parent = nullptr);
+    void resetButtons();
+    void changeRoom(int roomIndex);
 protected:
     void paintEvent(QPaintEvent *event);
     void drawWalls(QPainter *qp);
-    void changeRoom(int roomIndex);
 private:
-    void resetButtons();
     Floor f;
     Room& current;
     GameInstance& game;
     vector<QPushButton> npcButtons;
+    vector<QPushButton> doorButtons;
 };
 
 #endif // MAPWIDGET_H

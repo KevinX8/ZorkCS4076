@@ -355,6 +355,7 @@ int Floor::getRoomIndex(Room& r){
 void Floor::generateLadders(bool firstFloor = false){
     auto upRoom = (rooms.begin() + (int)(rand() % rooms.size()));
     upRoom->giveLadder(true);
+    upRoom->hasKiosk = true;
     vector<Room>::iterator it = (rooms.begin() + (int)(rand() % rooms.size()));
     auto downRoom = it;
     while(downRoom->getDoors().size() < 2 && (int)*downRoom == (int)*upRoom){
@@ -373,7 +374,7 @@ Room& Floor::getRoom(int cellKey){
         if(r.cells.find(cellKey) != r.cells.end()){
             return r;
         }
-    }
+    } 
     throw GetRoomException();
 }
 

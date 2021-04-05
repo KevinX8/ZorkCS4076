@@ -3,6 +3,8 @@
 
 #include <vector>
 
+using namespace std;
+
 template <class T> class DialogueOption
 {
     private:
@@ -10,6 +12,11 @@ template <class T> class DialogueOption
     T reply;
     vector<DialogueOption<T>> nextOptions;
     public:
+    DialogueOption<T>(T o, T r, vector<DialogueOption<T>> nO){
+        option = o;
+        reply = r;
+        nextOptions = nO;
+    }
     T getOption() {
         return option;
     }

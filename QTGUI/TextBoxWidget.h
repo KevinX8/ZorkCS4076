@@ -1,8 +1,12 @@
 #ifndef __TEXTBOXWIDGET_H__
 #define __TEXTBOXWIDGET_H__
-#include "..\GameWorld\GameInstance.h"
 #include <QLabel>
 #include <QPushButton>
+#include <vector>
+
+using namespace std;
+
+class GameInstance;
 
 class TextBoxWidget : public QWidget {
     Q_OBJECT
@@ -16,6 +20,6 @@ class TextBoxWidget : public QWidget {
     TextBoxWidget(string text, vector<string> interactionBoxes);
     void updateTextBox(string text);
     void updateInteractions(vector<string> interactionBoxes);
-}
+};
 
 #endif // __TEXTBOXWIDGET_H__

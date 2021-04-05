@@ -1,11 +1,10 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef MAINWINDOW_H_
+#define MAINWINDOW_H_
+#include <QWidget>
 #include "InventoryWidget.h"
 #include "MapWidget.h"
 #include "RoomItemWidget.h"
 #include "TextBoxWidget.h"
-#include "..\GameWorld\GameInstance.h"
-#include <QWidget>
 
 class MainWindow {
   private:
@@ -15,6 +14,7 @@ class MainWindow {
     RoomItemWidget room;
     TextBoxWidget text;
   public:
+    MainWindow();
 };
 
 #endif
