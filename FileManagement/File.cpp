@@ -1,15 +1,15 @@
 #include "File.h"
 
-File::File(string filePath,int gameSeed) {
+File::File(QString filePath,int gameSeed) {
     string saveObject;
-    this->filePath = filePath; //folder with save stuff, ends with \ or /
+    this->filePath = filePath.toStdString(); //folder with save stuff, ends with \ or /
     //open file just for output first so it gets created if it does not exist
     fstream saveFile;
     fstream floorFile;
     try {
-    saveFile.open(filePath + "game.dat", std::ios::out | std::ios::app);
+    saveFile.open(filePath.toStdString() + "game.dat", std::ios::out | std::ios::app);
     saveFile.close();
-    saveFile.open(filePath + "game.dat", std::ios::in | std::ios::out | std::ios::app);
+    saveFile.open(filePath.toStdString() + "game.dat", std::ios::in | std::ios::out | std::ios::app);
     } catch (std::ifstream::failure e) {
         qDebug() << "Exception opening file\n";
     }
@@ -46,10 +46,11 @@ string File::readFloor(int floorNumber) {
     }
     return "";
 }
-    
+
 
 void File::writeFloor(string floorToken,int floorNumber) {
-    std::filesystem::remove(filePath + "\\floor\\" + to_string(floorNumber) + ".dat");
+    QFile fileToRemove(QString::fromStdString(filePath + "\\floor\\" + to_string(floorNumber) + ".dat"));
+    fileToRemove.remove();
     ofstream saveFile (filePath + "\\floor\\" + to_string(floorNumber) + ".dat" );
     if (saveFile.is_open()) {
         saveFile << floorToken;
@@ -58,7 +59,8 @@ void File::writeFloor(string floorToken,int floorNumber) {
 }
 
 void File::close(string playerToken, int floor) {
-    std::filesystem::remove(filePath + "game.dat");
+    QFile fileToRemove(QString::fromStdString(filePath + "game.dat"));
+    fileToRemove.remove();
     ofstream saveFile (filePath + "game.dat" );
     if (saveFile.is_open()) {
         saveFile << gameSeed;
@@ -66,7 +68,7 @@ void File::close(string playerToken, int floor) {
         saveFile << playerToken;
     }
     saveFile.close();
-}    
+}
 
 string File::getPlayerToken() {
     return playerToken;
@@ -78,7 +80,9 @@ int File::getPlayerFloor() {
     return playerFloor;
 }
 
-void File::deleteSaves(string filePath) {
-    std::filesystem::remove(filePath + "game.dat");
-    std::filesystem::remove(filePath + "\\floor\\");
+void File::deleteSaves(QString filePath) {
+    QFile fileToRemove(QString::fromStdString(filePath.toStdString() + "game.dat"));
+    fileToRemove.remove();
+    QDir dirToRemove(QString::fromStdString(filePath.toStdString() + "\\floor\\"));
+    dirToRemove.removeRecursively();
 }

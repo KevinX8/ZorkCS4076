@@ -3,19 +3,21 @@
 
 #include <iostream>
 #include <fstream>
-#include <filesystem>
 #include <string>
 #include <QDebug>
+#include <QFileSystemModel>
+#include <QDir>
+#include <QFile>
 #include "..\GameWorld\Floor.h"
-#define DEFAULT_PATH std::filesystem::current_path():string
+#define DEFAULT_PATH QDir::currentPath()
 
 using namespace std;
 
 struct FloorFileException : public std::exception
 {
-	const char * what () const throw ()
+    const char * what () const throw ()
     {
-    	return "Floor not found";
+        return "Floor not found";
     }
 };
 
@@ -25,13 +27,13 @@ class File {
         int gameSeed;
         int playerFloor;
     public:
-        File(string filePath = DEFAULT_PATH, int gameSeed = 0);
+        File(QString filePath = DEFAULT_PATH, int gameSeed = 0);
         string getPlayerToken();
         string readFloor(int);
         void writeFloor(string floorToken,int floorNumber);
         void close(string playerToken, int floor);
         int getGameSeed();
         int getPlayerFloor();
-        static void deleteSaves(string filePath = DEFAULT_PATH);
+        static void deleteSaves(QString filePath = DEFAULT_PATH);
 };
 #endif
