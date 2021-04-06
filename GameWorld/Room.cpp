@@ -76,6 +76,15 @@ bool Room::getKiosk() {
     return hasKiosk;
 }
 
+bool Room::containsUpLadder(){
+    return hasUpLadder;
+}
+
+bool Room::containsDownLadder(){
+    return hasDownLadder;
+}
+
+
 int* Room::upgradeStats(short statToUpgrade) {
 //strength charisma luck invSpace
     int params[4] = {0,0,0,0};

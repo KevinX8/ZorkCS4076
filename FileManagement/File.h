@@ -3,8 +3,11 @@
 
 #include <iostream>
 #include <fstream>
+#include <filesystem>
+#include <string>
+#include <QDebug>
 #include "..\GameWorld\Floor.h"
-#define DEFAULT_PATH "./"
+#define DEFAULT_PATH std::filesystem::current_path():string
 
 using namespace std;
 

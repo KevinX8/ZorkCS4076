@@ -20,7 +20,7 @@ const unordered_map<short,string> Human::usefulInfoMap = {
    {6, " likes "}
 };
 
-Human::Human(int floorNumber, const short key, bool inventoryEmpty){
+Human::Human(int floorNumber, const short key, bool inventoryEmpty): baseOption(DialogueOption<string>("", ("How can I help you?"), {option1, option2, option3, option4})){
     this->key = key;
     this->charisma = (floorNumber + STARTING_ATRRIBUTE_POINTS) * (1-(strengthCharismaRatio.at(key)));
     this->strength = (floorNumber + STARTING_ATRRIBUTE_POINTS) * strengthCharismaRatio.at(key);
@@ -67,16 +67,22 @@ string Human::spareOrKill(bool spare, Player &p){
 
 string Human::giveItem(int i, Player &p){
     if(i == likedItem){
-        float itemValue = (1-strengthCharismaRatio.at(key)) * (p.getLuck() / (this->strength + this->charisma)) * Item::itemRarity.size();
-        vector<short> possibleItems = Item::itemRarity[itemValue];
-        vector<short>::iterator it;
-        it = possibleItems.begin() + (short)(rand() % possibleItems.size());
-        p.addItem(*it);
-        inventoryItems.push_back(i);
-        p.takeItem(i);
-        return "I love these.";
+        if(hasKey){
+            p.addItem(0);
+            hasKey = false;
+            return "I love these. Here's a key I found.";
+        }else{
+            float itemValue = (1-strengthCharismaRatio.at(key)) * (p.getLuck() / (this->strength + this->charisma)) * Item::itemRarity.size();
+            vector<short> possibleItems = Item::itemRarity[itemValue];
+            vector<short>::iterator it;
+            it = possibleItems.begin() + (short)(rand() % possibleItems.size());
+            p.addItem(*it);
+            inventoryItems.push_back(i);
+            p.takeItem(i);
+            return "I love these. Thank you!";
+        }
     }else{
-        return "I hate these.";
+        return "I hate these. You can keep it.";
     }
 }
 

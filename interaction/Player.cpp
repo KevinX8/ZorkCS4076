@@ -19,10 +19,6 @@ Player::Player(){
     this->inventory = vector<shared_ptr<Item>>();
 }
 
-void Player::unequip(){
-
-}
-
 Player::Player(string playerToken){
     int *offset = 0;
     for (int item=0; item < NEXT_HEX; item++) {

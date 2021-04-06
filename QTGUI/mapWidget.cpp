@@ -1,58 +1,57 @@
 #include "MapWidget.h"
 #include <ctime>
 
-#define SCALE 75;
-#define WALL_WIDTH 10;
+#define SCALE 75
+#define WALL_WIDTH 10
 
-MapWidget::MapWidget(int startIndex, GameInstance& g, QObject *parent) :QGraphicsScene(parent), f(0, 19), game(g), current(f.rooms.at(startIndex)){
+MapWidget::MapWidget(Floor& floor, Room& r, std::function<void(Door&)> dF, std::function<void(NPC&)> nF, std::function<void()> rF, std::function<void(bool)> cF, QWidget *parent) :QWidget(parent), current(r), f(floor){
     this->resetButtons();
+    this->doorFunc = dF;
+    this->npcFunc = nF;
+    this->resetFunc = rF;
+    this->floorFunc = cF;
 }
 
 void MapWidget::resetButtons(){
-    game.resetButtons();
+    resetFunc();
     npcButtons.clear();
     doorButtons.clear();
-    vector<int>::iterator it = current.getCells().begin();
+    unordered_set<int> openCells = current.getCells();
+    auto it = openCells.begin();
     for(shared_ptr<NPC> n : current.getNPCs()){
         Coordinate c = Tools::getKeyCoordinate((*it));
         it++;
-        QPushButton button
-        if(n->getCode < NUM_HUMANS){
-            button = QPushButton("👤", this);
-        }else{
-            button = QPushButton("🐕", this);
-        }
+        shared_ptr<QPushButton> button = (n->getCode() < NUM_HUMANS)? shared_ptr<QPushButton>(new QPushButton("👤", this)): shared_ptr<QPushButton>(new QPushButton("🐕", this));
         button->setGeometry(c.x * SCALE,c.y * SCALE,SCALE,SCALE);
-        connect(button, QPushButton::released, this, game.interactNPC(n));
+        connect(button.get(), &QPushButton::released, this, [n](){MapWidget::npcFunc(*n);});
         npcButtons.push_back(button);
     }
-    bool hasUp = current.hasUpLadder;
-    bool hasDown = current.hasDownLadder;
+    bool hasUp = current.containsUpLadder();
+    bool hasDown = current.containsDownLadder();
     if(hasUp || hasDown){
-        char icon = (hasUp?) '↗️' : '↘️';
+        QString icon = (hasUp)? "↗️" : "↘️";
         Coordinate c = Tools::getKeyCoordinate((*it));
-        QPushButton button = QPushButton(("" + icon), this);    
+        shared_ptr<QPushButton> button = shared_ptr<QPushButton>(new QPushButton(icon, this));
         button->setGeometry(c.x * SCALE,c.y * SCALE,SCALE,SCALE);
-        connect(button, QPushButton::released, this , game.changeFloor(hasUp));
+        connect(button.get(), &QPushButton::released, this , [hasUp](){MapWidget::floorFunc(hasUp);});
         npcButtons.push_back(button);
     }
     for(Door& d : current.getDoors()){
         //make door button
-        QPushButton button;
-
-        if(d.locked){
-            button = QPushButton("🔒", this);
-        }else{
-            button = QPushButton("⚫", this);
-        }
+        shared_ptr<QPushButton> button = (d.locked)? shared_ptr<QPushButton>(new QPushButton("🔒", this)) : shared_ptr<QPushButton>(new QPushButton("⚫", this));
+        Coordinate topRight, bottomLeft;
+        topRight.x = SCALE*(d.doorLocation.x+1)+WALL_WIDTH/2;
+        topRight.y = SCALE*(d.doorLocation.y)+WALL_WIDTH/2;
+        bottomLeft.y = topRight.y + SCALE;
+        bottomLeft.x = topRight.x - SCALE;
 
         if(d.vertical){
-            button->setGeometry(topRight.x-(WALL_WIDTH/2),topRight.y-(WALL_WIDTH/2), WALL_WIDTH,SCALE+WALL_WIDTH)
+            button->setGeometry(topRight.x-(WALL_WIDTH/2),topRight.y-(WALL_WIDTH/2), WALL_WIDTH,SCALE+WALL_WIDTH);
         }else{
             button->setGeometry(bottomLeft.x+(WALL_WIDTH/2),bottomLeft.y-(WALL_WIDTH/2), SCALE-WALL_WIDTH,WALL_WIDTH);
         }
-
-        connect(button, QPushButton::released, this , std::bind(&GameInstance::changeRoom, game, d));
+        shared_ptr<Door> a = shared_ptr<Door>(new Door(d));
+        connect(button.get(), &QPushButton::released, this , [a](){MapWidget::doorFunc(*a);});
     }
 
 }
@@ -63,8 +62,20 @@ void MapWidget::paintEvent(QPaintEvent *event){
     drawWalls(&qp);
 }
 
-void MapWidget::changeRoom(&Room room){
+void MapWidget::changeRoom(Room& room){
     current = room;
+    resetButtons();
+}
+
+void MapWidget::removeNPC(shared_ptr<NPC> npc){
+    vector<shared_ptr<NPC>>& npcs = current.getNPCs();
+
+    for(auto it = npcs.begin(); it != npcs.end(); ++it){
+        if((*it) == npc){
+            npcs.erase(it);
+            break;
+        }
+    }
     resetButtons();
 }
 

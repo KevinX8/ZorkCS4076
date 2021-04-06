@@ -43,6 +43,8 @@ private:
 	bool hasKiosk;
 public:
     int numberOfItems();
+    bool containsUpLadder();
+    bool containsDownLadder();
 	Room(unordered_set <int> cells = {});
     void addItem(int i);
     void removeItemFromRoom(int location);

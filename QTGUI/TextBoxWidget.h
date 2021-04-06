@@ -11,15 +11,20 @@ class GameInstance;
 class TextBoxWidget : public QWidget {
     Q_OBJECT
     private:
-    QLabel textBox;
-    QPushButton button1;
-    QPushButton button2;
-    QPushButton button3;
-    QPushButton button4;
+    unique_ptr<QLabel> textBox;
+    unique_ptr<QPushButton> button1;
+    unique_ptr<QPushButton> button2;
+    unique_ptr<QPushButton> button3;
+    unique_ptr<QPushButton> button4;
+    static std::function<void()> funcBox1;
+    static std::function<void()> funcBox2;
+    static std::function<void()> funcBox3;
+    static std::function<void()> funcBox4;
+    friend GameInstance;
     public:
-    TextBoxWidget(string text, vector<string> interactionBoxes);
-    void updateTextBox(string text);
-    void updateInteractions(vector<string> interactionBoxes);
+    TextBoxWidget(QString text, vector<QString> interactionBoxes);
+    void updateTextBox(QString text);
+    void updateInteractions(vector<QString> interactionBoxes);
 };
 
 #endif // __TEXTBOXWIDGET_H__

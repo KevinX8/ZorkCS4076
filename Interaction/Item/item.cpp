@@ -61,11 +61,6 @@ string Item::getShortDescription()
 	return description;
 }
 
-string Item::getLongDescription()
-{
-	return " item(s), " + description + ".\n";
-}
-
 array<int,4> Item::modifiers() {
     //strength, charisma, luck, invSpace
     array<int,4> mods = {0,0,0,0};

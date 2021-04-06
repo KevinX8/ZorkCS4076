@@ -1,27 +1,31 @@
 #include "TextBoxWidget.h"
 
-TextBoxWidget::TextBoxWidget(string text, vector<string> interactionBoxes, GameInstance &instance) 
+TextBoxWidget::TextBoxWidget(QString text, vector<QString> interactionBoxes)
 {
-    textBox = QLabel(text,this);
-    button1 = QPushButton(interactionBoxes[0],this);
-    button2 = QPushButton(interactionBoxes[1],this);
-    button3 = QPushButton(interactionBoxes[2],this);
-    button4 = QPushButton(interactionBoxes[3],this);
-    QObject::connect(button1,&QPushButton::released, this, &instance.funcBox1());
-    QObject::connect(button2,&QPushButton::released, this, &instance.funcBox2());
-    QObject::connect(button3,&QPushButton::released, this, &instance.funcBox3());
-    QObject::connect(button4,&QPushButton::released, this, &instance.funcBox4());
+    funcBox1 = [](){};
+    funcBox2 = [](){};
+    funcBox3 = [](){};
+    funcBox4 = [](){};
+    textBox = unique_ptr<QLabel>(new QLabel(text,this));
+    button1 = unique_ptr<QPushButton>(new QPushButton(interactionBoxes[0],this));
+    button2 = unique_ptr<QPushButton>(new QPushButton(interactionBoxes[1],this));
+    button3 = unique_ptr<QPushButton>(new QPushButton(interactionBoxes[2],this));
+    button4 = unique_ptr<QPushButton>(new QPushButton(interactionBoxes[3],this));
+    QObject::connect(button1.get(),&QPushButton::released, this, [](){TextBoxWidget::funcBox1();});
+    QObject::connect(button2.get(),&QPushButton::released, this, [](){TextBoxWidget::funcBox2();});
+    QObject::connect(button3.get(),&QPushButton::released, this, [](){TextBoxWidget::funcBox3();});
+    QObject::connect(button4.get(),&QPushButton::released, this, [](){TextBoxWidget::funcBox4();});
 }
-void TextBoxWidget::updateTextBox(string text) 
+void TextBoxWidget::updateTextBox(QString text)
 {
-    textBox.setText(text);
+    textBox->setText(text);
 }
 
-void TextBoxWidget::updateInteractions(vector<string> interactionBoxes) 
+void TextBoxWidget::updateInteractions(vector<QString> interactionBoxes)
 {
-    button1.setText(interactionBoxes[0]);
-    button2.setText(interactionBoxes[1]);
-    button3.setText(interactionBoxes[2]);
-    button4.setText(interactionBoxes[3]);
+    button1->setText(interactionBoxes[0]);
+    button2->setText(interactionBoxes[1]);
+    button3->setText(interactionBoxes[2]);
+    button4->setText(interactionBoxes[3]);
 }
 

@@ -1,9 +1,4 @@
-#include <QDebug>
 #include "File.h"
-#include <filesystem>
-#include <string>
-
-using namespace std;
 
 File::File(string filePath,int gameSeed) {
     string saveObject;

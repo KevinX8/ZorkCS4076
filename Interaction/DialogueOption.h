@@ -8,14 +8,11 @@ using namespace std;
 template <class T> class DialogueOption
 {
     private:
-    T option;
-    T reply;
-    vector<DialogueOption<T>> nextOptions;
     public:
-    DialogueOption<T>(T o, T r, vector<DialogueOption<T>> nO){
-        option = o;
-        reply = r;
-        nextOptions = nO;
+    const T option;
+    const T reply;
+    const vector<DialogueOption<T>> nextOptions;
+    DialogueOption<T>(T o, T r, vector<DialogueOption<T>> nO): option(o), reply(r), nextOptions(nO){
     }
     T getOption() {
         return option;

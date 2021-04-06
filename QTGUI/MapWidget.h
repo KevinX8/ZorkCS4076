@@ -9,24 +9,28 @@
 #include <QIcon>
 #include <QPushButton>
 #include <QGraphicsScene>
+#include <QString>
+#include <unordered_set>
 
-class GameInstance;
-
-class MapWidget : public QGraphicsScene{
+class MapWidget : public QWidget{
     Q_OBJECT
 public:
-    MapWidget(int startIndex, GameInstance& g, QObject *parent = nullptr);
+    MapWidget(Floor& f, Room& r, std::function<void(Door&)> doorFunc, std::function<void(NPC&)> npcFunc, std::function<void()> resetFunc, std::function<void(bool)> floorFunc, QWidget *parent = 0);
     void resetButtons();
-    void changeRoom(int roomIndex);
+    void changeRoom(Room& room);
+    void removeNPC(shared_ptr<NPC> npc);
 protected:
     void paintEvent(QPaintEvent *event);
     void drawWalls(QPainter *qp);
 private:
-    Floor f;
     Room& current;
-    GameInstance& game;
-    vector<QPushButton> npcButtons;
-    vector<QPushButton> doorButtons;
+    Floor& f;
+    vector<shared_ptr<QPushButton>> npcButtons;
+    vector<shared_ptr<QPushButton>> doorButtons;
+    static std::function<void(Door&)> doorFunc;
+    static std::function<void(NPC&)> npcFunc;
+    static std::function<void()> resetFunc;
+    static std::function<void(bool)> floorFunc;
 };
 
 #endif // MAPWIDGET_H

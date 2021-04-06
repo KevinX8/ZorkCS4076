@@ -18,8 +18,9 @@ using namespace std;
 class Player {
     private:
         friend class GameInstance;
+        friend class InventoryWidget;
         vector<shared_ptr<Item>> inventory;
-        int inventorySpace;
+        unsigned int inventorySpace;
         shared_ptr<Weapon> activeWeapon;
         shared_ptr<Wearable> activeWearable1;
         shared_ptr<Wearable> activeWearable2;

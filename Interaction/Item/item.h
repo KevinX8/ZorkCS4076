@@ -25,7 +25,6 @@ public:
 	Item (short itemHashcode);
 
 	string getShortDescription();
-	string getLongDescription();
 	short getRarity();
    virtual array<int,4> modifiers();
 	short hashCode;
