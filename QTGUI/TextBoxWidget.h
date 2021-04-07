@@ -16,10 +16,10 @@ class TextBoxWidget : public QWidget {
     unique_ptr<QPushButton> button2;
     unique_ptr<QPushButton> button3;
     unique_ptr<QPushButton> button4;
-    static std::function<void()> funcBox1;
-    static std::function<void()> funcBox2;
-    static std::function<void()> funcBox3;
-    static std::function<void()> funcBox4;
+    std::function<void()> funcBox1 = [](){return;};
+    std::function<void()> funcBox2 = [](){return;};
+    std::function<void()> funcBox3 = [](){return;};
+    std::function<void()> funcBox4 = [](){return;};
     friend GameInstance;
     public:
     TextBoxWidget(QString text, vector<QString> interactionBoxes);

@@ -221,7 +221,7 @@ void GameInstance::chatNPC(shared_ptr<NPC> npc, DialogueOption<string> d){
         DialogueOption<string> r = (*it);
         string option = r.option, reply = r.reply;
         vector<DialogueOption<string>> nextOptions = r.nextOptions;
-        shared_ptr<DialogueOption<string>> e = shared_ptr<DialogueOption<string>>(new DialogueOption(option, reply, nextOptions));
+        shared_ptr<DialogueOption<string>> e = shared_ptr<DialogueOption<string>>(new DialogueOption<string>(option, reply, nextOptions));
         options.push_back(QString::fromStdString(r.reply));
         switch (count) {
             case(0):{

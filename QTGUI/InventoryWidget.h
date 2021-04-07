@@ -15,7 +15,7 @@ class InventoryWidget : public QWidget {
     Q_OBJECT
     private:
     Player* player;
-    static std::function<void(shared_ptr<Item>)> dropFunc;
+    std::function<void(shared_ptr<Item>)> dropFunc;
     QList<QAction*> playerItems;
     QList<QAction*> equipedItems;
     unique_ptr<QMenu> wearableWeaponSubMenu;

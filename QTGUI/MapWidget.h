@@ -27,10 +27,10 @@ private:
     Floor& f;
     vector<shared_ptr<QPushButton>> npcButtons;
     vector<shared_ptr<QPushButton>> doorButtons;
-    static std::function<void(Door&)> doorFunc;
-    static std::function<void(NPC&)> npcFunc;
-    static std::function<void()> resetFunc;
-    static std::function<void(bool)> floorFunc;
+    std::function<void(Door&)> doorFunc;
+    std::function<void(NPC&)> npcFunc;
+    std::function<void()> resetFunc;
+    std::function<void(bool)> floorFunc;
 };
 
 #endif // MAPWIDGET_H

@@ -23,7 +23,7 @@ void MapWidget::resetButtons(){
         it++;
         shared_ptr<QPushButton> button = (n->getCode() < NUM_HUMANS)? shared_ptr<QPushButton>(new QPushButton("👤", this)): shared_ptr<QPushButton>(new QPushButton("🐕", this));
         button->setGeometry(c.x * SCALE,c.y * SCALE,SCALE,SCALE);
-        connect(button.get(), &QPushButton::released, this, [n](){MapWidget::npcFunc(*n);});
+        connect(button.get(), &QPushButton::released, this, [this,n](){MapWidget::npcFunc(*n);});
         npcButtons.push_back(button);
     }
     bool hasUp = current.containsUpLadder();
@@ -33,7 +33,7 @@ void MapWidget::resetButtons(){
         Coordinate c = Tools::getKeyCoordinate((*it));
         shared_ptr<QPushButton> button = shared_ptr<QPushButton>(new QPushButton(icon, this));
         button->setGeometry(c.x * SCALE,c.y * SCALE,SCALE,SCALE);
-        connect(button.get(), &QPushButton::released, this , [hasUp](){MapWidget::floorFunc(hasUp);});
+        connect(button.get(), &QPushButton::released, this , [this,hasUp](){MapWidget::floorFunc(hasUp);});
         npcButtons.push_back(button);
     }
     for(Door& d : current.getDoors()){
@@ -51,7 +51,7 @@ void MapWidget::resetButtons(){
             button->setGeometry(bottomLeft.x+(WALL_WIDTH/2),bottomLeft.y-(WALL_WIDTH/2), SCALE-WALL_WIDTH,WALL_WIDTH);
         }
         shared_ptr<Door> a = shared_ptr<Door>(new Door(d));
-        connect(button.get(), &QPushButton::released, this , [a](){MapWidget::doorFunc(*a);});
+        connect(button.get(), &QPushButton::released, this , [this,a](){MapWidget::doorFunc(*a);});
     }
 
 }

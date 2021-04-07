@@ -136,3 +136,8 @@ bool Player::equip(shared_ptr<Item> item, int slot){
     }
     return false;
 }
+
+void Player::unequip(int slot) 
+{
+    
+}

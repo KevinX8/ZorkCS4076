@@ -2,19 +2,19 @@
 
 TextBoxWidget::TextBoxWidget(QString text, vector<QString> interactionBoxes)
 {
-    funcBox1 = [](){};
-    funcBox2 = [](){};
-    funcBox3 = [](){};
-    funcBox4 = [](){};
+    funcBox1 = [](){return;};
+    funcBox2 = [](){return;};
+    funcBox3 = [](){return;};
+    funcBox4 = [](){return;};
     textBox = unique_ptr<QLabel>(new QLabel(text,this));
     button1 = unique_ptr<QPushButton>(new QPushButton(interactionBoxes[0],this));
     button2 = unique_ptr<QPushButton>(new QPushButton(interactionBoxes[1],this));
     button3 = unique_ptr<QPushButton>(new QPushButton(interactionBoxes[2],this));
     button4 = unique_ptr<QPushButton>(new QPushButton(interactionBoxes[3],this));
-    QObject::connect(button1.get(),&QPushButton::released, this, [](){TextBoxWidget::funcBox1();});
-    QObject::connect(button2.get(),&QPushButton::released, this, [](){TextBoxWidget::funcBox2();});
-    QObject::connect(button3.get(),&QPushButton::released, this, [](){TextBoxWidget::funcBox3();});
-    QObject::connect(button4.get(),&QPushButton::released, this, [](){TextBoxWidget::funcBox4();});
+    QObject::connect(button1.get(),&QPushButton::released, this, [this](){TextBoxWidget::funcBox1();});
+    QObject::connect(button2.get(),&QPushButton::released, this, [this](){TextBoxWidget::funcBox2();});
+    QObject::connect(button3.get(),&QPushButton::released, this, [this](){TextBoxWidget::funcBox3();});
+    QObject::connect(button4.get(),&QPushButton::released, this, [this](){TextBoxWidget::funcBox4();});
 }
 void TextBoxWidget::updateTextBox(QString text)
 {

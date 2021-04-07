@@ -51,6 +51,8 @@ class Floor {
         void connectCells(Coordinate c1, Coordinate c2);
         void connectRooms(Room &r1, Room &r2, Coordinate c1, Coordinate c2);
         int height;
+        int seed;
+        int number;
         vector<vector<Wall>> connections;
         Room &getRoom(int cellKey);
         Door& getOuterLockedDoor(int index);
@@ -68,5 +70,6 @@ class Floor {
         template<typename T>
         static int byteHexStringToInt(T first,T second);
         bool roomsUnitTest();
+        void floorHexUnitTest();
 };
 #endif

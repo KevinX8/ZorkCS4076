@@ -54,7 +54,21 @@ bool Floor::roomsUnitTest() {
     return true;
 }
 
+void Floor::floorHexUnitTest() 
+{
+    string firstToken = floorToken();
+    Floor testFloor = Floor(number,seed,firstToken);
+    string secondToken = testFloor.floorToken();
+    if (firstToken.compare(secondToken)) {
+        qDebug() << "Tokens are consistent";
+    } else {
+        qDebug() << "Tokens are inconsistent, token 1: " << QString::fromStdString(firstToken) << " token 2: " << QString::fromStdString(secondToken);
+    }
+}
+
 Floor::Floor(int number, int seed, bool previouslyGenerated){
+    this->seed = seed; //for Unit test
+    this->number = number;
     srand(seed+number);
     Tools::width = (rand() % 4) + 7;
     height = (rand() % 4) + 7;
@@ -89,6 +103,7 @@ Floor::Floor(int number, int seed, bool previouslyGenerated){
     generateLadders(number == 0);
     if (DEBUG) {
     qDebug() << roomsUnitTest();
+    floorHexUnitTest();
     }
 }
 

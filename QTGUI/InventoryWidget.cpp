@@ -110,6 +110,6 @@ void InventoryWidget::setItemInteraction(shared_ptr<Item> item)
         connect(use.get(),&QAction::triggered,this,[this,item](){ equip(item,0);});
     }
     itemMenu->addAction(drop.get());
-    connect(drop.get(),&QAction::triggered,this,[item](){InventoryWidget::dropFunc(item);});
+    connect(drop.get(),&QAction::triggered,this,[this,item](){InventoryWidget::dropFunc(item);});
     itemMenu->addAction(drop.get());
 }
