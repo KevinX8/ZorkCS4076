@@ -59,10 +59,11 @@ void Floor::floorHexUnitTest()
     string firstToken = floorToken();
     Floor testFloor = Floor(number,seed,firstToken);
     string secondToken = testFloor.floorToken();
-    if (firstToken.compare(secondToken)) {
+    if (firstToken.compare(secondToken) == 0) {
         qDebug() << "Tokens are consistent";
     } else {
-        qDebug() << "Tokens are inconsistent, token 1: " << QString::fromStdString(firstToken) << " token 2: " << QString::fromStdString(secondToken);
+        QString result = "Tokens are inconsistent, token 1: " + QString::fromStdString(firstToken) + " token 2: " + QString::fromStdString(secondToken);
+        qDebug() << result;
     }
 }
 
@@ -101,9 +102,9 @@ Floor::Floor(int number, int seed, bool previouslyGenerated){
         }
     }
     generateLadders(number == 0);
-    if (DEBUG) {
+    if (DEBUG && !previouslyGenerated) {
     qDebug() << roomsUnitTest();
-    floorHexUnitTest();
+    //floorHexUnitTest();
     }
 }
 
@@ -111,8 +112,9 @@ Floor::Floor(int number, int seed, bool previouslyGenerated){
 Floor::Floor(int number,int seed, string floorToken) {
     Floor(number,seed,true);
     int *offset = 0;
+    int count = 0;
     for (Room& room : rooms) {       
-        bool visited = (NEXT_HEX != 0); // does nothing at the moment
+        //bool visited = (NEXT_HEX != 0); // does nothing at the moment
         int numItemsInRoom = NEXT_HEX;
         for (int i =0; i < numItemsInRoom; ++i) { //add items to the room
             room.addItem(NEXT_HEX);
@@ -127,16 +129,17 @@ Floor::Floor(int number,int seed, string floorToken) {
             }
         }
         if(NEXT_HEX){//door is locked in room
-            Door& d = getOuterLockedDoor(getRoomIndex(room));
+            Door& d = getOuterLockedDoor(count);
             lockDoor(d);
         }
-
+        count++;
     }
 }
 
 string Floor::floorToken() {
     stringstream sstream;
     string token = "";
+    int count = 0;
     for (Room room : rooms) {
         //sstream << room.visited();
         sstream << Tools::intToByteHexString(room.itemsInRoom.size());
@@ -150,7 +153,8 @@ string Floor::floorToken() {
                 sstream << Tools::intToByteHexString(items);
             }
         }
-        sstream << Tools::intToByteHexString(room.getDoors().at(0).locked);
+        sstream << Tools::intToByteHexString(getOuterLockedDoor(count).locked);
+        count++;
     }
     sstream >> token;
     return token;

@@ -12,7 +12,7 @@ RoomItemWidget::RoomItemWidget(vector<int> itemCodes, std::function<void(int)> r
     connect(close.get(), &QAction::triggered,this,[this](){itemMenu->hide();});
     this->updateItems(itemCodes);
     listView.addActions(roomItems);
-    roomItemsLabel = unique_ptr<QLabel>(new QLabel(QString::fromStdString("Items in Room: " + roomItems.size()),this));
+    roomItemsLabel = unique_ptr<QLabel>(new QLabel(QString::fromStdString("Items in Room: " + to_string(roomItems.size())),this));
 }
 
 void RoomItemWidget::updateItems(vector<int> itemCodes) 
@@ -23,7 +23,7 @@ void RoomItemWidget::updateItems(vector<int> itemCodes)
         connect(itemAction.get(), &QAction::triggered, this, [this,itemCode](){setItemInteraction(itemCode);});
         roomItems.push_back(itemAction.get());
     }
-    roomItemsLabel->setText(QString::fromStdString("Items in Room: " + roomItems.size()));
+    roomItemsLabel->setText(QString::fromStdString("Items in Room: " + to_string(roomItems.size())));
 }
 
 void RoomItemWidget::setItemInteraction(int itemCode) 

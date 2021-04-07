@@ -2,68 +2,73 @@
 #define MAINWINDOW_H_
 #include <QWidget>
 #include <memory>
+#include <QMainWindow>
 #include "InventoryWidget.h"
 #include "MapWidget.h"
 #include "RoomItemWidget.h"
 #include "TextBoxWidget.h"
 
-#define MAP_X
-#define MAP_Y
-#define MAP_W
-#define MAP_H
+#define WINDOW_W 1280
+#define WINDOW_H 720
 
-#define ROOMLABEL_X
-#define ROOMLABEL_Y
-#define ROOMLABEL_W
-#define ROOMLABEL_H
+#define MAP_X 0
+#define MAP_Y 0
+#define MAP_W 1280
+#define MAP_H 470
 
-#define STATSLABEL_X
-#define STATSLABEL_Y
-#define STATSLABEL_W
-#define STATSLABEL_H
+#define ROOMLABEL_X 120
+#define LABEL_Y 470
+#define ROOMLABEL_W 110
+#define ROOMLABEL_H 16
 
-#define INVLABEL_X
-#define INVLABEL_Y
-#define INVLABEL_W
-#define INVLABEL_H
+#define STATSLABEL_X 550
+#define STATSLABEL_W 220
+#define STATSLABEL_H 21
 
-#define ROOMINV_X 
-#define ROOMINV_Y
+#define INVLABEL_X 1080
+#define INVLABEL_W 100
+#define INVLABEL_H 16
 
-#define TEXTBOX_X 
-#define TEXTBOX_Y
-#define TEXTBOX_W
-#define TEXTBOX_H
+#define TEXTBOX_X 350
+#define TEXTBOX_Y 490 //should be the same as INV_Y maybe?
+#define TEXTBOX_W 600
+#define TEXTBOX_H 220 //should be same as INV_H probably
+//horizontal centre align text and add autofill background
 
-#define BUTTON1_X 
-#define BUTTON1_Y
-#define BUTTON2_X 
-#define BUTTON2_Y
-#define BUTTON3_X 
-#define BUTTON3_Y
-#define BUTTON4_X 
-#define BUTTON4_Y
-#define FUNCBUTTON_W
-#define FUNCBUTTON_H
-#define BACKPACK_X 
-#define BACKPACK_Y
-#define BACKPACK_W
-#define BACKPACK_H
+#define BUTTON_Y 640
+#define BUTTON1_X 370
+#define BUTTON2_X 520
+#define BUTTON3_X 670
+#define BUTTON4_X 820
+#define FUNCBUTTON_W 120//width and height of every button is the same
+#define FUNCBUTTON_H 30
+#define BACKPACKBUTTON_X 930
+#define BACKPACKBUTTON_Y 490
+#define BACKPACKBUTTON_W 40
+#define BACKPACKBUTTON_H 30
 
-#define PLAYERINV_X 
-#define PLAYERINV_Y
-#define INV_W
-#define INV_H
+#define ROOMINV_X 0
+#define PLAYERINV_X 970
+#define INV_Y 470
+#define INV_W 340
+#define INV_H 220
 
-class MainWindow {
+class MainWindow : public QMainWindow {
+  Q_OBJECT
   private:
     friend class GameInstance;
-    unique_ptr<MapWidget> map;
-    unique_ptr<InventoryWidget> inv;
-    unique_ptr<RoomItemWidget> room;
-    unique_ptr<TextBoxWidget> text;
+    shared_ptr<MapWidget> map;
+    shared_ptr<InventoryWidget> inv;
+    shared_ptr<RoomItemWidget> room;
+    shared_ptr<TextBoxWidget> text;
   public:
     MainWindow();
+    MainWindow(//shared_ptr<RoomItemWidget> roomWidget,
+    shared_ptr<MapWidget> map
+    //shared_ptr<TextBoxWidget> text,
+    //shared_ptr<InventoryWidget> inv
+    );
+
 };
 
 #endif

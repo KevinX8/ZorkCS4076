@@ -18,8 +18,8 @@ Coordinate Tools::getKeyCoordinate(int key){
 }
 
 string Tools::intToByteHexString(int i){
-    int first = i & 0b00001111;
-    int second = (i & 0b11110000) >> 4;
+    int second = i & 0b00001111;
+    int first = (i & 0b11110000) >> 4;
     stringstream ss;
     string number = "";
     ss << std::hex << first;

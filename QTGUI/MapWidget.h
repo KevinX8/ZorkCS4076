@@ -15,7 +15,7 @@
 class MapWidget : public QWidget{
     Q_OBJECT
 public:
-    MapWidget(Floor& f, Room& r, std::function<void(Door&)> doorFunc, std::function<void(NPC&)> npcFunc, std::function<void()> resetFunc, std::function<void(bool)> floorFunc, QWidget *parent = 0);
+    MapWidget(Floor& f, Room& r, std::function<void(Door&)>& doorFunc, std::function<void(shared_ptr<NPC>)>& npcFunc, std::function<void()>& resetFunc, std::function<void(bool)>& floorFunc, QWidget *parent = 0);
     void resetButtons();
     void changeRoom(Room& room);
     void removeNPC(shared_ptr<NPC> npc);
@@ -28,7 +28,7 @@ private:
     vector<shared_ptr<QPushButton>> npcButtons;
     vector<shared_ptr<QPushButton>> doorButtons;
     std::function<void(Door&)> doorFunc;
-    std::function<void(NPC&)> npcFunc;
+    std::function<void(shared_ptr<NPC>)> npcFunc;
     std::function<void()> resetFunc;
     std::function<void(bool)> floorFunc;
 };

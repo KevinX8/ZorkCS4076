@@ -4,6 +4,7 @@
 #include "Floor.h"
 #include "../FileManagement/File.h"
 #include <memory>
+#include <ctime>
 #include <functional>
 #include <string>
 #include "../QTGUI/mainWindow.h"
@@ -16,7 +17,7 @@ class GameInstance {
         int seed;
         File gameState;
         int playerRoomIndex;
-        MainWindow gui;
+        unique_ptr<MainWindow> gui;
         void fightNPC(shared_ptr<NPC> npc);
         void askInfoNPC(shared_ptr<Human> h);
         void giveNPCItem(shared_ptr<NPC> npc);
@@ -27,7 +28,7 @@ class GameInstance {
         void chatNPC(shared_ptr<NPC> npc, DialogueOption<string> d);
     public:
         void resetButtons();
-        GameInstance(bool loadGame, int seed);
+        GameInstance(bool loadGame = false, int seed = time(nullptr));
         void changeFloor(bool up);
         void changeRoom(Door& d);
         void useKey(Door& d);

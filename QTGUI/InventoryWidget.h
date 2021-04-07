@@ -14,7 +14,7 @@
 class InventoryWidget : public QWidget {
     Q_OBJECT
     private:
-    Player* player;
+    Player& player;
     std::function<void(shared_ptr<Item>)> dropFunc;
     QList<QAction*> playerItems;
     QList<QAction*> equipedItems;
@@ -32,7 +32,7 @@ class InventoryWidget : public QWidget {
     unique_ptr<QLabel> inventoryType;
     QListView rightInventoryView;
     QListView rightEquipmentView;
-    InventoryWidget(Player* player, std::function<void(shared_ptr<Item>)> dropFunc);
+    InventoryWidget(Player& player, std::function<void(shared_ptr<Item>)> dropFunc);
     void updateStats();
     void updateEquipment(int type);
     void updateInventory(int index);
