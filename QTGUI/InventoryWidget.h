@@ -9,7 +9,6 @@
 #include <QPushButton>
 #include <functional>
 #include <string>
-#include <QPushButton>
 #include "../interaction/Player.h"
 class InventoryWidget : public QWidget {
     Q_OBJECT
