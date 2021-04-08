@@ -4,7 +4,7 @@
 #include <QLabel>
 #include <QMenu>
 #include <QAction>
-#include <QListView>
+#include <QListWidget>
 #include <QWidget>
 #include <QPushButton>
 #include <functional>
@@ -15,8 +15,6 @@ class InventoryWidget : public QWidget {
     private:
     Player& player;
     std::function<void(shared_ptr<Item>)> dropFunc;
-    QList<QAction*> playerItems;
-    QList<QAction*> equipedItems;
     unique_ptr<QMenu> wearableWeaponSubMenu;
     unique_ptr<QMenu> itemMenu;
     unique_ptr<QAction> use;
@@ -25,12 +23,14 @@ class InventoryWidget : public QWidget {
     unique_ptr<QAction> drop;
     unique_ptr<QAction> close;
     void setItemInteraction(shared_ptr<Item> item);
+    void invListUpdated();
+    void equListUpdated();
     public:
     unique_ptr<QPushButton> changeInvButton;
     unique_ptr<QLabel> playerStats;
     unique_ptr<QLabel> inventoryType;
-    unique_ptr<QListView> rightInventoryView;
-    unique_ptr<QListView> rightEquipmentView;
+    QListWidget* rightInventoryList;
+    QListWidget* rightEquipmentList;
     InventoryWidget(Player& player, std::function<void(shared_ptr<Item>)> dropFunc);
     void updateStats();
     void updateEquipment(int type);

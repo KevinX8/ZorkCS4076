@@ -1,6 +1,6 @@
 #ifndef __ROOMITEMWIDGET_H__
 #define __ROOMITEMWIDGET_H__
-#include <QListView>
+#include <QListWidget>
 #include <QMenu>
 #include <QLabel>
 #include <QList>
@@ -16,15 +16,15 @@ using namespace std;
 class RoomItemWidget : public QWidget {
     Q_OBJECT
     private:
-    QList<QAction*> roomItems;
     unique_ptr<QLabel> roomItemsLabel;
     unique_ptr<QMenu> itemMenu;
     unique_ptr<QAction> pickup;
     unique_ptr<QAction> close;
-    void setItemInteraction(int itemCode);
     std::function<void(int)> roomItemFunc;
+    void setItemInteraction(int itemCode);
+    void listUpdated();
     public:
-    unique_ptr<QListView> listView;
+    QListWidget* listWidget;
     RoomItemWidget(vector<int> itemCodes, std::function<void(int)> roomItemFunc);
     void updateItems(vector<int> itemCodes);
 };

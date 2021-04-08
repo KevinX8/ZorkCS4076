@@ -6,7 +6,6 @@ InventoryWidget::InventoryWidget(Player& player, std::function<void(shared_ptr<I
     this->dropFunc = dropFunc;
     playerStats = unique_ptr<QLabel>(new QLabel(this));
     updateStats();
-    playerItems.reserve(3);
     itemMenu = unique_ptr<QMenu>(new QMenu(this));
     wearableWeaponSubMenu = unique_ptr<QMenu>(new QMenu("Equip As: ",this));
     asWeapon = unique_ptr<QAction>(new QAction("Weapon",wearableWeaponSubMenu.get()));
@@ -17,17 +16,15 @@ InventoryWidget::InventoryWidget(Player& player, std::function<void(shared_ptr<I
     close = unique_ptr<QAction>(new QAction("Close",this));
     drop = unique_ptr<QAction>(new QAction("Drop",this));
     changeInvButton = unique_ptr<QPushButton>(new QPushButton("🎒",this));
-    rightInventoryView = unique_ptr<QListView>(new QListView(this));
-    rightEquipmentView = unique_ptr<QListView>(new QListView(this));
+    rightInventoryList = new QListWidget(this);
+    rightEquipmentList = new QListWidget(this);
     itemMenu->addAction(drop.get());
     itemMenu->addAction(close.get());
     connect(changeInvButton.get(), &QPushButton::released,this,[this](){changeDisplay();});
     connect(close.get(), &QAction::triggered,this,[this](){itemMenu->hide();});
-    rightInventoryView->addActions(playerItems);
-    rightEquipmentView->addActions(equipedItems);
     inventoryType = unique_ptr<QLabel>(new QLabel("Inventory 🧰",this));
-    rightInventoryView->show();
-    rightEquipmentView->hide();
+    rightInventoryList->show();
+    rightEquipmentList->hide();
 }
 
 void InventoryWidget::updateStats() 
@@ -36,43 +33,45 @@ void InventoryWidget::updateStats()
     playerStats->setText(stats);
 }
 
-void InventoryWidget::updateEquipment(int type) 
+void InventoryWidget::updateEquipment(int type)
 {
-    int itemCode = 0;
+    delete(rightEquipmentList->takeItem(type));
+    QString name;
     switch (type) {
-        case 0: equipedItems[type] = new QAction(QString::fromStdString(player.activeWeapon->getShortDescription())); itemCode = player.activeWeapon->hashCode; break;
-        case 1: equipedItems[type] = new QAction(QString::fromStdString(player.activeWearable1->getShortDescription())); itemCode = player.activeWearable1->hashCode; break;
-        case 2: equipedItems[type] = new QAction(QString::fromStdString(player.activeWearable2->getShortDescription())); itemCode = player.activeWearable2->hashCode; break;
+        case 0: name = QString::fromStdString(player.activeWeapon->getShortDescription()); break;
+        case 1: name = QString::fromStdString(player.activeWeapon->getShortDescription()); break;
+        case 2: name = QString::fromStdString(player.activeWeapon->getShortDescription()); break;
     }
+    rightEquipmentList->insertItem(type,new QListWidgetItem(name));
     unique_ptr<QAction> unEquipAct = unique_ptr<QAction>(new QAction("Unequip",this));
     connect(unEquipAct.get(),&QAction::triggered,itemMenu.get(),[this,type](){unEquip(type);});
     itemMenu->clear();
     itemMenu->addAction(unEquipAct.get());
     itemMenu->addAction(close.get());
-    connect(equipedItems[type],&QAction::triggered,this,[this](){itemMenu->popup(QCursor::pos());});
+    connect(rightInventoryList,&QListWidget::itemChanged,this,[this](){itemMenu->popup(QCursor::pos());});
 }
 
 void InventoryWidget::updateInventory(int index) 
 {
-    if (index < playerItems.size()) {
-    playerItems.erase(playerItems.begin() + index);
+    if (index < rightInventoryList->count()) {
+        delete(rightInventoryList->takeItem(index));
     } else {
-        unique_ptr<QAction> item = unique_ptr<QAction>(new QAction(QString::fromStdString(player.inventory.at(index)->getShortDescription()),this));
-        connect(item.get(), &QAction::triggered,this,[this,index](){setItemInteraction(player.inventory.at(index));});
-        playerItems.push_back(item.get());
+        QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(player.inventory.at(index)->getShortDescription()));
+        connect(item, &QListWidget::itemChanged,this,[this,index](){setItemInteraction(player.inventory.at(index));});
+        rightEquipmentList->addItem(item);
     }
 }
 
 void InventoryWidget::changeDisplay()
 {
-    if (rightInventoryView->isHidden()) {
+    if (rightInventoryList->isHidden()) {
         inventoryType->setText("Inventory 🧰");
-        rightInventoryView->show();
-        rightEquipmentView->hide();
+        rightInventoryList->show();
+        rightEquipmentList->hide();
     } else {
         inventoryType->setText("Equipment 🛠️");
-        rightInventoryView->hide();
-        rightEquipmentView->show();
+        rightInventoryList->hide();
+        rightEquipmentList->show();
     }
 }
 
@@ -80,7 +79,7 @@ void InventoryWidget::unEquip(int type)
 //Don't shift equipment up to avoid shifting all data structures related to it
 {
     player.unequip(type);
-    equipedItems[type] = new QAction("");
+    delete(rightEquipmentList->takeItem(type));
 }
 
 void InventoryWidget::equip(shared_ptr<Item> itemToEquip, int slot) 
