@@ -53,6 +53,7 @@ public:
 	int getKey();
 	bool cellInRoom(Coordinate c);
 	unordered_set<int> getCells();
+	vector<int> getItems();
 	vector<Door> &getDoors();
 	operator int();
 	bool operator<(Room r2);

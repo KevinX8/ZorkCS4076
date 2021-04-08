@@ -11,7 +11,6 @@ class GameInstance;
 class TextBoxWidget : public QWidget {
     Q_OBJECT
     private:
-    unique_ptr<QLabel> textBox;
     unique_ptr<QPushButton> button1;
     unique_ptr<QPushButton> button2;
     unique_ptr<QPushButton> button3;
@@ -22,9 +21,11 @@ class TextBoxWidget : public QWidget {
     std::function<void()> funcBox4 = [](){return;};
     friend GameInstance;
     public:
+    unique_ptr<QLabel> textBox;
     TextBoxWidget(QString text, vector<QString> interactionBoxes);
     void updateTextBox(QString text);
     void updateInteractions(vector<QString> interactionBoxes);
+    void enableButtons(int amount);
 };
 
 #endif // __TEXTBOXWIDGET_H__

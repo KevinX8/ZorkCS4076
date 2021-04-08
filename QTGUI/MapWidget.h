@@ -24,6 +24,7 @@ protected:
     void paintEvent(QPaintEvent *event);
     void drawWalls(QPainter *qp);
 private:
+    friend class GameInstance;
     Room current;
     Floor& f;
     vector<shared_ptr<QPushButton>> npcButtons;

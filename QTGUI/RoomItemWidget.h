@@ -24,7 +24,7 @@ class RoomItemWidget : public QWidget {
     void setItemInteraction(int itemCode);
     std::function<void(int)> roomItemFunc;
     public:
-    QListView listView;
+    unique_ptr<QListView> listView;
     RoomItemWidget(vector<int> itemCodes, std::function<void(int)> roomItemFunc);
     void updateItems(vector<int> itemCodes);
 };

@@ -4,6 +4,7 @@ InventoryWidget::InventoryWidget(Player& player, std::function<void(shared_ptr<I
 {
     this->player = player;
     this->dropFunc = dropFunc;
+    playerStats = unique_ptr<QLabel>(new QLabel(this));
     updateStats();
     playerItems.reserve(3);
     itemMenu = unique_ptr<QMenu>(new QMenu(this));
@@ -16,15 +17,17 @@ InventoryWidget::InventoryWidget(Player& player, std::function<void(shared_ptr<I
     close = unique_ptr<QAction>(new QAction("Close",this));
     drop = unique_ptr<QAction>(new QAction("Drop",this));
     changeInvButton = unique_ptr<QPushButton>(new QPushButton("🎒",this));
+    rightInventoryView = unique_ptr<QListView>(new QListView(this));
+    rightEquipmentView = unique_ptr<QListView>(new QListView(this));
     itemMenu->addAction(drop.get());
     itemMenu->addAction(close.get());
     connect(changeInvButton.get(), &QPushButton::released,this,[this](){changeDisplay();});
     connect(close.get(), &QAction::triggered,this,[this](){itemMenu->hide();});
-    rightInventoryView.addActions(playerItems);
-    rightEquipmentView.addActions(equipedItems);
+    rightInventoryView->addActions(playerItems);
+    rightEquipmentView->addActions(equipedItems);
     inventoryType = unique_ptr<QLabel>(new QLabel("Inventory 🧰",this));
-    rightInventoryView.show();
-    rightEquipmentView.hide();
+    rightInventoryView->show();
+    rightEquipmentView->hide();
 }
 
 void InventoryWidget::updateStats() 
@@ -62,14 +65,14 @@ void InventoryWidget::updateInventory(int index)
 
 void InventoryWidget::changeDisplay()
 {
-    if (rightInventoryView.isHidden()) {
+    if (rightInventoryView->isHidden()) {
         inventoryType->setText("Inventory 🧰");
-        rightInventoryView.show();
-        rightEquipmentView.hide();
+        rightInventoryView->show();
+        rightEquipmentView->hide();
     } else {
         inventoryType->setText("Equipment 🛠️");
-        rightInventoryView.hide();
-        rightEquipmentView.show();
+        rightInventoryView->hide();
+        rightEquipmentView->show();
     }
 }
 

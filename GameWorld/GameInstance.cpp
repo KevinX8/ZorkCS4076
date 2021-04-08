@@ -15,29 +15,30 @@ GameInstance::GameInstance(bool loadGame, int seed) {
         this-> seed = seed;
         this-> player = Player();
         this-> floorNumber = 0;
-        this-> floor = new Floor(0, 124);
+        this-> floor = new Floor(0, seed);
         File::deleteSaves();
     }
     std::function<void(Door&)> dRf = std::bind(&GameInstance::changeRoom,this,std::placeholders::_1);
     std::function<void(shared_ptr<NPC>)> nRf = std::bind(&GameInstance::interactNPC,this,std::placeholders::_1);
     std::function<void()> rRf = std::bind(&GameInstance::resetButtons,this);
     std::function<void(bool)> cfRf = std::bind(&GameInstance::changeFloor,this,std::placeholders::_1);
+    std::function<void(int)> riRf = std::bind(&GameInstance::interactRoomItem,this,std::placeholders::_1);
+    std::function<void(shared_ptr<Item>)> diRf = std::bind(&GameInstance::interactDropPlayerInv,this,std::placeholders::_1);
     this-> playerRoomIndex = 0;
     shared_ptr<MapWidget> map = shared_ptr<MapWidget>(new MapWidget(*floor, floor->rooms.at(playerRoomIndex), dRf, nRf, rRf, cfRf));
-    this->gui = unique_ptr<MainWindow>(new MainWindow(map));
+    shared_ptr<RoomItemWidget> roomInv = shared_ptr<RoomItemWidget>(new RoomItemWidget(floor->rooms.at(playerRoomIndex).getItems(),riRf));
+    shared_ptr<InventoryWidget> playerInv = shared_ptr<InventoryWidget>(new InventoryWidget(player,diRf));
+    shared_ptr<TextBoxWidget> textBox = shared_ptr<TextBoxWidget>(new TextBoxWidget("Try clicking on buttons on the map!",{"","","",""}));
+    this->gui = unique_ptr<MainWindow>(new MainWindow(roomInv,map,textBox,playerInv));
     gui->show();
-    //shared_ptr<InventoryWidget> inv = shared_ptr<InventoryWidget>(new InventoryWidget(player,[this](shared_ptr<Item> i){interactDropPlayerInv(i);}));
     resetButtons();
 }
 
 void GameInstance::resetButtons(){
     vector<QString> options = {"","","",""};
-    //gui->text->updateInteractions(options);
-    //gui->text->funcBox1 = []() {};
-    //gui->text->funcBox2 = []() {};
-    //gui->text->funcBox3 = []() {};
-    //gui->text->funcBox4 = []() {};
-    //gui->text->updateTextBox("");
+    gui->text->updateInteractions(options);
+    gui->text->enableButtons(0);
+    gui->text->updateTextBox("");
 }
 
 void GameInstance::changeFloor(bool up){
@@ -76,10 +77,9 @@ void GameInstance::changeRoom(Door& d){
                 options.push_back("");
                 options.push_back("");
                 gui->text->updateInteractions(options);
+                gui->text->enableButtons(2);
                 gui->text->funcBox1 = std::bind(&GameInstance::unlockDoor,this , d, item);
                 gui->text->funcBox2 = [&](){resetButtons();};
-                gui->text->funcBox3 = []() {};
-                gui->text->funcBox4 = []() {};
                 keyFound = true;
             }
         }
@@ -91,6 +91,7 @@ void GameInstance::changeRoom(Door& d){
             resetButtons();
             Room& r = floor->rooms.at(d.roomIndex);
             gui->map->changeRoom(r);
+            gui->room->updateItems(gui->map->current.getItems());
             if(r.getKiosk()){
                 gui->text->updateTextBox("You reached the end of the Floor! Choose an ability to upgrade:");
                 vector<QString> options;
@@ -99,10 +100,10 @@ void GameInstance::changeRoom(Door& d){
                 options.push_back("☘️");
                 options.push_back("");
                 gui->text->updateInteractions(options);
+                gui->text->enableButtons(3);
                 gui->text->funcBox1 = [&](){resetButtons(); player.strength++; gui->inv->updateStats();};
                 gui->text->funcBox2 = [&](){resetButtons(); player.charisma++; gui->inv->updateStats();};
                 gui->text->funcBox3 = [&](){resetButtons(); player.luck++; gui->inv->updateStats();};
-                gui->text->funcBox4 = []() {};
             }
         }else{
             gui->text->updateTextBox("You can't move because you're carrying too many items!");
@@ -157,6 +158,7 @@ void GameInstance::setNPCButtons(shared_ptr<NPC> npc){
         options.push_back("Chat");
         gui->text->updateInteractions(options);
         std::function<void ()> fightFunc = std::bind(&GameInstance::fightNPC,this , npc);
+        gui->text->enableButtons(4);
         gui->text->funcBox1 = std::bind(&GameInstance::fightNPC,this , npc);
         gui->text->funcBox2 = std::bind(&GameInstance::askInfoNPC, this, h);
         gui->text->funcBox3 = std::bind(&GameInstance::giveNPCItem, this, npc);
@@ -168,10 +170,9 @@ void GameInstance::fightNPC(shared_ptr<NPC> npc){
     if(npc->fight(player)){
         QString info = QString::fromStdString("You won the fight! Should you spare " + npc->getName() + "?");
         gui->text->updateTextBox(info);
+        gui->text->enableButtons(2);
         gui->text->funcBox1 = std::bind(&GameInstance::spareOrKill,this , npc, true);
         gui->text->funcBox2 = std::bind(&GameInstance::spareOrKill, this, npc, false);
-        gui->text->funcBox3 = []() {};
-        gui->text->funcBox4 = []() {};
         vector<QString> options;
         options.push_back("Spare");
         options.push_back("Kill");
@@ -251,40 +252,23 @@ void GameInstance::chatNPC(shared_ptr<NPC> npc, DialogueOption<string> d){
     if(count == 0){
         setNPCButtons(npc);
     }else{
-        while(count < 4){
-            options.push_back("");
-            switch (count) {
-                case(0):{
-                    gui->text->funcBox1 = [](){};
-                    break;
-                }
-                case(1):{
-                    gui->text->funcBox2 = [](){};
-                    break;
-                }
-                case(2):{
-                    gui->text->funcBox3 = [](){};
-                    break;
-                }
-                case(3): {
-                    gui->text->funcBox4 = [](){};
-                    break;
-                }
-            }
-            count++;
-        }
+        gui->text->enableButtons(count);
     }
     gui->text->updateInteractions(options);
 }
 
-void GameInstance::interactRoomItem(int itemCode) //user clicked pick it up
+void GameInstance::interactRoomItem(int index) //user clicked pick it up
 {
-    //not implemented
+    player.addItem(gui->map->current.getItems().at(index));
+    gui->map->current.removeItemFromRoom(index);
+    gui->room->updateItems(gui->map->current.getItems());
     gui->inv->updateStats();
 }
 
 void GameInstance::interactDropPlayerInv(shared_ptr<Item> item) //find item in player inventory and remove it, then add to room inventory
 {
-    //not implemented
+    gui->map->current.addItem(item->hashCode);
+    player.takeItem(item->hashCode);
+    gui->room->updateItems(gui->map->current.getItems());
     gui->inv->updateStats();
 }

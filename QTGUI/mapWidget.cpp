@@ -13,7 +13,6 @@ MapWidget::MapWidget(Floor& floor, Room& r, std::function<void(Door&)>& dF, std:
 }
 
 void MapWidget::resetButtons(){
-    resetFunc();
     npcButtons.clear();
     doorButtons.clear();
     unordered_set<int> openCells = current.getCells();
@@ -22,7 +21,7 @@ void MapWidget::resetButtons(){
         Coordinate c = Tools::getKeyCoordinate((*it));
         it++;
         shared_ptr<QPushButton> button = (n->getCode() < NUM_HUMANS)? shared_ptr<QPushButton>(new QPushButton("👤", this)): shared_ptr<QPushButton>(new QPushButton("🐕", this));
-        button->setGeometry(c.x * SCALE,c.y * SCALE,SCALE,SCALE);
+        button->setGeometry(c.x * SCALE + WALL_WIDTH,c.y * SCALE+ WALL_WIDTH,SCALE- WALL_WIDTH,SCALE- WALL_WIDTH);
         connect(button.get(), &QPushButton::released, this, [this,n](){MapWidget::npcFunc(n);});
         npcButtons.push_back(button);
         button->show();
@@ -97,6 +96,8 @@ void MapWidget::drawWalls(QPainter *qp){
     connections = f.getConnections();
     QPen pen(Qt::black, 2, Qt::SolidLine);
     QBrush wallBrush(Qt::SolidPattern);
+    QBrush doorBrush(Qt::Dense6Pattern);
+    QBrush lockedDoorBrush(Qt::Dense3Pattern);
     qp->setPen(pen);
 
     qp -> fillRect(0,0, SCALE*f.getWidth(),WALL_WIDTH, wallBrush);
@@ -113,10 +114,26 @@ void MapWidget::drawWalls(QPainter *qp){
                     qp->fillRect(topRight.x-(WALL_WIDTH/2),topRight.y-(WALL_WIDTH/2), WALL_WIDTH,SCALE+WALL_WIDTH, wallBrush);
                     break;
                 }
+                case(2):{
+                    qp->fillRect(topRight.x-(WALL_WIDTH/2),topRight.y-(WALL_WIDTH/2), WALL_WIDTH,SCALE+WALL_WIDTH, doorBrush);;
+                    break;
+                }
+                case(3):{
+                    qp->fillRect(topRight.x-(WALL_WIDTH/2),topRight.y-(WALL_WIDTH/2), WALL_WIDTH,SCALE+WALL_WIDTH, lockedDoorBrush);
+                    break;
+                }
             }
             switch(connections[r][c].down){
                 case(0):{
                     qp->fillRect(bottomLeft.x-(WALL_WIDTH/2),bottomLeft.y-(WALL_WIDTH/2), SCALE+WALL_WIDTH,WALL_WIDTH, wallBrush);
+                    break;
+                }
+                case(2):{
+                    qp->fillRect(bottomLeft.x-(WALL_WIDTH/2),bottomLeft.y-(WALL_WIDTH/2), SCALE+WALL_WIDTH,WALL_WIDTH, doorBrush);
+                    break;
+                }
+                case(3):{
+                    qp->fillRect(bottomLeft.x-(WALL_WIDTH/2),bottomLeft.y-(WALL_WIDTH/2), SCALE+WALL_WIDTH,WALL_WIDTH, lockedDoorBrush);
                     break;
                 }
             }

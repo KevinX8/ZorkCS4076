@@ -16,6 +16,11 @@ void Room::addItem(int i) {
     itemsInRoom.push_back(i);
 }
 
+void Room::removeItemFromRoom(int location) 
+{
+    itemsInRoom.erase(itemsInRoom.begin() + location);
+}
+
 int Room::numberOfItems() {
     return itemsInRoom.size();
 }
@@ -30,6 +35,11 @@ int Room::getKey(){
 
 unordered_set<int> Room::getCells(){
 	return cells;
+}
+
+vector<int> Room::getItems() 
+{
+    return itemsInRoom;
 }
 
 vector<Door> &Room::getDoors(){{}

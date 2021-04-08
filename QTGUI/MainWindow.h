@@ -17,25 +17,6 @@
 #define MAP_W 1280 * RESSCALE
 #define MAP_H 470 * RESSCALE
 
-#define ROOMLABEL_X 120 * RESSCALE
-#define LABEL_Y 470 * RESSCALE
-#define ROOMLABEL_W 110 * RESSCALE
-#define ROOMLABEL_H 16 * RESSCALE
-
-#define STATSLABEL_X 550 * RESSCALE
-#define STATSLABEL_W 220 * RESSCALE
-#define STATSLABEL_H 21 * RESSCALE
-
-#define INVLABEL_X 1080 * RESSCALE
-#define INVLABEL_W 100 * RESSCALE
-#define INVLABEL_H 16 * RESSCALE
-
-#define TEXTBOX_X 350 * RESSCALE
-#define TEXTBOX_Y 490 * RESSCALE //should be the same as INV_Y maybe?
-#define TEXTBOX_W 600 * RESSCALE
-#define TEXTBOX_H 220 * RESSCALE //should be same as INV_H probably
-//horizontal centre align text and add autofill background
-
 #define BUTTON_Y 640 * RESSCALE
 #define BUTTON1_X 370 * RESSCALE
 #define BUTTON2_X 520 * RESSCALE
@@ -48,11 +29,17 @@
 #define BACKPACKBUTTON_W 40 * RESSCALE
 #define BACKPACKBUTTON_H 30 * RESSCALE
 
-#define ROOMINV_X 0 * RESSCALE
-#define PLAYERINV_X 970 * RESSCALE
-#define INV_Y 470 * RESSCALE
+#define ROOMINV_X 5 * RESSCALE
+#define PLAYERINV_X 940 * RESSCALE
 #define INV_W 340 * RESSCALE
 #define INV_H 220 * RESSCALE
+#define INV_Y 500 * RESSCALE
+
+#define TEXTBOX_X INV_W + 7
+#define TEXTBOX_Y INV_Y //should be the same as INV_Y maybe?
+#define TEXTBOX_W PLAYERINV_X - INV_W -10
+#define TEXTBOX_H INV_H //should be same as INV_H probably
+//horizontal centre align text and add autofill background
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -64,10 +51,10 @@ class MainWindow : public QMainWindow {
     shared_ptr<TextBoxWidget> text;
   public:
     MainWindow();
-    MainWindow(//shared_ptr<RoomItemWidget> roomWidget,
-    shared_ptr<MapWidget> map
-    //shared_ptr<TextBoxWidget> text,
-    //shared_ptr<InventoryWidget> inv
+    MainWindow(shared_ptr<RoomItemWidget> roomWidget,
+    shared_ptr<MapWidget> map,
+    shared_ptr<TextBoxWidget> text,
+    shared_ptr<InventoryWidget> inv
     );
 
 };

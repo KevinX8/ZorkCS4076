@@ -29,8 +29,8 @@ class InventoryWidget : public QWidget {
     unique_ptr<QPushButton> changeInvButton;
     unique_ptr<QLabel> playerStats;
     unique_ptr<QLabel> inventoryType;
-    QListView rightInventoryView;
-    QListView rightEquipmentView;
+    unique_ptr<QListView> rightInventoryView;
+    unique_ptr<QListView> rightEquipmentView;
     InventoryWidget(Player& player, std::function<void(shared_ptr<Item>)> dropFunc);
     void updateStats();
     void updateEquipment(int type);
