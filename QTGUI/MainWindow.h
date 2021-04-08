@@ -8,50 +8,51 @@
 #include "RoomItemWidget.h"
 #include "TextBoxWidget.h"
 
-#define WINDOW_W 1280
-#define WINDOW_H 720
+#define RESSCALE 1.5
+#define WINDOW_W 1280 * RESSCALE
+#define WINDOW_H 720 * RESSCALE
 
-#define MAP_X 0
-#define MAP_Y 0
-#define MAP_W 1280
-#define MAP_H 470
+#define MAP_X 0 * RESSCALE
+#define MAP_Y 0 * RESSCALE
+#define MAP_W 1280 * RESSCALE
+#define MAP_H 470 * RESSCALE
 
-#define ROOMLABEL_X 120
-#define LABEL_Y 470
-#define ROOMLABEL_W 110
-#define ROOMLABEL_H 16
+#define ROOMLABEL_X 120 * RESSCALE
+#define LABEL_Y 470 * RESSCALE
+#define ROOMLABEL_W 110 * RESSCALE
+#define ROOMLABEL_H 16 * RESSCALE
 
-#define STATSLABEL_X 550
-#define STATSLABEL_W 220
-#define STATSLABEL_H 21
+#define STATSLABEL_X 550 * RESSCALE
+#define STATSLABEL_W 220 * RESSCALE
+#define STATSLABEL_H 21 * RESSCALE
 
-#define INVLABEL_X 1080
-#define INVLABEL_W 100
-#define INVLABEL_H 16
+#define INVLABEL_X 1080 * RESSCALE
+#define INVLABEL_W 100 * RESSCALE
+#define INVLABEL_H 16 * RESSCALE
 
-#define TEXTBOX_X 350
-#define TEXTBOX_Y 490 //should be the same as INV_Y maybe?
-#define TEXTBOX_W 600
-#define TEXTBOX_H 220 //should be same as INV_H probably
+#define TEXTBOX_X 350 * RESSCALE
+#define TEXTBOX_Y 490 * RESSCALE //should be the same as INV_Y maybe?
+#define TEXTBOX_W 600 * RESSCALE
+#define TEXTBOX_H 220 * RESSCALE //should be same as INV_H probably
 //horizontal centre align text and add autofill background
 
-#define BUTTON_Y 640
-#define BUTTON1_X 370
-#define BUTTON2_X 520
-#define BUTTON3_X 670
-#define BUTTON4_X 820
-#define FUNCBUTTON_W 120//width and height of every button is the same
-#define FUNCBUTTON_H 30
-#define BACKPACKBUTTON_X 930
-#define BACKPACKBUTTON_Y 490
-#define BACKPACKBUTTON_W 40
-#define BACKPACKBUTTON_H 30
+#define BUTTON_Y 640 * RESSCALE
+#define BUTTON1_X 370 * RESSCALE
+#define BUTTON2_X 520 * RESSCALE
+#define BUTTON3_X 670 * RESSCALE
+#define BUTTON4_X 820 * RESSCALE
+#define FUNCBUTTON_W 120 * RESSCALE//width and height of every button is the same
+#define FUNCBUTTON_H 30 * RESSCALE
+#define BACKPACKBUTTON_X 930 * RESSCALE
+#define BACKPACKBUTTON_Y 490 * RESSCALE
+#define BACKPACKBUTTON_W 40 * RESSCALE
+#define BACKPACKBUTTON_H 30 * RESSCALE
 
-#define ROOMINV_X 0
-#define PLAYERINV_X 970
-#define INV_Y 470
-#define INV_W 340
-#define INV_H 220
+#define ROOMINV_X 0 * RESSCALE
+#define PLAYERINV_X 970 * RESSCALE
+#define INV_Y 470 * RESSCALE
+#define INV_W 340 * RESSCALE
+#define INV_H 220 * RESSCALE
 
 class MainWindow : public QMainWindow {
   Q_OBJECT

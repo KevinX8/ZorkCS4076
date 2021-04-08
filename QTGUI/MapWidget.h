@@ -10,6 +10,7 @@
 #include <QPushButton>
 #include <QGraphicsScene>
 #include <QString>
+#include <QPalette>
 #include <unordered_set>
 
 class MapWidget : public QWidget{
@@ -23,7 +24,7 @@ protected:
     void paintEvent(QPaintEvent *event);
     void drawWalls(QPainter *qp);
 private:
-    Room& current;
+    Room current;
     Floor& f;
     vector<shared_ptr<QPushButton>> npcButtons;
     vector<shared_ptr<QPushButton>> doorButtons;

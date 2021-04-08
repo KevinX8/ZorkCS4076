@@ -15,7 +15,7 @@ GameInstance::GameInstance(bool loadGame, int seed) {
         this-> seed = seed;
         this-> player = Player();
         this-> floorNumber = 0;
-        this-> floor = new Floor(0, seed);
+        this-> floor = new Floor(0, 124);
         File::deleteSaves();
     }
     std::function<void(Door&)> dRf = std::bind(&GameInstance::changeRoom,this,std::placeholders::_1);
@@ -89,7 +89,7 @@ void GameInstance::changeRoom(Door& d){
     }else{
         if(player.inventorySpace >= player.inventory.size()){
             resetButtons();
-            Room& r = (*floor).rooms.at(d.roomIndex);
+            Room& r = floor->rooms.at(d.roomIndex);
             gui->map->changeRoom(r);
             if(r.getKiosk()){
                 gui->text->updateTextBox("You reached the end of the Floor! Choose an ability to upgrade:");

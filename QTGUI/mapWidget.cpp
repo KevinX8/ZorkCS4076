@@ -39,8 +39,18 @@ void MapWidget::resetButtons(){
     }
     for(Door& d : current.getDoors()){
         //make door button
-        shared_ptr<QPushButton> button = (d.locked)? shared_ptr<QPushButton>(new QPushButton("🔒", this)) : shared_ptr<QPushButton>(new QPushButton("⚫", this));
+        shared_ptr<QPushButton> button = shared_ptr<QPushButton>(new QPushButton("", this));
         Coordinate topRight, bottomLeft;
+        QPalette pal = button->palette();
+        if (d.locked) {
+             pal.setColor(QPalette::Button, QColor(Qt::darkGray));
+        } else {
+             pal.setColor(QPalette::Button, QColor(Qt::darkRed));
+        }
+        button->setAutoFillBackground(true);
+        button->setPalette(pal);
+        button->setFlat(true);
+        button->update();
         topRight.x = SCALE*(d.doorLocation.x+1)+WALL_WIDTH/2;
         topRight.y = SCALE*(d.doorLocation.y)+WALL_WIDTH/2;
         bottomLeft.y = topRight.y + SCALE;
@@ -53,6 +63,7 @@ void MapWidget::resetButtons(){
         }
         shared_ptr<Door> a = shared_ptr<Door>(new Door(d));
         connect(button.get(), &QPushButton::released, this , [this,a](){MapWidget::doorFunc(*a);});
+        doorButtons.push_back(button);
         button->show();
     }
 
