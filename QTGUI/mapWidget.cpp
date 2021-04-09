@@ -59,7 +59,7 @@ void MapWidget::resetButtons(){
         bottomLeft.x = topRight.x - SCALE;
 
         if(d.vertical){
-            button->setGeometry(topRight.x-(WALL_WIDTH/2) + xOffset,topRight.y-(WALL_WIDTH/2), WALL_WIDTH,SCALE+WALL_WIDTH);
+            button->setGeometry(topRight.x-(WALL_WIDTH/2) + xOffset,topRight.y+(WALL_WIDTH/2), WALL_WIDTH,SCALE-WALL_WIDTH);
         }else{
             button->setGeometry(bottomLeft.x+(WALL_WIDTH/2) + xOffset,bottomLeft.y-(WALL_WIDTH/2), SCALE-WALL_WIDTH,WALL_WIDTH);
         }

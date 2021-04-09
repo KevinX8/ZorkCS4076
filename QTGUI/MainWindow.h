@@ -62,6 +62,7 @@ class QTGui::MainWindow : public QMainWindow {
     shared_ptr<TextBoxWidget> text,
     shared_ptr<InventoryWidget> inv
     );
+    void changeMapWidget(shared_ptr<MapWidget> m);
 
 };
 

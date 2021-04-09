@@ -32,6 +32,7 @@ class QTGui::GameInstance {
         void unlockDoor(Door& d, shared_ptr<Item> key);
         void startConvo(shared_ptr<NPC> npc);
         void chatNPC(shared_ptr<NPC> npc, DialogueOption<string> d);
+        void setGUI();
     public:
         void resetButtons();
         GameInstance(bool loadGame = false, int seed = time(nullptr));

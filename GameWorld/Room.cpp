@@ -64,7 +64,7 @@ bool Room::operator==(Room * const r2){
 
 shared_ptr<NPC> Room::addNPC(int NPCKey, int floorNumber, bool emptyNPC){
     if(NPCKey < NUM_HUMANS){
-        shared_ptr<NPC> npc(new Human(NPCKey, floorNumber, emptyNPC));
+        shared_ptr<NPC> npc(new Human(floorNumber, NPCKey, emptyNPC));
         npcsInRoom.push_back(npc);
         return npc;
     }

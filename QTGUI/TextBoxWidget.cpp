@@ -18,10 +18,10 @@ TextBoxWidget::TextBoxWidget(QString text, vector<QString> interactionBoxes)
     textBox->update();
     textBox->setMargin(50);
     textBox->setAlignment(Qt::AlignHCenter);
-    button1->setGeometry(30,330-50,200,30);
-    button2->setGeometry(button1->x() + button1->width()+10,330-50,200,30);
-    button3->setGeometry(button2->x() + button2->width()+10,330-50,200,30);
-    button4->setGeometry(button3->x() + button3->width()+10,330-50,200,30);
+    button1->setGeometry(30,330-75,200,30);
+    button2->setGeometry(button1->x() + button1->width()+10,330-75,200,30);
+    button3->setGeometry(button2->x() + button2->width()+10,330-75,200,30);
+    button4->setGeometry(button3->x() + button3->width()+10,330-75,200,30);
     QObject::connect(button1.get(),&QPushButton::released, this, [this](){TextBoxWidget::funcBox1();});
     QObject::connect(button2.get(),&QPushButton::released, this, [this](){TextBoxWidget::funcBox2();});
     QObject::connect(button3.get(),&QPushButton::released, this, [this](){TextBoxWidget::funcBox3();});

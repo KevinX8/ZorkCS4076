@@ -27,3 +27,10 @@ MainWindow::MainWindow(shared_ptr<RoomItemWidget> r, shared_ptr<MapWidget> m, sh
 MainWindow::MainWindow(){
 
 }
+
+void MainWindow::changeMapWidget(shared_ptr<MapWidget> m){
+    this->map = m;
+    map->setParent(this);
+    setCentralWidget(map.get());
+    map->setGeometry(MAP_X,MAP_Y-30,MAP_W,MAP_H+30);
+}

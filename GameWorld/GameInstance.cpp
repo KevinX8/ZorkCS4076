@@ -18,6 +18,10 @@ GameInstance::GameInstance(bool loadGame, int seed) {
         this-> floor = new Floor(0, seed);
         File::deleteSaves();
     }
+    setGUI();
+}
+
+void GameInstance::setGUI(){
     std::function<void(Door&)> dRf = std::bind(&GameInstance::changeRoom,this,std::placeholders::_1);
     std::function<void(shared_ptr<NPC>)> nRf = std::bind(&GameInstance::interactNPC,this,std::placeholders::_1);
     std::function<void()> rRf = std::bind(&GameInstance::resetButtons,this);
@@ -43,15 +47,20 @@ void GameInstance::resetButtons(){
 
 void GameInstance::changeFloor(bool up){
     gameState.writeFloor(floor->floorToken(), floorNumber);
+    if(floor->rooms.at(gui->map->currentRoomIndex).getKiosk()){
+        int upgrade = rand() % 3;
+        switch(upgrade){
+            case(0): {player.strength++;break;};
+            case(1): {player.luck++;break;};
+            case(2): {player.charisma++;break;};
+        }
+        floor->rooms.at(gui->map->currentRoomIndex).removeKiosk();
+    }
     delete(floor);
     if(up){
         floorNumber++;
-        try{
-            string token = gameState.readFloor(floorNumber);
-            floor = new Floor(seed, floorNumber, token);
-        }catch(FloorFileException f){
-            floor = new Floor(floorNumber, seed);
-        }
+        floor = new Floor(floorNumber, seed);
+        setGUI();
     }else{
         floorNumber--;
         string token = gameState.readFloor(floorNumber);
@@ -255,9 +264,9 @@ void GameInstance::chatNPC(shared_ptr<NPC> npc, DialogueOption<string> d){
 
 void GameInstance::interactRoomItem(int index) //user clicked pick it up
 {
-    player.addItem(gui->map->current.getItems().at(index));
+    player.addItem(gui->map->f.rooms.at(gui->map->currentRoomIndex).getItems().at(index));
     gui->map->current.removeItemFromRoom(index);
-    gui->room->updateItems(gui->map->current.getItems());
+    gui->room->updateItems(gui->map->f.rooms.at(gui->map->currentRoomIndex).getItems());
     gui->inv->updateStats();
     gui->inv->updateInventory(player.inventory.size()-1);
 }
