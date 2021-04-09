@@ -18,17 +18,18 @@ RoomItemWidget::RoomItemWidget(vector<int> itemCodes, std::function<void(int)> r
 void RoomItemWidget::updateItems(vector<int> itemCodes) 
 {
     int index = 0;
+    roomItemsLabel->clear();
     for (int itemCode: itemCodes) {
         listWidget->addItem(QString::fromStdString(Item::getType(itemCode) + Item::itemNameMap.at(itemCode)));
         index++;
     }
-    roomItemsLabel->setText(QString::fromStdString("Items in Room: " + to_string(index+1)));
+    roomItemsLabel->setText(QString::fromStdString("Items in Room: " + to_string(index)));
 }
 
 void RoomItemWidget::setItemInteraction(int index) 
 {
     connect(pickup.get(), &QAction::triggered,this,[this,index](){roomItemFunc(index);});
-    itemMenu->popup(QCursor::pos());
+    itemMenu->popup(QWidget::mapFromGlobal(QCursor::pos()));
 }
 
 void RoomItemWidget::listUpdated()

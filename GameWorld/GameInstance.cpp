@@ -215,7 +215,7 @@ void GameInstance::startConvo(shared_ptr<NPC> npc){
 
 void GameInstance::chatNPC(shared_ptr<NPC> npc, DialogueOption<string> d){
 
-    gui->text->updateTextBox(QString::fromStdString(d.option));
+    gui->text->updateTextBox(QString::fromStdString(d.reply));
     int count = 0;
     vector<DialogueOption<string>> nextOptions = d.getNextOption();
     auto it = nextOptions.begin();
@@ -245,7 +245,7 @@ void GameInstance::chatNPC(shared_ptr<NPC> npc, DialogueOption<string> d){
                 break;
             }
         }
-        options.push_back(QString::fromStdString(r.reply));
+        options.push_back(QString::fromStdString(r.option));
         count++;
         it++;
     }
@@ -253,8 +253,8 @@ void GameInstance::chatNPC(shared_ptr<NPC> npc, DialogueOption<string> d){
         setNPCButtons(npc);
     }else{
         gui->text->enableButtons(count);
+        gui->text->updateInteractions(options);
     }
-    gui->text->updateInteractions(options);
 }
 
 void GameInstance::interactRoomItem(int index) //user clicked pick it up

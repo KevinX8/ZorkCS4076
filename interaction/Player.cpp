@@ -56,10 +56,14 @@ void Player::addItem(int item){
 }
 
 int Player::takeRandomItem(){
-    auto it = inventory.begin() + (int)(rand() % inventory.size());
-    int item = (*it)->hashCode;
-    inventory.erase(it);
-    return item;
+    if(inventory.size() > 0){
+        auto it = inventory.begin() + (int)(rand() % inventory.size());
+        int item = (*it)->hashCode;
+        inventory.erase(it);
+        return item;
+    }else{
+        return -1;
+    }
 }
 
 void Player::takeItem(int item){    

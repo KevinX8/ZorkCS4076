@@ -25,6 +25,8 @@ InventoryWidget::InventoryWidget(Player& player, std::function<void(shared_ptr<I
     inventoryType = unique_ptr<QLabel>(new QLabel("Inventory 🧰",this));
     rightInventoryList->show();
     rightEquipmentList->hide();
+    connect(rightInventoryList, &QListWidget::itemChanged,this,[this](){this->invListUpdated();});
+    connect(rightEquipmentList,&QListWidget::itemChanged,this,[this](){this->equListUpdated();});
 }
 
 void InventoryWidget::updateStats() 
@@ -43,12 +45,6 @@ void InventoryWidget::updateEquipment(int type)
         case 2: name = QString::fromStdString(player.activeWeapon->getShortDescription()); break;
     }
     rightEquipmentList->insertItem(type,new QListWidgetItem(name));
-    unique_ptr<QAction> unEquipAct = unique_ptr<QAction>(new QAction("Unequip",this));
-    connect(unEquipAct.get(),&QAction::triggered,itemMenu.get(),[this,type](){unEquip(type);});
-    itemMenu->clear();
-    itemMenu->addAction(unEquipAct.get());
-    itemMenu->addAction(close.get());
-    connect(rightInventoryList,&QListWidget::itemChanged,this,[this](){itemMenu->popup(QCursor::pos());});
 }
 
 void InventoryWidget::updateInventory(int index) 
@@ -57,7 +53,6 @@ void InventoryWidget::updateInventory(int index)
         delete(rightInventoryList->takeItem(index));
     } else {
         QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(player.inventory.at(index)->getShortDescription()));
-        connect(item, &QListWidget::itemChanged,this,[this,index](){setItemInteraction(player.inventory.at(index));});
         rightEquipmentList->addItem(item);
     }
 }
@@ -114,4 +109,28 @@ void InventoryWidget::setItemInteraction(shared_ptr<Item> item)
     itemMenu->addAction(drop.get());
     connect(drop.get(),&QAction::triggered,this,[this,item](){InventoryWidget::dropFunc(item);});
     itemMenu->addAction(drop.get());
+}
+
+void InventoryWidget::invListUpdated() 
+{
+    for (int i=0; i < rightInventoryList->count();i++) {
+        if (rightInventoryList->item(i)->isSelected()) {
+            setItemInteraction(player.inventory.at(i));
+            itemMenu->popup(QCursor::pos());
+        }
+    }
+}
+
+void InventoryWidget::equListUpdated() 
+{
+    for (int i=0; i < rightEquipmentList->count();i++) {
+        if (rightEquipmentList->item(i)->isSelected()) {
+                unique_ptr<QAction> unEquipAct = unique_ptr<QAction>(new QAction("Unequip",this));
+                connect(unEquipAct.get(),&QAction::triggered,itemMenu.get(),[this,i](){unEquip(i);});
+                itemMenu->clear();
+                itemMenu->addAction(unEquipAct.get());
+                itemMenu->addAction(close.get());
+                itemMenu->popup(QCursor::pos());
+        }
+    }
 }

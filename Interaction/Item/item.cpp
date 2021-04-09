@@ -7,11 +7,7 @@ const unordered_map<short,string> Item::itemNameMap = {
 
    {0 + NUM_STD_ITEMS, "Big Massive Sword"},
    {1 + NUM_STD_ITEMS, "dagger"},
-
-   /*anything below 50 is a standard item
-   anything between 50 and 99 is a weapon
-   anything between 100 and 150 is a wearable
-   anything above 150 is a wearable weapon */
+    {2 + NUM_STD_ITEMS, "axe"}
 };
 
 const vector<vector<short>> Item::itemRarity = {
@@ -23,7 +19,7 @@ const vector<vector<short>> Item::itemRarity = {
     index 3: very rare item which spawns in room/uncommon item which spawns in locked room (2/15 items are in here)
     index 4: item only spawns in locked room (1/15 items are in here)
     */
-   {0},{1,2},{50},{51},{51}
+   {0},{1,2},{0+NUM_STD_ITEMS},{1+NUM_STD_ITEMS},{2+NUM_STD_ITEMS}
 };
 
 string Item::getType(int hashCode) {

@@ -35,7 +35,10 @@ bool Human::fight(Player &p){
     if(rand() % combinedStrength >= this->strength){
         return true;
     }else{
-        inventoryItems.push_back(p.takeRandomItem());
+        int item = p.takeRandomItem();
+        if(item >= 0){
+            inventoryItems.push_back(item);
+        }
         return false;
     }
 } 
@@ -91,9 +94,16 @@ string Human::askInfo(Player &p){
     if(rand() % combinedCharisma >= this->charisma){
         return usefulInfo;
     }else{
-        inventoryItems.push_back(p.takeRandomItem());
+        int item = p.takeRandomItem();
+        if(item >= 0){
+            inventoryItems.push_back(p.takeRandomItem());
+        }
     
-        return "You failed to persuade " + name + ". " + name + " persuaded you to give them an item!";
+        if(item >= 0){
+            return "You failed to persuade " + name + ". " + name + " persuaded you to give them an item!";
+        }else{
+            return "You failed to persuade " + name + ".";
+        }
     }
 }
 
