@@ -60,11 +60,19 @@ void Floor::floorHexUnitTest()
 {
     string firstToken = floorToken();
     Floor testFloor = Floor(number,seed,firstToken);
+    Floor consistencyTestFloor = Floor(number,seed);
     string secondToken = testFloor.floorToken();
-    if (firstToken.compare(secondToken) == 0) {
-        qDebug() << "Tokens are consistent";
+    string consistencyToken = consistencyTestFloor.floorToken();
+    if (firstToken.compare(consistencyToken) == 0) {
+        qDebug() << "Basic Tokens are consistent";
     } else {
-        QString result = "Tokens are inconsistent, token 1: " + QString::fromStdString(firstToken) + " token 2: " + QString::fromStdString(secondToken);
+        QString result = "Basic Tokens are inconsistent, token 1: " + QString::fromStdString(firstToken) + " token 2: " + QString::fromStdString(consistencyToken);
+        qDebug() << result;
+    }
+   if (firstToken.compare(secondToken) == 0) {
+        qDebug() << "Hex Tokens are consistent";
+    } else {
+        QString result = "Hex Tokens are inconsistent, token 1: " + QString::fromStdString(firstToken) + " token 2: " + QString::fromStdString(secondToken);
         qDebug() << result;
     }
 }
@@ -106,15 +114,19 @@ Floor::Floor(int number, int seed, bool previouslyGenerated){
     generateLadders(number == 0);
     if (DEBUG && !previouslyGenerated) {
     qDebug() << roomsUnitTest();
-    floorHexUnitTest();
     }
 }
 
 Floor::Floor(int number,int seed, string floorToken) : Floor(number,seed,true) {
     vector<int> hexOut;
+    stringstream sstream;
     for (auto it = floorToken.begin(); it != floorToken.end();it+=2) {
         hexOut.insert(hexOut.begin(),byteHexStringToInt(*it,*(it+1)));
     }
+    for (int i : hexOut) {
+        sstream << i;
+    }
+    qDebug() << QString::fromStdString(sstream.str()) << " after decoding";
     int count = 0;
     for (Room& room : rooms) {
         if (hexOut.size() <= 0) {
@@ -152,25 +164,33 @@ Floor::Floor(int number,int seed, string floorToken) : Floor(number,seed,true) {
 
 string Floor::floorToken() {
     stringstream sstream;
+    stringstream instream;
     string token = "";
     int count = 0;
-    for (Room room : rooms) {
+    for (Room& room : rooms) {
         //sstream << room.visited();
         sstream << Tools::intToByteHexString(room.itemsInRoom.size());
+        instream << room.itemsInRoom.size();
         for (int items : room.itemsInRoom) {
             sstream << Tools::intToByteHexString(items);
+            instream << items;
         }
         sstream << Tools::intToByteHexString(room.npcsInRoom.size());
+        instream << room.npcsInRoom.size();
         for (shared_ptr<NPC> npc : room.getNPCs()) {
             sstream << Tools::intToByteHexString(npc->getCode());
+            instream << npc->getCode();
             for (int items : npc->getInventory()) {
                 sstream << Tools::intToByteHexString(items);
+                instream << items;
             }
         }
         sstream << Tools::intToByteHexString(getOuterLockedDoor(count).locked);
+        instream << getOuterLockedDoor(count).locked;
         count++;
     }
     sstream >> token;
+    qDebug() << QString::fromStdString(instream.str()) << " before encoding";
     return token;
 }
 

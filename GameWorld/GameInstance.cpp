@@ -16,6 +16,7 @@ GameInstance::GameInstance(bool loadGame, int seed) {
         this-> player = Player();
         this-> floorNumber = 0;
         this-> floor = new Floor(0, seed);
+        //floor->floorHexUnitTest();
         File::deleteSaves();
     }
     std::function<void(Door&)> dRf = std::bind(&GameInstance::changeRoom,this,std::placeholders::_1);
