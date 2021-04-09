@@ -1,5 +1,6 @@
-
 #include "InventoryWidget.h"
+#include <string>
+
 InventoryWidget::InventoryWidget(Player& player, std::function<void(shared_ptr<Item>)> dropFunc) : player(player)
 {
     this->player = player;
@@ -25,8 +26,8 @@ InventoryWidget::InventoryWidget(Player& player, std::function<void(shared_ptr<I
     inventoryType = unique_ptr<QLabel>(new QLabel("Inventory 🧰",this));
     rightInventoryList->show();
     rightEquipmentList->hide();
-    connect(rightInventoryList, &QListWidget::itemChanged,this,[this](){this->invListUpdated();});
-    connect(rightEquipmentList,&QListWidget::itemChanged,this,[this](){this->equListUpdated();});
+    connect(rightInventoryList, &QListWidget::itemClicked,this,&InventoryWidget::invListUpdated);
+    connect(rightEquipmentList,&QListWidget::itemClicked,this,&InventoryWidget::equListUpdated);
 }
 
 void InventoryWidget::updateStats() 
@@ -35,25 +36,30 @@ void InventoryWidget::updateStats()
     playerStats->setText(stats);
 }
 
+inline string InventoryWidget::sign(int x) {
+    return ((x > 0) - (x < 0)) == -1? "-":"+";
+}
+
 void InventoryWidget::updateEquipment(int type)
 {
     delete(rightEquipmentList->takeItem(type));
     QString name;
     switch (type) {
-        case 0: name = QString::fromStdString(player.activeWeapon->getShortDescription()); break;
-        case 1: name = QString::fromStdString(player.activeWeapon->getShortDescription()); break;
-        case 2: name = QString::fromStdString(player.activeWeapon->getShortDescription()); break;
+        case 0: name = QString::fromStdString(player.activeWeapon->getShortDescription() + " ⚔️" + sign(player.activeWeapon->getDamage()) + to_string(player.activeWeapon->getDamage()) STRINGEND(activeWeapon)); break;
+        case 1: name = WEARABLESTRING(activeWearable1); break;
+        case 2: name = WEARABLESTRING(activeWearable2); break;
     }
     rightEquipmentList->insertItem(type,new QListWidgetItem(name));
+    updateStats();
 }
 
-void InventoryWidget::updateInventory(int index) 
+void InventoryWidget::updateInventory(int index)
 {
     if (index < rightInventoryList->count()) {
         delete(rightInventoryList->takeItem(index));
     } else {
         QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(player.inventory.at(index)->getShortDescription()));
-        rightEquipmentList->addItem(item);
+        rightInventoryList->addItem(item);
     }
 }
 
@@ -81,18 +87,25 @@ void InventoryWidget::equip(shared_ptr<Item> itemToEquip, int slot)
 {
     if (slot == 0) {
         player.equip(itemToEquip,0);
+        updateEquipment(slot);
+        updateInventory(player.takeItem(itemToEquip->hashCode));
     } else if (slot > 0) {
-    if (!player.activeWearable1) {
-        player.equip(itemToEquip,1);
-    } else if (!player.activeWearable2) {
-        player.equip(itemToEquip,2);
-    } else {
-        itemMenu->clear();
-        itemMenu->addAction(new QAction("Unequip a wearble first!"));
-        itemMenu->addAction(drop.get());
-        itemMenu->addAction(close.get());
+        if (!player.activeWearable1) {
+            player.equip(itemToEquip,1);
+            updateEquipment(1);
+            updateInventory(player.takeItem(itemToEquip->hashCode));
+        } else if (!player.activeWearable2) {
+            player.equip(itemToEquip,2);
+            updateEquipment(2);
+            updateInventory(player.takeItem(itemToEquip->hashCode));
+        } else {
+            itemMenu->clear();
+            itemMenu->addAction(new QAction("Unequip a wearble first!"));
+            itemMenu->addAction(drop.get());
+            itemMenu->addAction(close.get());
+        }
     }
-    }
+    updateStats();
 }
 
 void InventoryWidget::setItemInteraction(shared_ptr<Item> item) 
@@ -102,13 +115,17 @@ void InventoryWidget::setItemInteraction(shared_ptr<Item> item)
         itemMenu->addMenu(wearableWeaponSubMenu.get());
         connect(asWeapon.get(),&QAction::triggered,this,[this,item](){ equip(item,0);});
         connect(asWearable.get(),&QAction::triggered,this,[this,item](){ equip(item,1);});
-    } else if (item->hashCode >= NUM_STD_ITEMS && item->hashCode < NUM_WEAPONS) {
+    } else if (item->hashCode >= NUM_STD_ITEMS) {
         itemMenu->addAction(use.get());
-        connect(use.get(),&QAction::triggered,this,[this,item](){ equip(item,0);});
+        if (item->hashCode < NUM_STD_ITEMS+NUM_WEAPONS) {
+            connect(use.get(),&QAction::triggered,this,[this,item](){ equip(item,0);});
+        } else {
+            connect(use.get(),&QAction::triggered,this,[this,item](){ equip(item,1);});
+        }
     }
     itemMenu->addAction(drop.get());
     connect(drop.get(),&QAction::triggered,this,[this,item](){InventoryWidget::dropFunc(item);});
-    itemMenu->addAction(drop.get());
+    itemMenu->addAction(close.get());
 }
 
 void InventoryWidget::invListUpdated() 

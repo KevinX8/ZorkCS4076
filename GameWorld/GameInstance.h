@@ -9,7 +9,13 @@
 #include <string>
 #include "../QTGUI/mainWindow.h"
 
-class GameInstance {
+namespace QTGui {
+    class GameInstance;
+}
+
+using namespace QTGui;
+
+class QTGui::GameInstance {
     private:
         Player player;
         Floor* floor;
@@ -32,7 +38,6 @@ class GameInstance {
         void changeFloor(bool up);
         void changeRoom(Door& d);
         void useKey(Door& d);
-        void useKiosk(int toUpgrade);
         void interactNPC(shared_ptr<NPC> npc);
         void interactRoomItem(int itemCode);
         void interactDropPlayerInv(shared_ptr<Item> item);

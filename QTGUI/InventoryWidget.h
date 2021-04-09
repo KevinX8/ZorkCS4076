@@ -10,11 +10,22 @@
 #include <functional>
 #include <string>
 #include "../interaction/Player.h"
-class InventoryWidget : public QWidget {
+
+#define STRINGEND(type) + " 🎒" + sign(player.type->getInvSpace()) + to_string(player.type->getInvSpace())
+#define WEARABLESTRING(type) QString::fromStdString(player.type->getShortDescription() + " 🗣️" + sign(player.type->getCharisma()) + to_string(player.type->getCharisma()) + " ☘️" + to_string(player.type->getLuck()) + STRINGEND(type))
+
+namespace QTGui {
+    class InventoryWidget;
+}
+
+using namespace QTGui;
+
+class QTGui::InventoryWidget : public QWidget {
     Q_OBJECT
     private:
     Player& player;
     std::function<void(shared_ptr<Item>)> dropFunc;
+    inline string sign(int x);
     unique_ptr<QMenu> wearableWeaponSubMenu;
     unique_ptr<QMenu> itemMenu;
     unique_ptr<QAction> use;

@@ -1,11 +1,15 @@
 #ifndef HUMAN_H_
 #define HUMAN_H_
 #include <vector>
+#include <cmath>
 using namespace std;
 #include "NPC.h"
 #include "../DialogueOption.h"
 
-
+union strengthItem {
+    int strength;
+    int itemCode: 5;
+};
 
 class Human : public NPC {
     private:

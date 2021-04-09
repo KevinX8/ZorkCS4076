@@ -20,8 +20,8 @@ const unordered_map<short,string> Human::usefulInfoMap = {
    {6, " likes "}
 };
 
-Human::Human(int floorNumber, const short key, bool inventoryEmpty): baseOption(DialogueOption<string>("", ("How can I help you?"), {option1, option2, option3, option4})){
-    this->key = key;
+Human::Human(int floorNumber, const short k, bool inventoryEmpty): baseOption(DialogueOption<string>("", ("How can I help you?"), {option1, option2, option3, option4})){
+    this->key = k;
     this->charisma = (floorNumber + STARTING_ATRRIBUTE_POINTS) * (1-(strengthCharismaRatio.at(key)));
     this->strength = (floorNumber + STARTING_ATRRIBUTE_POINTS) * strengthCharismaRatio.at(key);
     this->usefulInfo = usefulInfoMap.at(key);
@@ -31,13 +31,14 @@ Human::Human(int floorNumber, const short key, bool inventoryEmpty): baseOption(
 }
 
 bool Human::fight(Player &p){
-    int combinedStrength = this->strength + p.getStrength();
-    if(rand() % combinedStrength >= this->strength){
+    strengthItem si;
+    si.strength = this->strength + p.getStrength();
+    if(rand() % si.strength >= this->strength){
         return true;
     }else{
-        int item = p.takeRandomItem();
-        if(item >= 0){
-            inventoryItems.push_back(item);
+        si.itemCode = p.takeRandomItem();
+        if(si.itemCode >= 0){
+            inventoryItems.push_back(si.itemCode);
         }
         return false;
     }

@@ -20,6 +20,10 @@ short Wearable::getInvSpace() {
     return wearableMods.invSpace;
 }
 
+short Wearable::getLuck() {
+    return wearableMods.luck;
+}
+
 array<int,4> Wearable::modifiers() {
     std::array<int,4> mods = {0, wearableMods.charisma, 0, wearableMods.invSpace};
     return mods;

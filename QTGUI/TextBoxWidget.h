@@ -6,9 +6,13 @@
 
 using namespace std;
 
-class GameInstance;
+namespace QTGui {
+    class TextBoxWidget;
+}
 
-class TextBoxWidget : public QWidget {
+using namespace QTGui;
+
+class QTGui::TextBoxWidget : public QWidget {
     Q_OBJECT
     private:
     unique_ptr<QPushButton> button1;
@@ -19,7 +23,7 @@ class TextBoxWidget : public QWidget {
     std::function<void()> funcBox2 = [](){return;};
     std::function<void()> funcBox3 = [](){return;};
     std::function<void()> funcBox4 = [](){return;};
-    friend GameInstance;
+    friend class GameInstance;
     public:
     unique_ptr<QLabel> textBox;
     TextBoxWidget(QString text, vector<QString> interactionBoxes);

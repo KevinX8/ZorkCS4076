@@ -15,10 +15,15 @@
 
 using namespace std;
 
+namespace QTGui {
+    class InventoryWidget;
+    class GameInstance;
+}
+
 class Player {
     private:
-        friend class GameInstance;
-        friend class InventoryWidget;
+        friend class QTGui::GameInstance;
+        friend class QTGui::InventoryWidget;
         vector<shared_ptr<Item>> inventory;
         unsigned int inventorySpace;
         shared_ptr<Weapon> activeWeapon;
@@ -37,7 +42,7 @@ class Player {
         void unequip(int slot);
         void addItem(int key);
         int takeRandomItem();
-        void takeItem(int i);
+        int takeItem(int i);
         bool canMove();
         template<typename T>
         static int byteHexStringToInt(T first,T second);

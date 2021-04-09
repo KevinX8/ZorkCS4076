@@ -17,14 +17,14 @@ struct Door {
     bool vertical;
 	bool locked;
     int roomIndex;
-	Door(const Door& d) {
+	Door(const Door& d) { //deep opy
 		doorLocation = d.doorLocation;
 		vertical = d.vertical;
 		locked = d.locked;
 		roomIndex = d.roomIndex;
 	}
 	Door(){
-		
+
 	}
 };
 
@@ -48,7 +48,6 @@ public:
 	Room(unordered_set <int> cells = {});
     void addItem(int i);
     void removeItemFromRoom(int location);
-	int* upgradeStats(short statToUpgrade);
 	bool getKiosk();
 	int getKey();
 	bool cellInRoom(Coordinate c);
@@ -61,6 +60,8 @@ public:
     shared_ptr<NPC> addNPC(int key, int floorNumber, bool emptyNPC = false);
     vector<shared_ptr<NPC>> &getNPCs();
 	void giveLadder(bool up);
+	void removeKiosk();
+    void removeNPC(shared_ptr<NPC>);
 };
 
 #endif

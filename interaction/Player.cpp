@@ -17,6 +17,9 @@ int Player::byteHexStringToInt(T first,T second) {
 Player::Player(){
     this->inventorySpace = space;
     this->inventory = vector<shared_ptr<Item>>();
+    this->luck = 2;
+    this->strength = 1;
+    this->charisma = 1;
 }
 
 Player::Player(string playerToken){
@@ -66,13 +69,16 @@ int Player::takeRandomItem(){
     }
 }
 
-void Player::takeItem(int item){    
+int Player::takeItem(int item){
+    int index = 0;
     for(auto it = inventory.begin(); it != inventory.end(); ++it){
         if((*it)->hashCode == item){
             inventory.erase(it);
-            return;
+            return index;
         }
+        index++;
     }
+    return -1;
 }
 
 void Player::changeParams(int params[], bool equip) {
@@ -104,8 +110,9 @@ bool Player::equip(shared_ptr<Item> item, int slot){
     std::array<int,4> modifiers;
     switch(slot){
         case(0):{
-            if(shared_ptr<Weapon> weapon = dynamic_pointer_cast<Weapon>(item)){
+            if(item->hashCode >= NUM_STD_ITEMS){
                 if (!activeWeapon) {
+                    shared_ptr<Weapon> weapon = shared_ptr<Weapon>(new Weapon(item->hashCode));
                     activeWeapon = weapon;
                     copy(modifiers.begin(), modifiers.end(),weapon->modifiers().begin());
                 }
@@ -113,7 +120,8 @@ bool Player::equip(shared_ptr<Item> item, int slot){
             return true;
         }
         case(1):{
-            if(shared_ptr<Wearable> wearable = dynamic_pointer_cast<Wearable>(item)){
+            if(item->hashCode >= NUM_STD_ITEMS+ NUM_WEAPONS){
+                auto wearable = shared_ptr<Wearable>(new Wearable(item->hashCode));
                 if (!activeWearable1) {
                     activeWearable1 = wearable;
                     copy(modifiers.begin(), modifiers.end(),wearable->modifiers().begin());
@@ -127,7 +135,8 @@ bool Player::equip(shared_ptr<Item> item, int slot){
             return true;
         }
         case(2):{
-            if(shared_ptr<Wearable> wearable = dynamic_pointer_cast<Wearable>(item)){
+            if(item->hashCode >= NUM_STD_ITEMS+ NUM_WEAPONS){
+                auto wearable = shared_ptr<Wearable>(new Wearable(item->hashCode));
                 if (!activeWearable2) {
                     activeWearable2 = wearable;
                     copy(modifiers.begin(), modifiers.end(),wearable->modifiers().begin());
@@ -143,5 +152,9 @@ bool Player::equip(shared_ptr<Item> item, int slot){
 
 void Player::unequip(int slot) 
 {
-    
+    switch (slot) {
+    case 0: activeWeapon.reset();break;
+    case 1: activeWearable1.reset();break;
+    case 2: activeWearable2.reset();break;
+    }
 }

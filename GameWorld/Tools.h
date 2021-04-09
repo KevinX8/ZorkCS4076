@@ -10,6 +10,11 @@ using namespace std;
 struct Coordinate {
     int x;
     int y;
+    Coordinate(const Coordinate& c) { //shallow copy
+        *this = c;
+    }
+    Coordinate() {
+    }
 };
 struct Wall {
     unsigned int right : 2;

@@ -13,7 +13,13 @@
 
 using namespace std;
 
-class RoomItemWidget : public QWidget {
+namespace QTGui {
+    class RoomItemWidget;
+}
+
+using namespace QTGui;
+
+class QTGui::RoomItemWidget : public QWidget {
     Q_OBJECT
     private:
     unique_ptr<QLabel> roomItemsLabel;

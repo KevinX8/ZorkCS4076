@@ -71,8 +71,8 @@ Floor::Floor(int number, int seed, bool previouslyGenerated){
     this->seed = seed; //for Unit test
     this->number = number;
     srand(seed+number);
-    Tools::width = (rand() % 4) + 7;
-    height = (rand() % 4) + 7;
+    Tools::width = (rand() % 4) + 15;
+    height = (rand() % 3) + 7;
     vector<int> floorCells;
     //vector<vector<Wall>> *tempConnections* = new vector<;
     connections.resize(height);
@@ -294,7 +294,7 @@ void Floor::generateNPCs(int floorNumber){
     for(int i = 0; i< numberOfNPCs; i++){
         vector<Room>::iterator it;
         it = rooms.begin() + (int)(rand() % rooms.size());
-        int key = rand() % NUM_NPCS;
+        int key = rand() % NUM_HUMANS;
         if(it->getNPCs().size() + 1 < it->getCells().size()){
             it->addNPC(key, floorNumber);
         }else{

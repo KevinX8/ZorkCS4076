@@ -39,9 +39,15 @@
 #define TEXTBOX_Y INV_Y //should be the same as INV_Y maybe?
 #define TEXTBOX_W PLAYERINV_X - INV_W -10
 #define TEXTBOX_H INV_H //should be same as INV_H probably
-//horizontal centre align text and add autofill background
+//horizontal centre align text and add autofill
 
-class MainWindow : public QMainWindow {
+namespace QTGui {
+    class MainWindow;
+}
+
+using namespace QTGui;
+
+class QTGui::MainWindow : public QMainWindow {
   Q_OBJECT
   private:
     friend class GameInstance;

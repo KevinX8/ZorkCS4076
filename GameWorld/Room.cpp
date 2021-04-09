@@ -94,11 +94,15 @@ bool Room::containsDownLadder(){
     return hasDownLadder;
 }
 
-
-int* Room::upgradeStats(short statToUpgrade) {
-//strength charisma luck invSpace
-    int params[4] = {0,0,0,0};
-    params[statToUpgrade] = 1;
+void Room::removeKiosk(){
     hasKiosk = false;
-    return params;
+}
+
+void Room::removeNPC(shared_ptr<NPC> npc){
+    for(auto it = npcsInRoom.begin(); it != npcsInRoom.end(); ++it){
+        if((*it) == npc){
+            npcsInRoom.erase(it);
+            break;
+        }
+    }
 }
