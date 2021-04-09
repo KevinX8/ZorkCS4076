@@ -38,8 +38,14 @@ void RoomItemWidget::setItemInteraction(int index)
 void RoomItemWidget::listUpdated()
 {
     for (int i=0;i < listWidget->count();i++) {
+        disconnect(pickup.get());
         if (listWidget->item(i)->isSelected()) {
             setItemInteraction(i);
         }
     }
+}
+
+QTGui::RoomItemWidget::~RoomItemWidget() 
+{
+    delete(listWidget);
 }

@@ -63,6 +63,12 @@ void InventoryWidget::updateInventory(int index)
     }
 }
 
+QTGui::InventoryWidget::~InventoryWidget() 
+{
+    delete(rightEquipmentList);
+    delete(rightInventoryList);
+}
+
 void InventoryWidget::changeDisplay()
 {
     if (rightInventoryList->isHidden()) {
@@ -80,6 +86,11 @@ void InventoryWidget::unEquip(int type)
 //Don't shift equipment up to avoid shifting all data structures related to it
 {
     player.unequip(type);
+    switch (type) {
+        case 0: rightInventoryList->addItem(QString::fromStdString(player.activeWeapon->getShortDescription())); break;
+        case 1: rightInventoryList->addItem(QString::fromStdString(player.activeWearable1->getShortDescription())); break;
+        case 2: rightInventoryList->addItem(QString::fromStdString(player.activeWearable2->getShortDescription())); break;
+    }
     delete(rightEquipmentList->takeItem(type));
 }
 
@@ -142,10 +153,10 @@ void InventoryWidget::equListUpdated()
 {
     for (int i=0; i < rightEquipmentList->count();i++) {
         if (rightEquipmentList->item(i)->isSelected()) {
-                unique_ptr<QAction> unEquipAct = unique_ptr<QAction>(new QAction("Unequip",this));
-                connect(unEquipAct.get(),&QAction::triggered,itemMenu.get(),[this,i](){unEquip(i);});
+                QAction* unEquipAct = new QAction("Unequip",this);
+                connect(unEquipAct,&QAction::triggered,itemMenu.get(),[this,i](){this->unEquip(i);});
                 itemMenu->clear();
-                itemMenu->addAction(unEquipAct.get());
+                itemMenu->addAction(unEquipAct);
                 itemMenu->addAction(close.get());
                 itemMenu->popup(QCursor::pos());
         }

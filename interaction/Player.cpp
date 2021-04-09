@@ -153,8 +153,8 @@ bool Player::equip(shared_ptr<Item> item, int slot){
 void Player::unequip(int slot) 
 {
     switch (slot) {
-    case 0: activeWeapon.reset();break;
-    case 1: activeWearable1.reset();break;
-    case 2: activeWearable2.reset();break;
+    case 0: addItem(activeWeapon->hashCode); activeWeapon.reset();break;
+    case 1: addItem(activeWearable1->hashCode);activeWearable1.reset();break;
+    case 2: addItem(activeWearable2->hashCode);activeWearable2.reset(); break;
     }
 }

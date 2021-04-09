@@ -270,3 +270,8 @@ void GameInstance::interactDropPlayerInv(shared_ptr<Item> item) //find item in p
     gui->inv->updateInventory(itemIndex);
     gui->inv->updateStats();
 }
+
+QTGui::GameInstance::~GameInstance() 
+{
+    delete(floor);
+}
