@@ -30,7 +30,10 @@ int Floor::byteHexStringToInt(T first,T second) {
     string number = "";
     ss << first;
     ss << second;
-    ss << std::hex << ss.str();
+    string temp;
+    ss >> temp;
+    ss.clear();
+    ss << std::hex << temp;
     ss >> number;
     return stoi(number);
 }
@@ -103,18 +106,21 @@ Floor::Floor(int number, int seed, bool previouslyGenerated){
     generateLadders(number == 0);
     if (DEBUG && !previouslyGenerated) {
     qDebug() << roomsUnitTest();
-    //floorHexUnitTest();
+    floorHexUnitTest();
     }
 }
 
-Floor::Floor(int number,int seed, string floorToken) {
-    Floor(number,seed,true);
+Floor::Floor(int number,int seed, string floorToken) : Floor(number,seed,true) {
     vector<int> hexOut;
     for (auto it = floorToken.begin(); it != floorToken.end();it+=2) {
         hexOut.insert(hexOut.begin(),byteHexStringToInt(*it,*(it+1)));
     }
     int count = 0;
-    for (Room& room : rooms) {       
+    for (Room& room : rooms) {
+        if (hexOut.size() <= 0) {
+            qDebug() << "Oh noes the hex string ran out but the rooms didn't";
+            return;
+        }
         //bool visited = (NEXT_HEX != 0); // does nothing at the moment
         int numItemsInRoom = hexOut.back();
         hexOut.pop_back();
