@@ -49,7 +49,7 @@ void GameInstance::changeFloor(bool up){
         try{
             string token = gameState.readFloor(floorNumber);
             floor = new Floor(seed, floorNumber, token);
-        }catch(FloorFileException f){
+        }catch(FloorFileException &f){
             floor = new Floor(floorNumber, seed);
         }
     }else{

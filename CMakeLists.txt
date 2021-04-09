@@ -41,6 +41,8 @@ set(PROJECT_SOURCES
         ${QTGUISOURCES}
 )
 
+set (CMAKE_CXX_FLAGS "-Wall -Wextra")
+
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(ZorkUI
         ${PROJECT_SOURCES}

@@ -1,6 +1,5 @@
 #include "Floor.h"
 
-#define NEXT_HEX byteHexStringToInt(Tools::nextChar(floorToken, offset),Tools::nextChar(floorToken, offset))
 #define DEBUG true
 
 using namespace std;
@@ -108,30 +107,39 @@ Floor::Floor(int number, int seed, bool previouslyGenerated){
     }
 }
 
-//USE A UNION HERE
 Floor::Floor(int number,int seed, string floorToken) {
     Floor(number,seed,true);
-    int *offset = 0;
+    vector<int> hexOut;
+    for (auto it = floorToken.begin(); it != floorToken.end();it+=2) {
+        hexOut.insert(hexOut.begin(),byteHexStringToInt(*it,*(it+1)));
+    }
     int count = 0;
     for (Room& room : rooms) {       
         //bool visited = (NEXT_HEX != 0); // does nothing at the moment
-        int numItemsInRoom = NEXT_HEX;
+        int numItemsInRoom = hexOut.back();
+        hexOut.pop_back();
         for (int i =0; i < numItemsInRoom; ++i) { //add items to the room
-            room.addItem(NEXT_HEX);
+            room.addItem(hexOut.back());
+            hexOut.pop_back();
         }
-        int numNPCsInRoom = NEXT_HEX;
+        int numNPCsInRoom = hexOut.back();
+        hexOut.pop_back();
         for (int i =0; i < numNPCsInRoom; ++i) {
             
-            shared_ptr<NPC> npc = room.addNPC(NEXT_HEX,number, true);
-            int numItems = NEXT_HEX;
+            shared_ptr<NPC> npc = room.addNPC(hexOut.back(),number, true);
+            hexOut.pop_back();
+            int numItems = hexOut.back();
+            hexOut.pop_back();
             for (int j=0; j < numItems; ++j) {
-                npc->addItem(NEXT_HEX);
+                npc->addItem(hexOut.back());
+                hexOut.pop_back();
             }
         }
-        if(NEXT_HEX){//door is locked in room
+        if(hexOut.back()){//door is locked in room
             Door& d = getOuterLockedDoor(count);
             lockDoor(d);
         }
+        hexOut.pop_back();
         count++;
     }
 }
@@ -282,7 +290,7 @@ void Floor::generateDoors(){
         }
         connectRooms(innerRoom, outerRoom, innerCell, outerCell);
         count--;
-        } catch (GetRoomException e) {
+        } catch (GetRoomException &e) {
             continue;
         }
     }    

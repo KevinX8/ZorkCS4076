@@ -38,6 +38,5 @@ class Tools
         static Coordinate getKeyCoordinate(int key);
         Tools() {};
         static string intToByteHexString(int i);
-        static char nextChar(string s, int *i); 
 };
 #endif

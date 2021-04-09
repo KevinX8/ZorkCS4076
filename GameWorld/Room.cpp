@@ -68,6 +68,7 @@ shared_ptr<NPC> Room::addNPC(int NPCKey, int floorNumber, bool emptyNPC){
         npcsInRoom.push_back(npc);
         return npc;
     }
+    throw std::bad_exception();
 }
 
 vector<shared_ptr<NPC>> &Room::getNPCs(){

@@ -7,7 +7,7 @@
 #include <ctime>
 #include <functional>
 #include <string>
-#include "../QTGUI/mainWindow.h"
+#include "../QTGUI/MainWindow.h"
 
 namespace QTGui {
     class GameInstance;
