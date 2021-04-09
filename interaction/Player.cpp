@@ -1,7 +1,6 @@
 #include "Player.h"
 
 #define space 20
-#define NEXT_HEX byteHexStringToInt(Tools::nextChar(playerToken, offset),Tools::nextChar(playerToken, offset))
 
 template<typename T>
 int Player::byteHexStringToInt(T first,T second) {
@@ -23,13 +22,21 @@ Player::Player(){
 }
 
 Player::Player(string playerToken){
-    int *offset = 0;
-    for (int item=0; item < NEXT_HEX; item++) {
-        inventory.push_back(shared_ptr<Item>(new Item(NEXT_HEX)));
+    vector<int> hexOut;
+    for (auto it = playerToken.begin(); it != playerToken.end();it+=2) {
+        hexOut.insert(hexOut.begin(),byteHexStringToInt(*it,*(it+1)));
     }
-    this->equip(shared_ptr<Item>(new Item(NEXT_HEX)), 0);
-    this->equip(shared_ptr<Item>(new Item(NEXT_HEX)), 1);
-    this->equip(shared_ptr<Item>(new Item(NEXT_HEX)), 2);
+    int noItems = hexOut.back();
+    hexOut.pop_back();
+    for (int item=0; item < noItems; item++) {
+        inventory.push_back(shared_ptr<Item>(new Item(hexOut.back())));
+        hexOut.pop_back();
+    }
+    this->equip(shared_ptr<Item>(new Item(hexOut.back())), 0);
+    hexOut.pop_back();
+    this->equip(shared_ptr<Item>(new Item(hexOut.back())), 1);
+    hexOut.pop_back();
+    this->equip(shared_ptr<Item>(new Item(hexOut.back())), 2);
 }
 
 int Player::getLuck(){
@@ -153,8 +160,8 @@ bool Player::equip(shared_ptr<Item> item, int slot){
 void Player::unequip(int slot) 
 {
     switch (slot) {
-    case 0: activeWeapon.reset();break;
-    case 1: activeWearable1.reset();break;
-    case 2: activeWearable2.reset();break;
+    case 0: addItem(activeWeapon->hashCode); activeWeapon.reset();break;
+    case 1: addItem(activeWearable1->hashCode);activeWearable1.reset();break;
+    case 2: addItem(activeWearable2->hashCode);activeWearable2.reset(); break;
     }
 }

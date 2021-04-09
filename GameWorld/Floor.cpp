@@ -1,6 +1,5 @@
 #include "Floor.h"
 
-#define NEXT_HEX byteHexStringToInt(Tools::nextChar(floorToken, offset),Tools::nextChar(floorToken, offset))
 #define DEBUG true
 
 using namespace std;
@@ -31,7 +30,10 @@ int Floor::byteHexStringToInt(T first,T second) {
     string number = "";
     ss << first;
     ss << second;
-    ss << std::hex << ss.str();
+    string temp;
+    ss >> temp;
+    ss.clear();
+    ss << std::hex << temp;
     ss >> number;
     return stoi(number);
 }
@@ -58,11 +60,19 @@ void Floor::floorHexUnitTest()
 {
     string firstToken = floorToken();
     Floor testFloor = Floor(number,seed,firstToken);
+    Floor consistencyTestFloor = Floor(number,seed);
     string secondToken = testFloor.floorToken();
-    if (firstToken.compare(secondToken) == 0) {
-        qDebug() << "Tokens are consistent";
+    string consistencyToken = consistencyTestFloor.floorToken();
+    if (firstToken.compare(consistencyToken) == 0) {
+        qDebug() << "Basic Tokens are consistent";
     } else {
-        QString result = "Tokens are inconsistent, token 1: " + QString::fromStdString(firstToken) + " token 2: " + QString::fromStdString(secondToken);
+        QString result = "Basic Tokens are inconsistent, token 1: " + QString::fromStdString(firstToken) + " token 2: " + QString::fromStdString(consistencyToken);
+        qDebug() << result;
+    }
+   if (firstToken.compare(secondToken) == 0) {
+        qDebug() << "Hex Tokens are consistent";
+    } else {
+        QString result = "Hex Tokens are inconsistent, token 1: " + QString::fromStdString(firstToken) + " token 2: " + QString::fromStdString(secondToken);
         qDebug() << result;
     }
 }
@@ -104,59 +114,83 @@ Floor::Floor(int number, int seed, bool previouslyGenerated){
     generateLadders(number == 0);
     if (DEBUG && !previouslyGenerated) {
     qDebug() << roomsUnitTest();
-    //floorHexUnitTest();
     }
 }
 
-//USE A UNION HERE
-Floor::Floor(int number,int seed, string floorToken) {
-    Floor(number,seed,true);
-    int *offset = 0;
+Floor::Floor(int number,int seed, string floorToken) : Floor(number,seed,true) {
+    vector<int> hexOut;
+    stringstream sstream;
+    for (auto it = floorToken.begin(); it != floorToken.end();it+=2) {
+        hexOut.insert(hexOut.begin(),byteHexStringToInt(*it,*(it+1)));
+    }
+    for (int i : hexOut) {
+        sstream << i;
+    }
+    qDebug() << QString::fromStdString(sstream.str()) << " after decoding";
     int count = 0;
-    for (Room& room : rooms) {       
-        //bool visited = (NEXT_HEX != 0); // does nothing at the moment
-        int numItemsInRoom = NEXT_HEX;
-        for (int i =0; i < numItemsInRoom; ++i) { //add items to the room
-            room.addItem(NEXT_HEX);
+    for (Room& room : rooms) {
+        if (hexOut.size() <= 0) {
+            qDebug() << "Oh noes the hex string ran out but the rooms didn't";
+            return;
         }
-        int numNPCsInRoom = NEXT_HEX;
+        //bool visited = (NEXT_HEX != 0); // does nothing at the moment
+        int numItemsInRoom = hexOut.back();
+        hexOut.pop_back();
+        for (int i =0; i < numItemsInRoom; ++i) { //add items to the room
+            room.addItem(hexOut.back());
+            hexOut.pop_back();
+        }
+        int numNPCsInRoom = hexOut.back();
+        hexOut.pop_back();
         for (int i =0; i < numNPCsInRoom; ++i) {
             
-            shared_ptr<NPC> npc = room.addNPC(NEXT_HEX,number, true);
-            int numItems = NEXT_HEX;
+            shared_ptr<NPC> npc = room.addNPC(hexOut.back(),number, true);
+            hexOut.pop_back();
+            int numItems = hexOut.back();
+            hexOut.pop_back();
             for (int j=0; j < numItems; ++j) {
-                npc->addItem(NEXT_HEX);
+                npc->addItem(hexOut.back());
+                hexOut.pop_back();
             }
         }
-        if(NEXT_HEX){//door is locked in room
+        if(hexOut.back()){//door is locked in room
             Door& d = getOuterLockedDoor(count);
             lockDoor(d);
         }
+        hexOut.pop_back();
         count++;
     }
 }
 
 string Floor::floorToken() {
     stringstream sstream;
+    stringstream instream;
     string token = "";
     int count = 0;
-    for (Room room : rooms) {
+    for (Room& room : rooms) {
         //sstream << room.visited();
         sstream << Tools::intToByteHexString(room.itemsInRoom.size());
+        instream << room.itemsInRoom.size();
         for (int items : room.itemsInRoom) {
             sstream << Tools::intToByteHexString(items);
+            instream << items;
         }
         sstream << Tools::intToByteHexString(room.npcsInRoom.size());
+        instream << room.npcsInRoom.size();
         for (shared_ptr<NPC> npc : room.getNPCs()) {
             sstream << Tools::intToByteHexString(npc->getCode());
+            instream << npc->getCode();
             for (int items : npc->getInventory()) {
                 sstream << Tools::intToByteHexString(items);
+                instream << items;
             }
         }
         sstream << Tools::intToByteHexString(getOuterLockedDoor(count).locked);
+        instream << getOuterLockedDoor(count).locked;
         count++;
     }
     sstream >> token;
+    qDebug() << QString::fromStdString(instream.str()) << " before encoding";
     return token;
 }
 
@@ -282,7 +316,7 @@ void Floor::generateDoors(){
         }
         connectRooms(innerRoom, outerRoom, innerCell, outerCell);
         count--;
-        } catch (GetRoomException e) {
+        } catch (GetRoomException &e) {
             continue;
         }
     }    

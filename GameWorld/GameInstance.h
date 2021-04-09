@@ -7,7 +7,7 @@
 #include <ctime>
 #include <functional>
 #include <string>
-#include "../QTGUI/mainWindow.h"
+#include "../QTGUI/MainWindow.h"
 
 namespace QTGui {
     class GameInstance;
@@ -36,6 +36,7 @@ class QTGui::GameInstance {
     public:
         void resetButtons();
         GameInstance(bool loadGame = false, int seed = time(nullptr));
+        ~GameInstance();
         void changeFloor(bool up);
         void changeRoom(Door& d);
         void useKey(Door& d);

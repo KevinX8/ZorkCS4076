@@ -16,6 +16,7 @@ GameInstance::GameInstance(bool loadGame, int seed) {
         this-> player = Player();
         this-> floorNumber = 0;
         this-> floor = new Floor(0, seed);
+        //floor->floorHexUnitTest();
         File::deleteSaves();
     }
     setGUI();
@@ -278,4 +279,9 @@ void GameInstance::interactDropPlayerInv(shared_ptr<Item> item) //find item in p
     gui->room->updateItems(gui->map->current.getItems());
     gui->inv->updateInventory(itemIndex);
     gui->inv->updateStats();
+}
+
+QTGui::GameInstance::~GameInstance() 
+{
+    delete(floor);
 }

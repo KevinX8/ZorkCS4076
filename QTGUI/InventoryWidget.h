@@ -5,6 +5,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QListWidget>
+#include <QMouseEvent>
 #include <QWidget>
 #include <QPushButton>
 #include <functional>
@@ -43,6 +44,7 @@ class QTGui::InventoryWidget : public QWidget {
     QListWidget* rightInventoryList;
     QListWidget* rightEquipmentList;
     InventoryWidget(Player& player, std::function<void(shared_ptr<Item>)> dropFunc);
+    ~InventoryWidget();
     void updateStats();
     void updateEquipment(int type);
     void updateInventory(int index);

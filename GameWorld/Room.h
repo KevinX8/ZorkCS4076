@@ -6,8 +6,8 @@
 #include <vector>
 #include <unordered_set>
 #include <memory>
-#include "..\Interaction\Item\item.h"
-#include "..\Interaction\NPC\Human.h"
+#include "..\interaction\Item\item.h"
+#include "..\interaction\NPC\Human.h"
 #include "Tools.h"
 
 class Room;

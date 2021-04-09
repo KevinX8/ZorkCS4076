@@ -32,6 +32,7 @@ class QTGui::RoomItemWidget : public QWidget {
     public:
     QListWidget* listWidget;
     RoomItemWidget(vector<int> itemCodes, std::function<void(int)> roomItemFunc);
+    ~RoomItemWidget();
     void updateItems(vector<int> itemCodes);
 };
 

@@ -10,7 +10,7 @@ File::File(QString filePath,int gameSeed) {
     saveFile.open(filePath.toStdString() + "game.dat", std::ios::out | std::ios::app);
     saveFile.close();
     saveFile.open(filePath.toStdString() + "game.dat", std::ios::in | std::ios::out | std::ios::app);
-    } catch (std::ifstream::failure e) {
+    } catch (std::ifstream::failure &e) {
         qDebug() << "Exception opening file\n";
     }
     int line = 0;
@@ -38,7 +38,7 @@ string File::readFloor(int floorNumber) {
     string saveObject;
     try {
         saveFile.open(filePath + to_string(floorNumber) + ".dat" , std::ios::in | std::ios::out | std::ios::app);
-    } catch (std::ifstream::failure e) {
+    } catch (std::ifstream::failure &e) {
         throw FloorFileException();
     }
     while (getline (saveFile, saveObject)) {

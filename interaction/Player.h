@@ -6,9 +6,9 @@
 #include <sstream>
 #include <array>
 #include <memory>
-#include "item\Item.h"
-#include "item\Weapon.h"
-#include "item\Wearable.h"
+#include "Item\item.h"
+#include "Item\Weapon.h"
+#include "Item\Wearable.h"
 #include "..\GameWorld\Tools.h"
 
 #define STARTING_ATRRIBUTE_POINTS 4

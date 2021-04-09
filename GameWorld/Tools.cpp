@@ -27,9 +27,3 @@ string Tools::intToByteHexString(int i){
     ss >> number;
     return number;
 }
-
-char Tools::nextChar(string s, int *i) {
-    char& val = s.at(*i);
-    ++*i;
-    return val;
-}

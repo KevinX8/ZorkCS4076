@@ -13,11 +13,12 @@
 #include <iterator>
 #include<QDebug>
 #include "Room.h"
-#include "../Interaction/item/item.h"
+#include "../interaction/Item/item.h"
+
+#define MAX_DIMENSION 15
+#define MIN_DIMENSION 5
 
 using namespace std;
-#define MAX_DIMENSION 15;
-#define MIN_DIMENSION 5;
 
 struct LockedDoorException : public std::exception
 {
