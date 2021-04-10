@@ -41,7 +41,7 @@ class Player {
         bool equip(shared_ptr<Item> item, int slot);
         void unequip(int slot);
         void addItem(int key);
-        int takeRandomItem();
+        Coordinate takeRandomItem();
         int takeItem(int i);
         bool canMove();
         template<typename T>

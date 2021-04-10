@@ -223,9 +223,20 @@ void GameInstance::spareOrKill(shared_ptr<NPC> npc, bool spare){
 }
 
 void GameInstance::askInfoNPC(shared_ptr<Human> h){
-    QString info = QString::fromStdString(h->askInfo(player));
+    int code = h->askInfo(player);
+    QString info;
+    if(code == -2){
+        info = QString::fromStdString( h->usefulInfo);
+    }else if(code == -1){
+        string text = "You failed to persuade " + h->getName() + ".";
+        info = QString::fromStdString(text);
+    }else{
+        string text = "You failed to persuade " + h->getName() + ". " + h->getName() + " took one of your items!";
+        info = QString::fromStdString(text);
+        gui->inv->updateStats();
+        gui->inv->updateInventory(code);
+    }
     gui->text->updateTextBox(info);
-    gui->inv->updateStats();
 }
 
 void GameInstance::giveNPCItem(shared_ptr<NPC> npc){   

@@ -32,14 +32,13 @@ class Human : public NPC {
         friend class NPC;
         int strength;
         int charisma;
-        string usefulInfo;
         short key;
     public:
         const DialogueOption<string> baseOption;
         Human(int FloorNumber, const short key, bool inventoryEmpty = false);
         ~Human();
         bool fight(Player &p);
-        string askInfo(Player &p);
+        int askInfo(Player &p);
         DialogueOption<string> converse(DialogueOption<string>, int subOption = -1);
         string spareOrKill(bool spare, Player &p);
         int getSpareItem();
@@ -54,5 +53,6 @@ class Human : public NPC {
         const static unordered_map<short,double> strengthCharismaRatio;
         vector<int> getInventory();
         string getName();
+        string usefulInfo;
 };
 #endif /*HUMAN_H_*/

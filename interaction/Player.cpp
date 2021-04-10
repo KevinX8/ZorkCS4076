@@ -67,15 +67,19 @@ void Player::addItem(int item){
     }
 }
 
-int Player::takeRandomItem(){
+Coordinate Player::takeRandomItem(){
+    Coordinate c;
+    c.x = -1;
+    c.y = -1;
     if(inventory.size() > 0){
-        auto it = inventory.begin() + (int)(rand() % inventory.size());
+        int index = (int)(rand() % inventory.size());
+        auto it = inventory.begin() + index;
         int item = (*it)->hashCode;
         inventory.erase(it);
-        return item;
-    }else{
-        return -1;
+        c.x = item;
+        c.y = index;
     }
+    return c;
 }
 
 int Player::takeItem(int item){
