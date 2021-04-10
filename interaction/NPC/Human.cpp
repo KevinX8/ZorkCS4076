@@ -22,6 +22,7 @@ const unordered_map<short,string> Human::usefulInfoMap = {
 
 Human::Human(int floorNumber, const short k, bool inventoryEmpty): baseOption(DialogueOption<string>("", ("How can I help you?"), {option1, option2, option3, option4})){
     this->key = k;
+    this->hasKey = false;
     this->charisma = (floorNumber + STARTING_ATRRIBUTE_POINTS) * (1-(strengthCharismaRatio.at(key)));
     this->strength = (floorNumber + STARTING_ATRRIBUTE_POINTS) * strengthCharismaRatio.at(key);
     this->usefulInfo = usefulInfoMap.at(key);
@@ -51,7 +52,7 @@ string Human::spareOrKill(bool spare, Player &p){
             hasKey = false;
             return "Thanks for your mercy. Here is this key I found.";
         }else{
-            float itemValue = strengthCharismaRatio.at(key) * (p.getLuck() / (this->strength + this->charisma)) * Item::itemRarity.size();
+            float itemValue = strengthCharismaRatio.at(key) * (p.getLuck() / (this->strength + this->charisma)) * (Item::itemRarity.size()-1) + 1;
             vector<short> possibleItems = Item::itemRarity[itemValue];
             vector<short>::iterator it;
             it = possibleItems.begin() + (int)(rand() % possibleItems.size());

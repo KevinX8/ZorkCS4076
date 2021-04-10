@@ -25,9 +25,9 @@ using namespace QTGui;
 class QTGui::MapWidget : public QWidget{
     Q_OBJECT
 public:
-    MapWidget(int floorNumber, int startRoomIndex, Floor& f, Room& r, std::function<void(Door&)>& doorFunc, std::function<void(shared_ptr<NPC>)>& npcFunc, std::function<void()>& resetFunc, std::function<void(bool)>& floorFunc, QWidget *parent = 0);
+    MapWidget(int floorNumber, int startRoomIndex, Floor& f, Room& r, std::function<void(shared_ptr<Door>)>& doorFunc, std::function<void(shared_ptr<NPC>)>& npcFunc, std::function<void()>& resetFunc, std::function<void(bool)>& floorFunc, QWidget *parent = 0);
     void resetButtons();
-    void changeRoom(Room& room);
+    void changeRoom(int roomIndex);
     void removeNPC(shared_ptr<NPC> npc);
     int xOffset = 0;
 protected:
@@ -41,7 +41,7 @@ private:
     Floor& f;
     vector<shared_ptr<QPushButton>> npcButtons;
     vector<shared_ptr<QPushButton>> doorButtons;
-    std::function<void(Door&)> doorFunc;
+    std::function<void(shared_ptr<Door>)> doorFunc;
     std::function<void(shared_ptr<NPC>)> npcFunc;
     std::function<void()> resetFunc;
     std::function<void(bool)> floorFunc;

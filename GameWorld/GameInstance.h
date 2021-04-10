@@ -29,7 +29,7 @@ class QTGui::GameInstance {
         void giveNPCItem(shared_ptr<NPC> npc);
         void setNPCButtons(shared_ptr<NPC> npc);
         void spareOrKill(shared_ptr<NPC> npc, bool spare);
-        void unlockDoor(Door& d, shared_ptr<Item> key);
+        void unlockDoor(shared_ptr<Door> d);
         void startConvo(shared_ptr<NPC> npc);
         void chatNPC(shared_ptr<NPC> npc, DialogueOption<string> d);
         void setGUI();
@@ -38,8 +38,8 @@ class QTGui::GameInstance {
         GameInstance(bool loadGame = false, int seed = time(nullptr));
         ~GameInstance();
         void changeFloor(bool up);
-        void changeRoom(Door& d);
-        void useKey(Door& d);
+        void changeRoom(shared_ptr<Door> d);
+        void useKey(shared_ptr<Door> d);
         void interactNPC(shared_ptr<NPC> npc);
         void interactRoomItem(int itemCode);
         void interactDropPlayerInv(shared_ptr<Item> item);

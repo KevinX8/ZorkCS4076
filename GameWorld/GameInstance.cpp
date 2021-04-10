@@ -23,7 +23,7 @@ GameInstance::GameInstance(bool loadGame, int seed) {
 }
 
 void GameInstance::setGUI(){
-    std::function<void(Door&)> dRf = std::bind(&GameInstance::changeRoom,this,std::placeholders::_1);
+    std::function<void(shared_ptr<Door>)> dRf = std::bind(&GameInstance::changeRoom,this,std::placeholders::_1);
     std::function<void(shared_ptr<NPC>)> nRf = std::bind(&GameInstance::interactNPC,this,std::placeholders::_1);
     std::function<void()> rRf = std::bind(&GameInstance::resetButtons,this);
     std::function<void(bool)> cfRf = std::bind(&GameInstance::changeFloor,this,std::placeholders::_1);
@@ -32,7 +32,7 @@ void GameInstance::setGUI(){
     this-> playerRoomIndex = -1;
     for(Room r: floor->rooms){
         this->playerRoomIndex++;
-        if(r.getDoors().size() > 1){
+        if(r.getDoors().size() > 1 && !r.getKiosk()){
             break;
         }
     }
@@ -75,14 +75,14 @@ void GameInstance::changeFloor(bool up){
     }
 }
 
-void GameInstance::changeRoom(Door& d){
+void GameInstance::changeRoom(shared_ptr<Door> d){
     /*
     0: door was unlocked and room got changed,
     1: door was locked and player has key,
     2: door was locked and player does not have key
     */
     resetButtons();
-    if(d.locked){
+    if(d->locked){
         bool keyFound = false;
         for(shared_ptr<Item> item : player.inventory){
             if(item->hashCode == 0){
@@ -94,7 +94,7 @@ void GameInstance::changeRoom(Door& d){
                 options.push_back("");
                 gui->text->updateInteractions(options);
                 gui->text->enableButtons(2);
-                gui->text->funcBox1 = std::bind(&GameInstance::unlockDoor,this , d, item);
+                gui->text->funcBox1 = std::bind(&GameInstance::unlockDoor,this , d);
                 gui->text->funcBox2 = [&](){resetButtons();};
                 keyFound = true;
                 break;
@@ -106,9 +106,8 @@ void GameInstance::changeRoom(Door& d){
     }else{
         if(player.inventorySpace >= player.inventory.size()){
             resetButtons();
-            Room& r = floor->rooms.at(d.roomIndex);
-            gui->map->currentRoomIndex = d.roomIndex;
-            gui->map->changeRoom(r);
+            gui->map->changeRoom(d->roomIndex);
+            Room& r = gui->map->f.rooms.at(d->roomIndex);
             gui->room->updateItems(floor->rooms.at(gui->map->currentRoomIndex).getItems());
             if(r.getKiosk()){
                 gui->text->updateTextBox("You reached the end of the Floor! Choose an ability to upgrade:");
@@ -130,24 +129,27 @@ void GameInstance::changeRoom(Door& d){
     }
 }
 
-void GameInstance::unlockDoor(Door& d, shared_ptr<Item> key) {
+void GameInstance::unlockDoor(shared_ptr<Door> d) {
     resetButtons();
-    this->interactDropPlayerInv(key);
-    d.locked = false;
+    int index = player.takeItem(0);
+    d->locked = false;
     gui->map->resetButtons();
+    gui->inv->updateInventory(index);
+    gui->inv->updateStats();
+
 }
 
-void GameInstance::useKey(Door& d){
+void GameInstance::useKey(shared_ptr<Door> d){
     for(auto it = player.inventory.begin(); it < player.inventory.end(); it++){
         if((*it)->hashCode == 0){
             player.inventory.erase(it);
         }
     }
-    d.locked = false;
-    if(d.vertical){
-        floor->getConnections()[d.doorLocation.y][d.doorLocation.x].right = 2;
+    d->locked = false;
+    if(d->vertical){
+        floor->getConnections()[d->doorLocation.y][d->doorLocation.x].right = 2;
     }else{
-        floor->getConnections()[d.doorLocation.y][d.doorLocation.x].down = 2;
+        floor->getConnections()[d->doorLocation.y][d->doorLocation.x].down = 2;
     }
 }
 
@@ -180,6 +182,7 @@ void GameInstance::setNPCButtons(shared_ptr<NPC> npc){
 }
 
 void GameInstance::fightNPC(shared_ptr<NPC> npc){
+    bool wasEmpty = (player.inventory.size() == 0);
     if(npc->fight(player)){
         QString info = QString::fromStdString("You won the fight! Should you spare " + npc->getName() + "?");
         gui->text->updateTextBox(info);
@@ -193,7 +196,14 @@ void GameInstance::fightNPC(shared_ptr<NPC> npc){
         options.push_back("");
         gui->text->updateInteractions(options);
     }else{
-        QString info = QString::fromStdString("You lost the fight! ... " + npc->getName() + " took one of your items!");
+        QString info;
+        if(wasEmpty){
+            info = QString::fromStdString("You lost the fight! ... You're so poor that " + npc->getName() + " had nothing to steal!");
+        }else{
+            info = QString::fromStdString("You lost the fight! ... " + npc->getName() + " stole one of your items!");
+            gui->inv->updateStats();
+
+        }
         gui->text->updateTextBox(info);
         setNPCButtons(npc);
     }
@@ -202,6 +212,8 @@ void GameInstance::fightNPC(shared_ptr<NPC> npc){
 void GameInstance::spareOrKill(shared_ptr<NPC> npc, bool spare){
     QString info = QString::fromStdString(npc->spareOrKill(spare, player));
     gui->text->updateTextBox(info);
+    gui->inv->updateInventory(player.inventory.size()-1);
+    gui->inv->updateStats();
     if(spare){
         setNPCButtons(npc);
     }else{
@@ -213,6 +225,7 @@ void GameInstance::spareOrKill(shared_ptr<NPC> npc, bool spare){
 void GameInstance::askInfoNPC(shared_ptr<Human> h){
     QString info = QString::fromStdString(h->askInfo(player));
     gui->text->updateTextBox(info);
+    gui->inv->updateStats();
 }
 
 void GameInstance::giveNPCItem(shared_ptr<NPC> npc){   

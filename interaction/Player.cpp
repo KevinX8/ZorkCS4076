@@ -62,7 +62,9 @@ int Player::getCharisma(){
 }
 
 void Player::addItem(int item){
-    inventory.push_back(shared_ptr<Item>(new Item(item)));
+    if(inventory.size() < inventorySpace){
+        inventory.push_back(shared_ptr<Item>(new Item(item)));
+    }
 }
 
 int Player::takeRandomItem(){

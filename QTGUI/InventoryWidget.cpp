@@ -34,6 +34,7 @@ void InventoryWidget::updateStats()
 {
     QString stats = QString::fromStdString("⚔️ " + std::to_string(player.getStrength()) + " 🗣️ " + std::to_string(player.getCharisma()) + " ☘️ " + std::to_string(player.getLuck()) + " 🎒 " + std::to_string(player.inventory.size()) + "/" + std::to_string(player.inventorySpace));
     playerStats->setText(stats);
+    playerStats->resize(175,20);
 }
 
 inline string InventoryWidget::sign(int x) {

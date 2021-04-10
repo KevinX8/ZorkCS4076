@@ -42,12 +42,13 @@ vector<int> Room::getItems()
     return itemsInRoom;
 }
 
-vector<Door> &Room::getDoors(){{}
+vector<shared_ptr<Door>> &Room::getDoors(){{}
     return doorsInRoom;
 }
 
 void Room::addDoor(Door& door){
-    doorsInRoom.push_back(door);
+    shared_ptr<Door> dP = shared_ptr<Door>(new Door(door));
+    doorsInRoom.push_back(dP);
 }
 
 Room::operator int() {

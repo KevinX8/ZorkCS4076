@@ -3,8 +3,9 @@
 
 #define SCALE 75
 #define WALL_WIDTH 10
+#define CURRENT f.rooms.at(currentRoomIndex)
 
-MapWidget::MapWidget(int floorNumber, int startRoomIndex, Floor& floor, Room& r, std::function<void(Door&)>& dF, std::function<void(shared_ptr<NPC>)>& nF, std::function<void()>& rF, std::function<void(bool)>& cF, QWidget *parent) :QWidget(parent), current(r), f(floor){
+MapWidget::MapWidget(int floorNumber, int startRoomIndex, Floor& floor, Room& r, std::function<void(shared_ptr<Door>)>& dF, std::function<void(shared_ptr<NPC>)>& nF, std::function<void()>& rF, std::function<void(bool)>& cF, QWidget *parent) :QWidget(parent), current(r), f(floor){
     this->doorFunc = dF;
     this->npcFunc = nF;
     this->resetFunc = rF;
@@ -47,9 +48,9 @@ MapWidget::MapWidget(int floorNumber, int startRoomIndex, Floor& floor, Room& r,
 void MapWidget::resetButtons(){
     npcButtons.clear();
     doorButtons.clear();
-    unordered_set<int> openCells = current.getCells();
+    unordered_set<int> openCells = CURRENT.getCells();
     auto it = openCells.begin();
-    for(shared_ptr<NPC> n : current.getNPCs()){
+    for(shared_ptr<NPC> n : CURRENT.getNPCs()){
         Coordinate c = Tools::getKeyCoordinate((*it));
         it++;
         shared_ptr<QPushButton> button = (n->getCode() < NUM_HUMANS)? shared_ptr<QPushButton>(new QPushButton("👤", this)): shared_ptr<QPushButton>(new QPushButton("🐕", this));
@@ -58,7 +59,7 @@ void MapWidget::resetButtons(){
         npcButtons.push_back(button);
         button->show();
     }
-    bool hasUp = current.containsUpLadder();
+    bool hasUp = CURRENT.containsUpLadder();
     bool hasDown = false;
     if(hasUp || hasDown){
         QString icon = (hasUp)? "⬆️" : "⬇️";
@@ -69,12 +70,12 @@ void MapWidget::resetButtons(){
         npcButtons.push_back(button);
         button->show();
     }
-    for(Door& d : f.rooms.at(currentRoomIndex).getDoors()){
+    for(shared_ptr<Door> d : f.rooms.at(currentRoomIndex).getDoors()){
         //make door button
         shared_ptr<QPushButton> button = shared_ptr<QPushButton>(new QPushButton("", this));
         Coordinate topRight, bottomLeft;
         QPalette pal = button->palette();
-        if (d.locked) {
+        if (d->locked) {
              pal.setColor(QPalette::Button, QColor(Qt::darkGray));
         } else {
              pal.setColor(QPalette::Button, QColor(Qt::darkRed));
@@ -83,18 +84,17 @@ void MapWidget::resetButtons(){
         button->setPalette(pal);
         button->setFlat(true);
         button->update();
-        topRight.x = SCALE*(d.doorLocation.x+1)+WALL_WIDTH/2;
-        topRight.y = SCALE*(d.doorLocation.y)+WALL_WIDTH/2;
+        topRight.x = SCALE*(d->doorLocation.x+1)+WALL_WIDTH/2;
+        topRight.y = SCALE*(d->doorLocation.y)+WALL_WIDTH/2;
         bottomLeft.y = topRight.y + SCALE;
         bottomLeft.x = topRight.x - SCALE;
 
-        if(d.vertical){
+        if(d->vertical){
             button->setGeometry(topRight.x-(WALL_WIDTH/2) + xOffset,topRight.y+(WALL_WIDTH/2), WALL_WIDTH,SCALE-WALL_WIDTH);
         }else{
             button->setGeometry(bottomLeft.x+(WALL_WIDTH/2) + xOffset,bottomLeft.y-(WALL_WIDTH/2), SCALE-WALL_WIDTH,WALL_WIDTH);
         }
-        shared_ptr<Door> a = shared_ptr<Door>(new Door(d));
-        connect(button.get(), &QPushButton::released, this , [this,a](){MapWidget::doorFunc(*a);});
+        connect(button.get(), &QPushButton::released, this , [this,d](){MapWidget::doorFunc(d);});
         doorButtons.push_back(button);
         button->show();
     }
@@ -107,13 +107,14 @@ void MapWidget::paintEvent(QPaintEvent *event){
     drawWalls(&qp);
 }
 
-void MapWidget::changeRoom(Room& room){
-    current = room;
+void MapWidget::changeRoom(int roomIndex){
+    current = f.rooms.at(roomIndex);
+    currentRoomIndex = roomIndex;
     resetButtons();
 }
 
 void MapWidget::removeNPC(shared_ptr<NPC> npc){
-    current.removeNPC(npc);
+    CURRENT.removeNPC(npc);
     f.rooms.at(currentRoomIndex).removeNPC(npc);
     resetButtons();
 }

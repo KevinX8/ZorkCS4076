@@ -41,7 +41,7 @@ class Floor {
         bool disconnectedCell(int x,int y);
         bool cellOutOfBounds(int x, int y);
         float rangeRand();
-        void lockDoor(Door& d);
+        void lockDoor(shared_ptr<Door> d);
         void generateRooms(vector<int> cells, int maxRoomSize);
         void generateNPCs(int floorNumber);
         void generateItems();
@@ -56,7 +56,7 @@ class Floor {
         int number;
         vector<vector<Wall>> connections;
         Room &getRoom(int cellKey);
-        Door& getOuterLockedDoor(int index);
+        shared_ptr<Door> getOuterLockedDoor(int index);
         void generateLockedDoors();
         int getRoomIndex(Room& r);
     public:

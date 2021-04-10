@@ -34,7 +34,7 @@ private:
 	friend class Floor;
     vector<int> itemsInRoom;
     vector<shared_ptr<NPC>> npcsInRoom;
-    vector<Door> doorsInRoom;
+    vector<shared_ptr<Door>> doorsInRoom;
 	unordered_set<int> cells;
     void addDoor(Door& door);
     int key;
@@ -53,7 +53,7 @@ public:
 	bool cellInRoom(Coordinate c);
 	unordered_set<int> getCells();
 	vector<int> getItems();
-	vector<Door> &getDoors();
+    vector<shared_ptr<Door>> &getDoors();
 	operator int();
 	bool operator<(Room r2);
 	bool operator==(Room * const r2);

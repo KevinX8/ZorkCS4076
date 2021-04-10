@@ -4,20 +4,20 @@
 
 using namespace std;
 
-inline void Floor::lockDoor(Door& d){
-    d.locked = true;
-    if(d.vertical){
-        connections[d.doorLocation.y][d.doorLocation.x].right = 3;
+inline void Floor::lockDoor(shared_ptr<Door> d){
+    d->locked = true;
+    if(d->vertical){
+        connections[d->doorLocation.y][d->doorLocation.x].right = 3;
     }else{
-        connections[d.doorLocation.y][d.doorLocation.x].down = 3;
+        connections[d->doorLocation.y][d->doorLocation.x].down = 3;
     }
 }
 
-inline Door& Floor::getOuterLockedDoor(int innerRoomIndex) {
+inline shared_ptr<Door> Floor::getOuterLockedDoor(int innerRoomIndex) {
     auto innerDoor = rooms.at(innerRoomIndex).getDoors().begin();
-    Room& outerRoom = rooms.at(innerDoor->roomIndex);
-    for(Door& d : outerRoom.getDoors()){
-        if(d.roomIndex == innerRoomIndex){
+    Room& outerRoom = rooms.at(innerDoor->get()->roomIndex);
+    for(shared_ptr<Door> d : outerRoom.getDoors()){
+        if(d->roomIndex == innerRoomIndex){
             return d;
         }
     }
@@ -40,10 +40,10 @@ int Floor::byteHexStringToInt(T first,T second) {
 
 bool Floor::roomsUnitTest() {
     for (Room& room : rooms) {
-        for (Door& door : room.getDoors()) {
+        for (shared_ptr<Door> door : room.getDoors()) {
             bool found = false;
-            for (Door& innerDoor : rooms.at(door.roomIndex).getDoors()) {
-                if (innerDoor.roomIndex == getRoomIndex(room)) {
+            for (shared_ptr<Door> innerDoor : rooms.at(door->roomIndex).getDoors()) {
+                if (innerDoor->roomIndex == getRoomIndex(room)) {
                     found = true;
                     break;
                 }
@@ -154,7 +154,7 @@ Floor::Floor(int number,int seed, string floorToken) : Floor(number,seed,true) {
             }
         }
         if(hexOut.back()){//door is locked in room
-            Door& d = getOuterLockedDoor(count);
+            shared_ptr<Door> d = getOuterLockedDoor(count);
             lockDoor(d);
         }
         hexOut.pop_back();
@@ -185,8 +185,8 @@ string Floor::floorToken() {
                 instream << items;
             }
         }
-        sstream << Tools::intToByteHexString(getOuterLockedDoor(count).locked);
-        instream << getOuterLockedDoor(count).locked;
+        sstream << Tools::intToByteHexString(getOuterLockedDoor(count)->locked);
+        instream << getOuterLockedDoor(count)->locked;
         count++;
     }
     sstream >> token;
@@ -347,7 +347,7 @@ void Floor::generateLockedDoors(){
     }
     for(Room *r : lockedRooms){
         try{
-            Door &d = getOuterLockedDoor(getRoomIndex(*r));
+            shared_ptr<Door> d = getOuterLockedDoor(getRoomIndex(*r));
             lockDoor(d);
         }catch(LockedDoorException &e){
             throw e;
