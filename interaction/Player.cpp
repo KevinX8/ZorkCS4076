@@ -90,7 +90,7 @@ int Player::takeItem(int item){
     return -1;
 }
 
-void Player::changeParams(int params[], bool equip) {
+void Player::changeParams(std::array<int,4> params, bool equip) {
     if(equip){
         strength += params[0];
         charisma += params[1];
@@ -123,9 +123,10 @@ bool Player::equip(shared_ptr<Item> item, int slot){
                 if (!activeWeapon) {
                     shared_ptr<Weapon> weapon = shared_ptr<Weapon>(new Weapon(item->hashCode));
                     activeWeapon = weapon;
-                    copy(modifiers.begin(), modifiers.end(),weapon->modifiers().begin());
+                    modifiers = weapon->modifiers();
                 }
             }
+            changeParams(modifiers,true);
             return true;
         }
         case(1):{
@@ -133,14 +134,15 @@ bool Player::equip(shared_ptr<Item> item, int slot){
                 auto wearable = shared_ptr<Wearable>(new Wearable(item->hashCode));
                 if (!activeWearable1) {
                     activeWearable1 = wearable;
-                    copy(modifiers.begin(), modifiers.end(),wearable->modifiers().begin());
+                    modifiers = wearable->modifiers();
                 } else if (!activeWearable2) {
                     activeWearable2 = wearable;
-                    copy(modifiers.begin(), modifiers.end(),wearable->modifiers().begin());
+                    modifiers = wearable->modifiers();
                 } else {
                     return false;
                 }
             }
+            changeParams(modifiers,true);
             return true;
         }
         case(2):{
@@ -148,11 +150,12 @@ bool Player::equip(shared_ptr<Item> item, int slot){
                 auto wearable = shared_ptr<Wearable>(new Wearable(item->hashCode));
                 if (!activeWearable2) {
                     activeWearable2 = wearable;
-                    copy(modifiers.begin(), modifiers.end(),wearable->modifiers().begin());
+                    modifiers = wearable->modifiers();
                 } else {
                     return false;
                 }
             }
+            changeParams(modifiers,true);
             return true;
         }
     }
@@ -161,9 +164,11 @@ bool Player::equip(shared_ptr<Item> item, int slot){
 
 void Player::unequip(int slot) 
 {
+    std::array<int,4> modifiers;
     switch (slot) {
-    case 0: addItem(activeWeapon->hashCode); activeWeapon.reset();break;
-    case 1: addItem(activeWearable1->hashCode);activeWearable1.reset();break;
-    case 2: addItem(activeWearable2->hashCode);activeWearable2.reset(); break;
+    case 0: addItem(activeWeapon->hashCode); modifiers = activeWeapon->modifiers(); activeWeapon.reset();break;
+    case 1: addItem(activeWearable1->hashCode); modifiers = activeWearable1->modifiers(); activeWearable1.reset();break;
+    case 2: addItem(activeWearable2->hashCode); modifiers = activeWearable2->modifiers(); activeWearable2.reset(); break;
     }
+    changeParams(modifiers,false);
 }

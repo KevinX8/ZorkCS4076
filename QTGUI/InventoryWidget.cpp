@@ -5,25 +5,25 @@ InventoryWidget::InventoryWidget(Player& player, std::function<void(shared_ptr<I
 {
     this->player = player;
     this->dropFunc = dropFunc;
-    playerStats = unique_ptr<QLabel>(new QLabel(this));
+    playerStats = new QLabel(this);
     updateStats();
-    itemMenu = unique_ptr<QMenu>(new QMenu(this));
-    wearableWeaponSubMenu = unique_ptr<QMenu>(new QMenu("Equip As: ",this));
-    asWeapon = unique_ptr<QAction>(new QAction("Weapon",wearableWeaponSubMenu.get()));
-    asWearable = unique_ptr<QAction>(new QAction("Wearable",wearableWeaponSubMenu.get()));
-    wearableWeaponSubMenu->addAction(asWeapon.get());
-    wearableWeaponSubMenu->addAction(asWearable.get());
-    use = unique_ptr<QAction>(new QAction("Equip",itemMenu.get()));
-    close = unique_ptr<QAction>(new QAction("Close",this));
-    drop = unique_ptr<QAction>(new QAction("Drop",this));
-    changeInvButton = unique_ptr<QPushButton>(new QPushButton("🎒",this));
+    itemMenu = new QMenu(this);
+    wearableWeaponSubMenu = new QMenu("Equip As: ",this);
+    asWeapon = new QAction("Weapon",wearableWeaponSubMenu);
+    asWearable = new QAction("Wearable",wearableWeaponSubMenu);
+    wearableWeaponSubMenu->addAction(asWeapon);
+    wearableWeaponSubMenu->addAction(asWearable);
+    use = new QAction("Equip",this);
+    close = new QAction("Close",this);
+    drop = new QAction("Drop",this);
+    changeInvButton = new QPushButton("🎒",this);
     rightInventoryList = new QListWidget(this);
     rightEquipmentList = new QListWidget(this);
-    itemMenu->addAction(drop.get());
-    itemMenu->addAction(close.get());
-    connect(changeInvButton.get(), &QPushButton::released,this,[this](){changeDisplay();});
-    connect(close.get(), &QAction::triggered,this,[this](){itemMenu->hide();});
-    inventoryType = unique_ptr<QLabel>(new QLabel("Inventory 🧰",this));
+    itemMenu->addAction(drop);
+    itemMenu->addAction(close);
+    connect(changeInvButton, &QPushButton::released,this,[this](){changeDisplay();});
+    connect(close, &QAction::triggered,this,[this](){itemMenu->hide();});
+    inventoryType = new QLabel("Inventory 🧰",this);
     rightInventoryList->show();
     rightEquipmentList->hide();
     connect(rightInventoryList, &QListWidget::itemClicked,this,&InventoryWidget::invListUpdated);
@@ -66,8 +66,18 @@ void InventoryWidget::updateInventory(int index)
 
 QTGui::InventoryWidget::~InventoryWidget() 
 {
-    delete(rightEquipmentList);
+   /* delete(rightEquipmentList); Qt objects do not need to be manually deleted due to parent memory management
     delete(rightInventoryList);
+    delete(wearableWeaponSubMenu);
+    delete(itemMenu);
+    delete(use);
+    delete(asWeapon);
+    delete(asWearable);
+    delete(drop);
+    delete(close);
+    delete(changeInvButton);
+    delete(playerStats);
+    delete(inventoryType); */
 }
 
 void InventoryWidget::changeDisplay()
@@ -86,12 +96,12 @@ void InventoryWidget::changeDisplay()
 void InventoryWidget::unEquip(int type) 
 //Don't shift equipment up to avoid shifting all data structures related to it
 {
-    player.unequip(type);
     switch (type) {
         case 0: rightInventoryList->addItem(QString::fromStdString(player.activeWeapon->getShortDescription())); break;
         case 1: rightInventoryList->addItem(QString::fromStdString(player.activeWearable1->getShortDescription())); break;
         case 2: rightInventoryList->addItem(QString::fromStdString(player.activeWearable2->getShortDescription())); break;
     }
+    player.unequip(type);
     delete(rightEquipmentList->takeItem(type));
 }
 
@@ -113,8 +123,8 @@ void InventoryWidget::equip(shared_ptr<Item> itemToEquip, int slot)
         } else {
             itemMenu->clear();
             itemMenu->addAction(new QAction("Unequip a wearble first!"));
-            itemMenu->addAction(drop.get());
-            itemMenu->addAction(close.get());
+            itemMenu->addAction(drop);
+            itemMenu->addAction(close);
         }
     }
     updateStats();
@@ -123,21 +133,25 @@ void InventoryWidget::equip(shared_ptr<Item> itemToEquip, int slot)
 void InventoryWidget::setItemInteraction(shared_ptr<Item> item) 
 {
     itemMenu->clear();
+    use->disconnect();
+    drop->disconnect();
     if (item->hashCode >= TOTAL_ITEMS - NUM_WEARABLEWEAPONS) {
-        itemMenu->addMenu(wearableWeaponSubMenu.get());
-        connect(asWeapon.get(),&QAction::triggered,this,[this,item](){ equip(item,0);});
-        connect(asWearable.get(),&QAction::triggered,this,[this,item](){ equip(item,1);});
+        asWeapon->disconnect();
+        asWearable->disconnect();
+        itemMenu->addMenu(wearableWeaponSubMenu);
+        connect(asWeapon,&QAction::triggered,this,[this,item](){ equip(item,0);});
+        connect(asWearable,&QAction::triggered,this,[this,item](){ equip(item,1);});
     } else if (item->hashCode >= NUM_STD_ITEMS) {
-        itemMenu->addAction(use.get());
+        itemMenu->addAction(use);
         if (item->hashCode < NUM_STD_ITEMS+NUM_WEAPONS) {
-            connect(use.get(),&QAction::triggered,this,[this,item](){ equip(item,0);});
+            connect(use,&QAction::triggered,this,[this,item](){ equip(item,0);});
         } else {
-            connect(use.get(),&QAction::triggered,this,[this,item](){ equip(item,1);});
+            connect(use,&QAction::triggered,this,[this,item](){ equip(item,1);});
         }
     }
-    itemMenu->addAction(drop.get());
-    connect(drop.get(),&QAction::triggered,this,[this,item](){InventoryWidget::dropFunc(item);});
-    itemMenu->addAction(close.get());
+    itemMenu->addAction(drop);
+    connect(drop,&QAction::triggered,this,[this,item](){InventoryWidget::dropFunc(item);});
+    itemMenu->addAction(close);
 }
 
 void InventoryWidget::invListUpdated() 
@@ -154,11 +168,11 @@ void InventoryWidget::equListUpdated()
 {
     for (int i=0; i < rightEquipmentList->count();i++) {
         if (rightEquipmentList->item(i)->isSelected()) {
-                QAction* unEquipAct = new QAction("Unequip",this);
-                connect(unEquipAct,&QAction::triggered,itemMenu.get(),[this,i](){this->unEquip(i);});
+                auto unEquipAct = new QAction("Unequip",this);
+                connect(unEquipAct,&QAction::triggered,itemMenu,[this,i](){this->unEquip(i);});
                 itemMenu->clear();
                 itemMenu->addAction(unEquipAct);
-                itemMenu->addAction(close.get());
+                itemMenu->addAction(close);
                 itemMenu->popup(QCursor::pos());
         }
     }

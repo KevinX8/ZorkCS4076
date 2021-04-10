@@ -31,7 +31,7 @@ class Player {
         shared_ptr<Wearable> activeWearable2;
         int luck, strength, charisma;
         void changeInventorySpace(int);
-        void changeParams(int params[], bool equip);
+        void changeParams(std::array<int,4> params, bool equip);
     public:
         Player();
         Player(string playerToken);

@@ -22,10 +22,10 @@ using namespace QTGui;
 class QTGui::RoomItemWidget : public QWidget {
     Q_OBJECT
     private:
-    unique_ptr<QLabel> roomItemsLabel;
-    unique_ptr<QMenu> itemMenu;
-    unique_ptr<QAction> pickup;
-    unique_ptr<QAction> close;
+    QLabel* roomItemsLabel;
+    QMenu* itemMenu;
+    QAction* pickup;
+    QAction* close;
     std::function<void(int)> roomItemFunc;
     void setItemInteraction(int itemCode);
     void listUpdated();

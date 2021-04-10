@@ -4,15 +4,15 @@
 RoomItemWidget::RoomItemWidget(vector<int> itemCodes, std::function<void(int)> roomItemFunc)
 {
     this->roomItemFunc = roomItemFunc;
-    itemMenu = unique_ptr<QMenu>(new QMenu(this));
-    pickup = unique_ptr<QAction>(new QAction("Pickup",this));
-    close = unique_ptr<QAction>(new QAction("Close",this));
-    roomItemsLabel = unique_ptr<QLabel>(new QLabel(QString::fromStdString("Items in Room: 0"),this));
+    itemMenu = new QMenu(this);
+    pickup = new QAction("Pickup",this);
+    close = new QAction("Close",this);
+    roomItemsLabel = new QLabel(QString::fromStdString("Items in Room: 0"),this);
     //roomItemsLabel->move(510-(roomItemsLabel->width()+50),0);
     listWidget = new QListWidget(this);
-    itemMenu->addAction(pickup.get());
-    itemMenu->addAction(close.get());
-    connect(close.get(), &QAction::triggered,this,[this](){itemMenu->hide();});
+    itemMenu->addAction(pickup);
+    itemMenu->addAction(close);
+    connect(close, &QAction::triggered,this,[this](){itemMenu->hide();});
     connect(listWidget,&QListWidget::itemClicked,this,&RoomItemWidget::listUpdated);
     this->updateItems(itemCodes);
 }
@@ -31,13 +31,13 @@ void RoomItemWidget::updateItems(vector<int> itemCodes)
 
 void RoomItemWidget::setItemInteraction(int index) 
 {
-    connect(pickup.get(), &QAction::triggered,this,[this,index](){roomItemFunc(index);});
+    connect(pickup, &QAction::triggered,this,[this,index](){roomItemFunc(index);disconnect(pickup);});
     itemMenu->popup(QCursor::pos());
 }
 
 void RoomItemWidget::listUpdated()
 {
-    disconnect(pickup.get());
+    pickup->disconnect();
     for (int i=0;i < listWidget->count();i++) {
         if (listWidget->item(i)->isSelected()) {
             setItemInteraction(i);
@@ -47,5 +47,9 @@ void RoomItemWidget::listUpdated()
 
 QTGui::RoomItemWidget::~RoomItemWidget() 
 {
-    delete(listWidget);
+ /* delete(listWidget); Qt objects do not need to be manually deleted due to parent memory management
+    delete(roomItemsLabel);
+    delete(itemMenu);
+    delete(pickup);
+    delete(close); */
 }
