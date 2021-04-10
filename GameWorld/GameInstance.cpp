@@ -84,7 +84,7 @@ void GameInstance::changeRoom(shared_ptr<Door> d){
     resetButtons();
     if(d->locked){
         bool keyFound = false;
-        for(shared_ptr<Item> item : player.inventory){
+        for(shared_ptr<Item> &item : player.inventory){
             if(item->hashCode == 0){
                 gui->text->updateTextBox("The Door is locked. Use key?");
                 vector<QString> options;

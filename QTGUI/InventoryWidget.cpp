@@ -9,8 +9,8 @@ InventoryWidget::InventoryWidget(Player& player, std::function<void(shared_ptr<I
     updateStats();
     itemMenu = new QMenu(this);
     wearableWeaponSubMenu = new QMenu("Equip As: ",this);
-    asWeapon = new QAction("Weapon",wearableWeaponSubMenu);
-    asWearable = new QAction("Wearable",wearableWeaponSubMenu);
+    asWeapon = new QAction("Weapon",this);
+    asWearable = new QAction("Wearable",this);
     wearableWeaponSubMenu->addAction(asWeapon);
     wearableWeaponSubMenu->addAction(asWearable);
     use = new QAction("Equip",this);
@@ -34,7 +34,7 @@ void InventoryWidget::updateStats()
 {
     QString stats = QString::fromStdString("⚔️ " + std::to_string(player.getStrength()) + " 🗣️ " + std::to_string(player.getCharisma()) + " ☘️ " + std::to_string(player.getLuck()) + " 🎒 " + std::to_string(player.inventory.size()) + "/" + std::to_string(player.inventorySpace));
     playerStats->setText(stats);
-    playerStats->resize(175,20);
+    playerStats->resize(200,30);
 }
 
 inline string InventoryWidget::sign(int x) {
