@@ -24,7 +24,9 @@ using namespace QTGui;
 class QTGui::InventoryWidget : public QWidget {
     Q_OBJECT
     private:
+    friend class QTGui::GameInstance;
     Player& player;
+    bool giving = false;
     std::function<void(shared_ptr<Item>)> dropFunc;
     inline string sign(int x);
     QMenu* wearableWeaponSubMenu;
@@ -35,6 +37,7 @@ class QTGui::InventoryWidget : public QWidget {
     QAction* drop;
     QAction* close;
     void setItemInteraction(shared_ptr<Item> item);
+    void setGiveItem(int index);
     void invListUpdated();
     void equListUpdated();
     public:

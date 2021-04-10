@@ -3,9 +3,12 @@
 #define changeToWeaponStruct(a,b,c) {a + NUM_STD_ITEMS, weaponMod{.damage = b, .invSpace = c}}
 
 const unordered_map<short,weaponMod> Weapon::weaponModMap = {
-   changeToWeaponStruct(0,3,1),
-   changeToWeaponStruct(1,1,1),
-   changeToWeaponStruct(2,3,2)
+   changeToWeaponStruct(0,3,-3),
+   changeToWeaponStruct(1,1,0),
+   changeToWeaponStruct(2,3,-1),
+    //Wearable Weapons
+   changeToWeaponStruct(0+ NUM_WEAPONS + NUM_WEARABLES,5,-3),
+   changeToWeaponStruct(1+ NUM_WEAPONS + NUM_WEARABLES,7,-1)
 };
 
 Weapon::Weapon(const short key) : Item(key) {

@@ -158,7 +158,11 @@ void InventoryWidget::invListUpdated()
 {
     for (int i=0; i < rightInventoryList->count();i++) {
         if (rightInventoryList->item(i)->isSelected()) {
-            setItemInteraction(player.inventory.at(i));
+            if (!giving) {
+                setItemInteraction(player.inventory.at(i));
+            } else {
+                setGiveItem(i);
+            }
             itemMenu->popup(QCursor::pos());
         }
     }
@@ -176,4 +180,14 @@ void InventoryWidget::equListUpdated()
                 itemMenu->popup(QCursor::pos());
         }
     }
+}
+
+void QTGui::InventoryWidget::setGiveItem(int index) 
+{
+    itemMenu->clear();
+    QAction* give = new QAction("Give NPC",this);
+    shared_ptr<Item> item = player.inventory.at(index);
+    connect(give,&QAction::triggered,this,[this,item]{InventoryWidget::dropFunc(item);});
+    itemMenu->addAction(give);
+    itemMenu->addAction(close);
 }

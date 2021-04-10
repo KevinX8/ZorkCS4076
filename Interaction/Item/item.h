@@ -9,10 +9,10 @@
 #include <unordered_map>
 #include <algorithm>
 
-#define NUM_STD_ITEMS 3
+#define NUM_STD_ITEMS 12
 #define NUM_WEAPONS 3
-#define NUM_WEARABLES 0
-#define NUM_WEARABLEWEAPONS 0
+#define NUM_WEARABLES 5
+#define NUM_WEARABLEWEAPONS 2
 #define TOTAL_ITEMS NUM_STD_ITEMS + NUM_WEAPONS + NUM_WEARABLES + NUM_WEARABLEWEAPONS
 
 using namespace std;

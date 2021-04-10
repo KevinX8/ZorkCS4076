@@ -7,17 +7,51 @@ const unordered_map<short,double> Human::strengthCharismaRatio = {
    {3, 0.5},
    {4, 0.2},
    {5, 0.3},
-   {6, 0.1}
+   {6, 0.1},
+   {7, 0.5},
+   {8, 0.2},
+   {9, 0.3},
+   {10, 0.8},
+   {11, 0.4},
+   {12, 0.2},
+   {13, 0.6},
+   {14,0}
 };
 
-const unordered_map<short,string> Human::usefulInfoMap = {
-   {0, "Paulis Gributs likes "},
-   {1, "Thomas Greaney likes "},
-   {2, " likes "},
-   {3, " likes "},
-   {4, " likes "},
-   {5, " likes "},
-   {6, " likes "}
+const unordered_map<short,short> Human::usefulInfoMap = {
+   {0, 1},
+   {1, 0},
+   {2, 13},
+   {3, 6},
+   {4, 8},
+   {5, 14},
+   {6, 7},
+   {7, 10},
+   {8, 4},
+   {9, 3},
+   {10, 9},
+   {11, 5},
+   {12, 2},
+   {13, 12},
+   {14, 11}
+};
+
+const unordered_map<short,short> Human::likeMap = {
+   {0, 9},
+   {1, 0 + NUM_STD_ITEMS + NUM_WEAPONS + NUM_WEARABLES},
+   {2, 10},
+   {3, 1 + NUM_STD_ITEMS + NUM_WEAPONS + NUM_WEARABLES},
+   {4, 4},
+   {5, 5},
+   {6, 0 + NUM_STD_ITEMS + NUM_WEAPONS},
+   {7, 7},
+   {8, 2 + NUM_STD_ITEMS + NUM_WEAPONS},
+   {9, 3},
+   {10, 1},
+   {11, 0 + NUM_STD_ITEMS},
+   {12, 4 + NUM_STD_ITEMS + NUM_WEAPONS},
+   {13, 3 + NUM_STD_ITEMS + NUM_WEAPONS},
+   {14, 11}
 };
 
 Human::Human(int floorNumber, const short k, bool inventoryEmpty): baseOption(DialogueOption<string>("", ("How can I help you?"), {option1, option2, option3, option4})){
@@ -25,8 +59,9 @@ Human::Human(int floorNumber, const short k, bool inventoryEmpty): baseOption(Di
     this->hasKey = false;
     this->charisma = (floorNumber + STARTING_ATRRIBUTE_POINTS) * (1-(strengthCharismaRatio.at(key)));
     this->strength = (floorNumber + STARTING_ATRRIBUTE_POINTS) * strengthCharismaRatio.at(key);
-    this->usefulInfo = usefulInfoMap.at(key);
+    this->usefulInfo = nameMap.at(usefulInfoMap.at(key)) + " likes " + Item::itemNameMap.at(likeMap.at(usefulInfoMap.at(key)));
     this->name = nameMap.at(key);
+    this->likedItem = likeMap.at(key);
     if(!inventoryEmpty){
     }
 }
@@ -84,7 +119,7 @@ string Human::giveItem(int i, Player &p){
             p.addItem(*it);
             inventoryItems.push_back(i);
             p.takeItem(i);
-            return "I love these. Thank you!";
+            return "I love these. Thank you! Here is a token of appreciation.";
         }
     }else{
         return "I hate these. You can keep it.";

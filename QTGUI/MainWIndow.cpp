@@ -1,6 +1,6 @@
 #include "MainWindow.h"
 
-MainWindow::MainWindow(shared_ptr<RoomItemWidget> r, shared_ptr<MapWidget> m, shared_ptr<TextBoxWidget> t, shared_ptr<InventoryWidget> i){
+MainWindow::MainWindow(shared_ptr<RoomItemWidget> r, shared_ptr<MapWidget> m, shared_ptr<TextBoxWidget> t, InventoryWidget* i){
     this->map = m;
     this-> inv = i;
     this-> room = r;

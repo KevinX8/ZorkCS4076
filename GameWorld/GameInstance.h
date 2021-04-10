@@ -24,6 +24,7 @@ class QTGui::GameInstance {
         File gameState;
         int playerRoomIndex;
         unique_ptr<MainWindow> gui;
+        shared_ptr<NPC> givingNPC;
         void fightNPC(shared_ptr<NPC> npc);
         void askInfoNPC(shared_ptr<Human> h);
         void giveNPCItem(shared_ptr<NPC> npc);
@@ -31,8 +32,11 @@ class QTGui::GameInstance {
         void spareOrKill(shared_ptr<NPC> npc, bool spare);
         void unlockDoor(shared_ptr<Door> d);
         void startConvo(shared_ptr<NPC> npc);
+        void continueGive(shared_ptr<Item> item);
         void chatNPC(shared_ptr<NPC> npc, DialogueOption<string> d);
         void setGUI();
+        void resetDropFunc();
+        bool givingItem = false;
     public:
         void resetButtons();
         GameInstance(bool loadGame = false, int seed = time(nullptr));

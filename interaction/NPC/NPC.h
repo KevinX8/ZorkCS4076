@@ -7,8 +7,8 @@
 
 using namespace std;
 
-#define NUM_HUMANS 7
-#define NUM_NPCS 7
+#define NUM_HUMANS 15
+#define NUM_NPCS 15
 
 const unordered_map<short,string> nameMap = {
    {0, "Thomas Greaney"},
@@ -18,7 +18,14 @@ const unordered_map<short,string> nameMap = {
    {4, "Leonardo di Caprio"},
    {5, "Shaggy"},
    {6, "Santa Claus"},
-
+   {7, "Chris Exton"},
+   {8, "Oprah"},
+   {9, "Michael D. Higgins"},
+   {10, "Random Loser"},
+   {11, "Snoop Dog"},
+   {12, "Bill Burr"},
+   {13, "Joe Rogan"},
+    {14, "Nicki Minaj"},
     {0 + NUM_HUMANS, "Scooby-Doo"},
     {1 + NUM_HUMANS, "Garfield"},
     {2 + NUM_HUMANS, "Mufasa"},

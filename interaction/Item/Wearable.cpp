@@ -4,8 +4,14 @@
 
 const unordered_map<short,wearableMod> Wearable::wearableModMap = {
     /*charisma luck invSpace */
-   changeToWearableStruct(0, 0, 3, 0), 
-   changeToWearableStruct(1, 3, 0 ,0)
+   changeToWearableStruct(0, 2, 3, 1), 
+   changeToWearableStruct(1, 0, 5 ,0),
+   changeToWearableStruct(2, 3, 0 ,0),
+   changeToWearableStruct(2, -2, 3 ,0),
+   changeToWearableStruct(3, 5, 5 ,-3),
+   //Wearable Weapons
+   changeToWearableStruct(0+NUM_WEARABLES, 7, 5 ,-3),
+   changeToWearableStruct(1+NUM_WEARABLES, 2, 4 ,-1),
 };
 
 Wearable::Wearable(const short key) : Item(key) {

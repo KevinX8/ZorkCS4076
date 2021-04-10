@@ -52,7 +52,7 @@ class QTGui::MainWindow : public QMainWindow {
   private:
     friend class GameInstance;
     shared_ptr<MapWidget> map;
-    shared_ptr<InventoryWidget> inv;
+    InventoryWidget* inv;
     shared_ptr<RoomItemWidget> room;
     shared_ptr<TextBoxWidget> text;
   public:
@@ -60,7 +60,7 @@ class QTGui::MainWindow : public QMainWindow {
     MainWindow(shared_ptr<RoomItemWidget> roomWidget,
     shared_ptr<MapWidget> map,
     shared_ptr<TextBoxWidget> text,
-    shared_ptr<InventoryWidget> inv
+    InventoryWidget* inv
     );
     void changeMapWidget(shared_ptr<MapWidget> m);
 

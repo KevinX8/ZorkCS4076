@@ -38,7 +38,7 @@ void GameInstance::setGUI(){
     }
     shared_ptr<MapWidget> map = shared_ptr<MapWidget>(new MapWidget(floorNumber, playerRoomIndex, *floor, floor->rooms.at(playerRoomIndex), dRf, nRf, rRf, cfRf));
     shared_ptr<RoomItemWidget> roomInv = shared_ptr<RoomItemWidget>(new RoomItemWidget(floor->rooms.at(playerRoomIndex).getItems(),riRf));
-    shared_ptr<InventoryWidget> playerInv = shared_ptr<InventoryWidget>(new InventoryWidget(player,diRf));
+    InventoryWidget* playerInv = new InventoryWidget(player,diRf);
     shared_ptr<TextBoxWidget> textBox = shared_ptr<TextBoxWidget>(new TextBoxWidget("Try clicking on buttons on the map!",{"","","",""}));
     this->gui = unique_ptr<MainWindow>(new MainWindow(roomInv,map,textBox,playerInv));
     gui->show();
@@ -53,6 +53,10 @@ void GameInstance::resetButtons(){
 }
 
 void GameInstance::changeFloor(bool up){
+    if(givingItem){
+        givingItem = false;
+        resetDropFunc();
+    }
     gameState.writeFloor(floor->floorToken(), floorNumber);
     if(floor->rooms.at(gui->map->currentRoomIndex).getKiosk()){
         int upgrade = rand() % 3;
@@ -81,6 +85,10 @@ void GameInstance::changeRoom(shared_ptr<Door> d){
     1: door was locked and player has key,
     2: door was locked and player does not have key
     */
+   if(givingItem){
+        givingItem = false;
+        resetDropFunc();
+    }
     resetButtons();
     if(d->locked){
         bool keyFound = false;
@@ -123,8 +131,8 @@ void GameInstance::changeRoom(shared_ptr<Door> d){
                 gui->text->funcBox3 = [&](){resetButtons(); player.luck++; gui->inv->updateStats(); r.removeKiosk();};
             }
         }else{
-            gui->text->updateTextBox("You can't move because you're carrying too many items!");
             resetButtons();
+            gui->text->updateTextBox("You can't move because you're \ncarrying too many items!");
         }
     }
 }
@@ -155,6 +163,10 @@ void GameInstance::useKey(shared_ptr<Door> d){
 
 void GameInstance::interactNPC(shared_ptr<NPC> npc) 
 {
+    if(givingItem){
+        givingItem = false;
+        resetDropFunc();
+    }
     if(npc->getCode() < NUM_HUMANS){
         shared_ptr<Human> h = std::dynamic_pointer_cast<Human>(npc);
         QString info = QString::fromStdString("Type: Human\nName: " + h->getName() + "\n⚔️: " + to_string(h->getStrength()) + ", 🗣️: " + to_string(h->getCharisma()));
@@ -239,8 +251,44 @@ void GameInstance::askInfoNPC(shared_ptr<Human> h){
     gui->text->updateTextBox(info);
 }
 
-void GameInstance::giveNPCItem(shared_ptr<NPC> npc){   
+void GameInstance::giveNPCItem(shared_ptr<NPC> npc){
+    gui->inv->giving = true;
+    givingItem = true;
+    gui->text->updateTextBox("Select an item to give from your inventory: ->");
+    gui->text->enableButtons(0);
+    gui->inv->dropFunc = std::bind(&GameInstance::continueGive,this,std::placeholders::_1);
+    givingNPC = npc;
+    gui->text->funcBox1 = std::bind(&GameInstance::interactNPC,this, npc);
+    vector<QString> options;
+    options.push_back("Cancel");
+    options.push_back("");
+    options.push_back("");
+    options.push_back("");
+    gui->text->updateInteractions(options);
+    gui->text->enableButtons(1);
+}
 
+void GameInstance::resetDropFunc(){
+    gui->inv->dropFunc = std::bind(&GameInstance::interactDropPlayerInv,this,std::placeholders::_1);
+    gui->inv->giving = false;
+}
+
+void GameInstance::continueGive(shared_ptr<Item> item){
+    int count = 0;
+    for(shared_ptr<Item> i : player.inventory){
+        if(item->hashCode == i->hashCode){
+            break;
+        }else{
+            count++;
+        }
+    }
+    gui->inv->updateInventory(count);
+    gui->inv->updateStats();
+    QString info = QString::fromStdString(givingNPC->giveItem(item->hashCode, player));
+    resetDropFunc();
+    givingItem = false;
+    interactNPC(givingNPC);
+    gui->text->updateTextBox(info);
 }
 
 void GameInstance::startConvo(shared_ptr<NPC> npc){

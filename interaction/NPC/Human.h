@@ -49,8 +49,9 @@ class Human : public NPC {
         int getCode();
         int getStrength();
         int getCharisma();
-        const static unordered_map<short,string> usefulInfoMap;
+        const static unordered_map<short,short> usefulInfoMap;
         const static unordered_map<short,double> strengthCharismaRatio;
+        const static unordered_map<short,short> likeMap;
         vector<int> getInventory();
         string getName();
         string usefulInfo;
