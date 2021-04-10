@@ -8,9 +8,12 @@
 #include <QPainter>
 #include <QIcon>
 #include <QPushButton>
+#include <QFont>
 #include <QGraphicsScene>
 #include <QString>
 #include <QPalette>
+#include <QLabel>
+#include <string>
 #include <unordered_set>
 
 namespace QTGui {
@@ -22,7 +25,7 @@ using namespace QTGui;
 class QTGui::MapWidget : public QWidget{
     Q_OBJECT
 public:
-    MapWidget(int i, Floor& f, Room& r, std::function<void(Door&)>& doorFunc, std::function<void(shared_ptr<NPC>)>& npcFunc, std::function<void()>& resetFunc, std::function<void(bool)>& floorFunc, QWidget *parent = 0);
+    MapWidget(int floorNumber, int startRoomIndex, Floor& f, Room& r, std::function<void(Door&)>& doorFunc, std::function<void(shared_ptr<NPC>)>& npcFunc, std::function<void()>& resetFunc, std::function<void(bool)>& floorFunc, QWidget *parent = 0);
     void resetButtons();
     void changeRoom(Room& room);
     void removeNPC(shared_ptr<NPC> npc);
@@ -32,6 +35,7 @@ protected:
     void drawWalls(QPainter *qp);
 private:
     friend class GameInstance;
+    unique_ptr<QLabel> floorNumberLabel;
     Room current;
     int currentRoomIndex;
     Floor& f;

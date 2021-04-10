@@ -4,14 +4,44 @@
 #define SCALE 75
 #define WALL_WIDTH 10
 
-MapWidget::MapWidget(int i, Floor& floor, Room& r, std::function<void(Door&)>& dF, std::function<void(shared_ptr<NPC>)>& nF, std::function<void()>& rF, std::function<void(bool)>& cF, QWidget *parent) :QWidget(parent), current(r), f(floor){
+MapWidget::MapWidget(int floorNumber, int startRoomIndex, Floor& floor, Room& r, std::function<void(Door&)>& dF, std::function<void(shared_ptr<NPC>)>& nF, std::function<void()>& rF, std::function<void(bool)>& cF, QWidget *parent) :QWidget(parent), current(r), f(floor){
     this->doorFunc = dF;
     this->npcFunc = nF;
     this->resetFunc = rF;
     this->floorFunc = cF;
-    this->currentRoomIndex = i;
+    this->currentRoomIndex = startRoomIndex;
     this->xOffset = 960 - ((f.getWidth() * SCALE + WALL_WIDTH + WALL_WIDTH / 2) / 2);
     this->resetButtons();
+    QString floorString;
+    if(floorNumber % 100 > 9 && floorNumber % 100 < 20){
+        floorString = QString::fromStdString((to_string(floorNumber) + "th Floor"));
+    }else if(floorNumber == 0){
+        floorString = QString::fromStdString("Ground Floor");
+    }else{
+        switch (floorNumber % 10){
+            case(1):{
+                floorString = QString::fromStdString((to_string(floorNumber) + "st Floor"));
+                break;
+            }
+            case(2):{
+                floorString = QString::fromStdString((to_string(floorNumber) + "nd Floor"));
+                break;
+            }
+            case(3):{
+                floorString = QString::fromStdString((to_string(floorNumber) + "rd Floor"));
+                break;
+            }
+            default:{
+                floorString = QString::fromStdString((to_string(floorNumber) + "th Floor"));
+                break;
+            }
+
+        }
+    }
+    QFont font( "Arial", 15, QFont::Bold);
+    floorNumberLabel = unique_ptr<QLabel>(new QLabel(floorString,this));
+    floorNumberLabel->setFont(font);
+    floorNumberLabel->move(960-floorNumberLabel->width()/2,750 - floorNumberLabel->height()-5);
 }
 
 void MapWidget::resetButtons(){
@@ -31,10 +61,10 @@ void MapWidget::resetButtons(){
     bool hasUp = current.containsUpLadder();
     bool hasDown = false;
     if(hasUp || hasDown){
-        QString icon = (hasUp)? "↗️" : "↘️";
+        QString icon = (hasUp)? "⬆️" : "⬇️";
         Coordinate c = Tools::getKeyCoordinate((*it));
         shared_ptr<QPushButton> button = shared_ptr<QPushButton>(new QPushButton(icon, this));
-        button->setGeometry(c.x * SCALE + xOffset,c.y * SCALE,SCALE,SCALE);
+        button->setGeometry(c.x * SCALE + WALL_WIDTH + xOffset,c.y * SCALE+ WALL_WIDTH,SCALE- WALL_WIDTH,SCALE- WALL_WIDTH);
         connect(button.get(), &QPushButton::released, this , [this,hasUp](){MapWidget::floorFunc(hasUp);});
         npcButtons.push_back(button);
         button->show();

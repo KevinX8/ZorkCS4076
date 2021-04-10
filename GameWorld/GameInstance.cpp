@@ -15,7 +15,7 @@ GameInstance::GameInstance(bool loadGame, int seed) {
         this-> seed = seed;
         this-> player = Player();
         this-> floorNumber = 0;
-        this-> floor = new Floor(0, seed);
+        this-> floor = new Floor(0, 123);
         //floor->floorHexUnitTest();
         File::deleteSaves();
     }
@@ -29,8 +29,14 @@ void GameInstance::setGUI(){
     std::function<void(bool)> cfRf = std::bind(&GameInstance::changeFloor,this,std::placeholders::_1);
     std::function<void(int)> riRf = std::bind(&GameInstance::interactRoomItem,this,std::placeholders::_1);
     std::function<void(shared_ptr<Item>)> diRf = std::bind(&GameInstance::interactDropPlayerInv,this,std::placeholders::_1);
-    this-> playerRoomIndex = 0;
-    shared_ptr<MapWidget> map = shared_ptr<MapWidget>(new MapWidget(playerRoomIndex, *floor, floor->rooms.at(playerRoomIndex), dRf, nRf, rRf, cfRf));
+    this-> playerRoomIndex = -1;
+    for(Room r: floor->rooms){
+        this->playerRoomIndex++;
+        if(r.getDoors().size() > 1){
+            break;
+        }
+    }
+    shared_ptr<MapWidget> map = shared_ptr<MapWidget>(new MapWidget(floorNumber, playerRoomIndex, *floor, floor->rooms.at(playerRoomIndex), dRf, nRf, rRf, cfRf));
     shared_ptr<RoomItemWidget> roomInv = shared_ptr<RoomItemWidget>(new RoomItemWidget(floor->rooms.at(playerRoomIndex).getItems(),riRf));
     shared_ptr<InventoryWidget> playerInv = shared_ptr<InventoryWidget>(new InventoryWidget(player,diRf));
     shared_ptr<TextBoxWidget> textBox = shared_ptr<TextBoxWidget>(new TextBoxWidget("Try clicking on buttons on the map!",{"","","",""}));
@@ -103,7 +109,7 @@ void GameInstance::changeRoom(Door& d){
             Room& r = floor->rooms.at(d.roomIndex);
             gui->map->currentRoomIndex = d.roomIndex;
             gui->map->changeRoom(r);
-            gui->room->updateItems(gui->map->current.getItems());
+            gui->room->updateItems(floor->rooms.at(gui->map->currentRoomIndex).getItems());
             if(r.getKiosk()){
                 gui->text->updateTextBox("You reached the end of the Floor! Choose an ability to upgrade:");
                 vector<QString> options;
@@ -265,18 +271,18 @@ void GameInstance::chatNPC(shared_ptr<NPC> npc, DialogueOption<string> d){
 
 void GameInstance::interactRoomItem(int index) //user clicked pick it up
 {
-    player.addItem(gui->map->f.rooms.at(gui->map->currentRoomIndex).getItems().at(index));
-    gui->map->current.removeItemFromRoom(index);
-    gui->room->updateItems(gui->map->f.rooms.at(gui->map->currentRoomIndex).getItems());
+    player.addItem(floor->rooms.at(gui->map->currentRoomIndex).getItems().at(index));
+    floor->rooms.at(gui->map->currentRoomIndex).removeItemFromRoom(index);
+    gui->room->updateItems(floor->rooms.at(gui->map->currentRoomIndex).getItems());
     gui->inv->updateStats();
     gui->inv->updateInventory(player.inventory.size()-1);
 }
 
 void GameInstance::interactDropPlayerInv(shared_ptr<Item> item) //find item in player inventory and remove it, then add to room inventory
 {
-    gui->map->current.addItem(item->hashCode);
+    floor->rooms.at(gui->map->currentRoomIndex).addItem(item->hashCode);
     int itemIndex = player.takeItem(item->hashCode);
-    gui->room->updateItems(gui->map->current.getItems());
+    gui->room->updateItems(floor->rooms.at(gui->map->currentRoomIndex).getItems());
     gui->inv->updateInventory(itemIndex);
     gui->inv->updateStats();
 }
