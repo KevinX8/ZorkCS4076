@@ -6,9 +6,9 @@ MainWindow::MainWindow(shared_ptr<RoomItemWidget> r, shared_ptr<MapWidget> m, sh
     this-> room = r;
     this-> text = t;
     map->setParent(this);
-    inv->setParent(this);
     room->setParent(this);
     text->setParent(this);
+    inv->setParent(this);
     setCentralWidget(map.get());
     resize(WINDOW_W,WINDOW_H);
     map->setGeometry(MAP_X,MAP_Y-30,MAP_W,MAP_H+30);
@@ -22,6 +22,8 @@ MainWindow::MainWindow(shared_ptr<RoomItemWidget> r, shared_ptr<MapWidget> m, sh
     room->listWidget->setGeometry(0,30,INV_W,INV_H);
     text->setGeometry(TEXTBOX_X,TEXTBOX_Y,TEXTBOX_W,TEXTBOX_H);
     text->textBox->resize(TEXTBOX_W,TEXTBOX_H);
+    this->setFixedSize(WINDOW_W,WINDOW_H);
+    //this->setWindowFlag(Qt::FramelessWindowHint);
 }
 
 MainWindow::MainWindow(){

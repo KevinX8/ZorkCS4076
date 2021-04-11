@@ -25,6 +25,7 @@ class QTGui::GameInstance {
         int playerRoomIndex;
         unique_ptr<MainWindow> gui;
         shared_ptr<NPC> givingNPC;
+        InventoryWidget* playerInv;
         void fightNPC(shared_ptr<NPC> npc);
         void askInfoNPC(shared_ptr<Human> h);
         void giveNPCItem(shared_ptr<NPC> npc);

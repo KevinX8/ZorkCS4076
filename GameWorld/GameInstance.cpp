@@ -19,6 +19,8 @@ GameInstance::GameInstance(bool loadGame, int seed) {
         //floor->floorHexUnitTest();
         File::deleteSaves();
     }
+     std::function<void(shared_ptr<Item>)> diRf = std::bind(&GameInstance::interactDropPlayerInv,this,std::placeholders::_1);
+    playerInv = new InventoryWidget(player,diRf);
     setGUI();
 }
 
@@ -28,7 +30,6 @@ void GameInstance::setGUI(){
     std::function<void()> rRf = std::bind(&GameInstance::resetButtons,this);
     std::function<void(bool)> cfRf = std::bind(&GameInstance::changeFloor,this,std::placeholders::_1);
     std::function<void(int)> riRf = std::bind(&GameInstance::interactRoomItem,this,std::placeholders::_1);
-    std::function<void(shared_ptr<Item>)> diRf = std::bind(&GameInstance::interactDropPlayerInv,this,std::placeholders::_1);
     this-> playerRoomIndex = -1;
     for(Room r: floor->rooms){
         this->playerRoomIndex++;
@@ -38,7 +39,6 @@ void GameInstance::setGUI(){
     }
     shared_ptr<MapWidget> map = shared_ptr<MapWidget>(new MapWidget(floorNumber, playerRoomIndex, *floor, floor->rooms.at(playerRoomIndex), dRf, nRf, rRf, cfRf));
     shared_ptr<RoomItemWidget> roomInv = shared_ptr<RoomItemWidget>(new RoomItemWidget(floor->rooms.at(playerRoomIndex).getItems(),riRf));
-    InventoryWidget* playerInv = new InventoryWidget(player,diRf);
     shared_ptr<TextBoxWidget> textBox = shared_ptr<TextBoxWidget>(new TextBoxWidget("Try clicking on buttons on the map!",{"","","",""}));
     this->gui = unique_ptr<MainWindow>(new MainWindow(roomInv,map,textBox,playerInv));
     gui->show();
@@ -360,4 +360,5 @@ void GameInstance::interactDropPlayerInv(shared_ptr<Item> item) //find item in p
 QTGui::GameInstance::~GameInstance() 
 {
     delete(floor);
+    delete(playerInv);
 }
