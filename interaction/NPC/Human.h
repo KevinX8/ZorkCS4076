@@ -43,7 +43,7 @@ class Human : public NPC {
         DialogueOption<string> converse(DialogueOption<string>, int subOption = -1);
         string spareOrKill(bool spare, Player &p, InventoryWidget* inv);
         int getSpareItem();
-        string giveItem(int giftItem,Player &p);
+        int giveItem(int giftItem,Player &p, InventoryWidget* inv);
         void giveKey();
         int getLikedItem();
         void addItem(int code);

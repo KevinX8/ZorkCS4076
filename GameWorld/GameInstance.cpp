@@ -282,9 +282,19 @@ void GameInstance::continueGive(shared_ptr<Item> item){
             count++;
         }
     }
-    gui->inv->updateInventory(count);
-    gui->inv->updateStats();
-    QString info = QString::fromStdString(givingNPC->giveItem(item->hashCode, player));
+    int result = givingNPC->giveItem(item->hashCode, player, gui->inv);
+    QString info;
+    if(result == -1){
+        info = "I hate these. you can keep it.";
+    }else{
+        if(result == 0){
+            info = "I love these. Here's a key I found.";
+        }else{
+            info = "I love these. Here's a token of appreciation.";
+        }
+        gui->inv->updateInventory(player.inventory.size()-1);
+        gui->inv->updateStats();
+    }
     resetDropFunc();
     givingItem = false;
     interactNPC(givingNPC);

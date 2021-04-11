@@ -46,7 +46,7 @@ class NPC {
         vector<int> inventoryItems;
     public:
         virtual int getSpareItem() = 0;
-        virtual string giveItem(int giftItem,Player &p)  = 0;
+        virtual int giveItem(int giftItem,Player &p, InventoryWidget* inv)  = 0;
         virtual void giveKey() = 0;
         virtual int getLikedItem() = 0;
         virtual void addItem(int code) = 0;
