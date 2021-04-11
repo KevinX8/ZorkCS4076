@@ -80,26 +80,34 @@ bool Human::fight(Player &p){
     }
 } 
 
-string Human::spareOrKill(bool spare, Player &p){
+string Human::spareOrKill(bool spare, Player &p, InventoryWidget* inv){
     if(spare){
         if(hasKey){
             p.addItem(0);
             hasKey = false;
             return "Thanks for your mercy. Here is this key I found.";
+            inv->updateInventory(p.inventory.size()-1);
+            inv->updateStats();
         }else{
             float itemValue = strengthCharismaRatio.at(key) * (p.getLuck() / (this->strength + this->charisma)) * (Item::itemRarity.size()-1) + 1;
             vector<short> possibleItems = Item::itemRarity[itemValue];
             vector<short>::iterator it;
             it = possibleItems.begin() + (int)(rand() % possibleItems.size());
             p.addItem(*it);
+            inv->updateInventory(p.inventory.size()-1);
+            inv->updateStats();
             return "Thanks for your mercy. Here is a token for you.";
         }
     }else{
         if(hasKey){
             p.addItem(0);
+            inv->updateInventory(p.inventory.size()-1);
+            inv->updateStats();
         }
         for(int i : inventoryItems){
             p.addItem(i);
+            inv->updateInventory(p.inventory.size()-1);
+            inv->updateStats();
         }
         return name + " is dead. You took all their items.";
     }

@@ -103,6 +103,7 @@ void InventoryWidget::unEquip(int type)
     }
     player.unequip(type);
     delete(rightEquipmentList->takeItem(type));
+    updateStats();
 }
 
 void InventoryWidget::equip(shared_ptr<Item> itemToEquip, int slot) 
@@ -128,6 +129,7 @@ void InventoryWidget::equip(shared_ptr<Item> itemToEquip, int slot)
         }
     }
     updateStats();
+    updateInventory(player.inventory.size()-1);
 }
 
 void InventoryWidget::setItemInteraction(shared_ptr<Item> item) 

@@ -5,6 +5,7 @@
 using namespace std;
 #include "NPC.h"
 #include "../DialogueOption.h"
+#include <functional>
 
 union strengthItem {
     int strength;
@@ -40,7 +41,7 @@ class Human : public NPC {
         bool fight(Player &p);
         int askInfo(Player &p);
         DialogueOption<string> converse(DialogueOption<string>, int subOption = -1);
-        string spareOrKill(bool spare, Player &p);
+        string spareOrKill(bool spare, Player &p, InventoryWidget* inv);
         int getSpareItem();
         string giveItem(int giftItem,Player &p);
         void giveKey();

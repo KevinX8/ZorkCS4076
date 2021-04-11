@@ -4,6 +4,7 @@
 #include <iostream>
 #include <unordered_map>
 #include "../Player.h"
+#include "../../QTGUI/InventoryWidget.h"
 
 using namespace std;
 
@@ -52,7 +53,7 @@ class NPC {
         virtual int getCode() = 0;
         virtual vector<int> getInventory() = 0;
         virtual string getName() = 0;
-        virtual string spareOrKill(bool spare, Player &p) = 0;
+        virtual string spareOrKill(bool spare, Player &p, InventoryWidget* inv) = 0;
         virtual bool fight(Player &p) = 0;
         virtual int askInfo(Player &p) = 0;
         /*

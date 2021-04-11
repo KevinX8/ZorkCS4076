@@ -15,7 +15,7 @@ GameInstance::GameInstance(bool loadGame, int seed) {
         this-> seed = seed;
         this-> player = Player();
         this-> floorNumber = 0;
-        this-> floor = new Floor(0, 123);
+        this-> floor = new Floor(0, 200);
         //floor->floorHexUnitTest();
         File::deleteSaves();
     }
@@ -222,10 +222,8 @@ void GameInstance::fightNPC(shared_ptr<NPC> npc){
 }
 
 void GameInstance::spareOrKill(shared_ptr<NPC> npc, bool spare){
-    QString info = QString::fromStdString(npc->spareOrKill(spare, player));
+    QString info = QString::fromStdString(npc->spareOrKill(spare, player, gui->inv));
     gui->text->updateTextBox(info);
-    gui->inv->updateInventory(player.inventory.size()-1);
-    gui->inv->updateStats();
     if(spare){
         setNPCButtons(npc);
     }else{

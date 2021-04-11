@@ -24,6 +24,7 @@ class Player {
     private:
         friend class QTGui::GameInstance;
         friend class QTGui::InventoryWidget;
+        friend class Human;
         vector<shared_ptr<Item>> inventory;
         unsigned int inventorySpace;
         shared_ptr<Weapon> activeWeapon;
