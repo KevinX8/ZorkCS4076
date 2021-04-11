@@ -22,6 +22,7 @@ Player::Player(){
 }
 
 Player::Player(string playerToken){
+    //generate player from a string, used for the unimplemented load game function
     vector<int> hexOut;
     for (auto it = playerToken.begin(); it != playerToken.end();it+=2) {
         hexOut.insert(hexOut.begin(),byteHexStringToInt(*it,*(it+1)));
@@ -66,15 +67,15 @@ void Player::addItem(int item){
 }
 
 Coordinate Player::takeRandomItem(){
+    //chooses a random item to take from the player, required for certain npc interactions
     Coordinate c;
     c.x = -1;
     c.y = -1;
     if(inventory.size() > 0){
         int index = (int)(rand() % inventory.size());
         auto it = inventory.begin() + index;
-        int item = (*it)->hashCode;
         inventory.erase(it);
-        c.x = item;
+        c.x = (*it)->hashCode;
         c.y = index;
     }
     return c;
@@ -93,6 +94,7 @@ int Player::takeItem(int item){
 }
 
 void Player::changeParams(std::array<int,4> params, bool equip) {
+    //adds the parameters to the player if it's used for equipping, otherwise substracts them
     if(equip){
         strength += params[0];
         charisma += params[1];
@@ -121,7 +123,7 @@ bool Player::equip(shared_ptr<Item> item, int slot){
     std::array<int,4> modifiers;
     switch(slot){
         case(0):{
-            if(item->hashCode >= NUM_STD_ITEMS){
+            if(item->hashCode >= NUM_STD_ITEMS){ //equips a weapon to the activeWeapon slot by generating a weapon based off the item hashcode
                 if (!activeWeapon) {
                     shared_ptr<Weapon> weapon = shared_ptr<Weapon>(new Weapon(item->hashCode));
                     activeWeapon = weapon;
@@ -132,7 +134,7 @@ bool Player::equip(shared_ptr<Item> item, int slot){
             return true;
         }
         case(1):{
-            if(item->hashCode >= NUM_STD_ITEMS+ NUM_WEAPONS){
+            if(item->hashCode >= NUM_STD_ITEMS+ NUM_WEAPONS){ //equips a wearable in a similiar way while also having a fallback to the second wearable slot if the first one is full
                 auto wearable = shared_ptr<Wearable>(new Wearable(item->hashCode));
                 if (!activeWearable1) {
                     activeWearable1 = wearable;
@@ -166,6 +168,7 @@ bool Player::equip(shared_ptr<Item> item, int slot){
 
 void Player::unequip(int slot) 
 {
+    //adds the item back to players inventory and removes the buffs/debuffs the item had, while also reseting the pointer in the end
     std::array<int,4> modifiers;
     switch (slot) {
     case 0: addItem(activeWeapon->hashCode); modifiers = activeWeapon->modifiers(); activeWeapon.reset();break;

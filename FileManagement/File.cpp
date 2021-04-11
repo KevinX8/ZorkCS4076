@@ -34,10 +34,11 @@ File::File(QString filePath,int gameSeed) {
 }
 
 string File::readFloor(int floorNumber) {
+    //reads the floor token from the dat file with the name floorNumber inside the floor folder
     fstream saveFile;
     string saveObject;
     try {
-        saveFile.open(filePath + to_string(floorNumber) + ".dat" , std::ios::in | std::ios::out | std::ios::app);
+        saveFile.open(filePath + "\\floor\\" + to_string(floorNumber) + ".dat" , std::ios::in | std::ios::out | std::ios::app);
     } catch (std::ifstream::failure &e) {
         throw FloorFileException();
     }
@@ -49,6 +50,7 @@ string File::readFloor(int floorNumber) {
 
 
 void File::writeFloor(string floorToken,int floorNumber) {
+    //writes the floor token to file inside the floor folder
     QFile fileToRemove(QString::fromStdString(filePath + "\\floor\\" + to_string(floorNumber) + ".dat"));
     fileToRemove.remove();
     ofstream saveFile (filePath + "\\floor\\" + to_string(floorNumber) + ".dat" );
@@ -59,6 +61,7 @@ void File::writeFloor(string floorToken,int floorNumber) {
 }
 
 void File::close(string playerToken, int floor) {
+    //saves the games globals, the game's seed the floor the player is on and the players token (inventory,equipment etc.)
     QFile fileToRemove(QString::fromStdString(filePath + "game.dat"));
     fileToRemove.remove();
     ofstream saveFile (filePath + "game.dat" );
@@ -81,6 +84,7 @@ int File::getPlayerFloor() {
 }
 
 void File::deleteSaves(QString filePath) {
+    //necessary when starting a new game with existing save files being present
     QFile fileToRemove(QString::fromStdString(filePath.toStdString() + "game.dat"));
     fileToRemove.remove();
     QDir dirToRemove(QString::fromStdString(filePath.toStdString() + "\\floor\\"));

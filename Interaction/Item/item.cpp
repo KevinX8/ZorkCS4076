@@ -5,7 +5,7 @@ const unordered_map<short,string> Item::itemNameMap = {
    {1, "pen"},
    {2, "water bottle"},
    {3, "smashed glasses"},
-   {4, "telecope"},
+   {4, "telescope"},
    {5, "scooby-snax"},
    {6, "ice cream"},
    {7, "laptop"},

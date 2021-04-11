@@ -3,6 +3,8 @@
 using namespace std::placeholders;
 
 GameInstance::GameInstance(bool loadGame, int seed) {
+    //constructs a game instance
+    //creates a File interface object, not yet implemented fully
     this-> gameState = File();
 
     if(loadGame){
@@ -25,6 +27,7 @@ GameInstance::GameInstance(bool loadGame, int seed) {
 }
 
 void GameInstance::setGUI(){
+    //sets the user interface for the game instance
     std::function<void(shared_ptr<Door>)> dRf = std::bind(&GameInstance::changeRoom,this,std::placeholders::_1);
     std::function<void(shared_ptr<NPC>)> nRf = std::bind(&GameInstance::interactNPC,this,std::placeholders::_1);
     std::function<void()> rRf = std::bind(&GameInstance::resetButtons,this);
@@ -46,6 +49,7 @@ void GameInstance::setGUI(){
 }
 
 void GameInstance::resetButtons(){
+    //resets option buttons so that the options and prompt are blank
     vector<QString> options = {"","","",""};
     gui->text->updateInteractions(options);
     gui->text->enableButtons(0);
@@ -53,6 +57,7 @@ void GameInstance::resetButtons(){
 }
 
 void GameInstance::changeFloor(bool up){
+    //goes to the next floor
     if(givingItem){
         givingItem = false;
         resetDropFunc();
@@ -80,6 +85,7 @@ void GameInstance::changeFloor(bool up){
 }
 
 void GameInstance::changeRoom(shared_ptr<Door> d){
+    //move to the room which door d goes to
     /*
     0: door was unlocked and room got changed,
     1: door was locked and player has key,
@@ -138,6 +144,7 @@ void GameInstance::changeRoom(shared_ptr<Door> d){
 }
 
 void GameInstance::unlockDoor(shared_ptr<Door> d) {
+    //unlocks door d
     resetButtons();
     int index = player.takeItem(0);
     d->locked = false;
@@ -147,22 +154,9 @@ void GameInstance::unlockDoor(shared_ptr<Door> d) {
 
 }
 
-void GameInstance::useKey(shared_ptr<Door> d){
-    for(auto it = player.inventory.begin(); it < player.inventory.end(); it++){
-        if((*it)->hashCode == 0){
-            player.inventory.erase(it);
-        }
-    }
-    d->locked = false;
-    if(d->vertical){
-        floor->getConnections()[d->doorLocation.y][d->doorLocation.x].right = 2;
-    }else{
-        floor->getConnections()[d->doorLocation.y][d->doorLocation.x].down = 2;
-    }
-}
-
 void GameInstance::interactNPC(shared_ptr<NPC> npc) 
 {
+    //function called when player clicks on NPC button on the map. interacts with the npc
     if(givingItem){
         givingItem = false;
         resetDropFunc();
@@ -176,6 +170,7 @@ void GameInstance::interactNPC(shared_ptr<NPC> npc)
 }
 
 void GameInstance::setNPCButtons(shared_ptr<NPC> npc){
+    //sets the npc interaction buttons.
     if(npc->getCode() < NUM_HUMANS){
         shared_ptr<Human> h = std::dynamic_pointer_cast<Human>(npc);
         vector<QString> options;
@@ -194,6 +189,7 @@ void GameInstance::setNPCButtons(shared_ptr<NPC> npc){
 }
 
 void GameInstance::fightNPC(shared_ptr<NPC> npc){
+    //called when the player trys to fight an NPC.
     bool wasEmpty = (player.inventory.size() == 0);
     int result = npc->fight(player);
     if(result == -1){
@@ -224,6 +220,7 @@ void GameInstance::fightNPC(shared_ptr<NPC> npc){
 }
 
 void GameInstance::spareOrKill(shared_ptr<NPC> npc, bool spare){
+    //called when the player either chooses to spare or kill an NPC after beating them in a fight.
     QString info = QString::fromStdString(npc->spareOrKill(spare, player, gui->inv));
     gui->text->updateTextBox(info);
     if(spare){
@@ -235,6 +232,7 @@ void GameInstance::spareOrKill(shared_ptr<NPC> npc, bool spare){
 }
 
 void GameInstance::askInfoNPC(shared_ptr<Human> h){
+    //called when the player asks an NPC for some useful info
     int code = h->askInfo(player);
     QString info;
     if(code == -2){
@@ -252,6 +250,7 @@ void GameInstance::askInfoNPC(shared_ptr<Human> h){
 }
 
 void GameInstance::giveNPCItem(shared_ptr<NPC> npc){
+    //changes the inventory widget so that the player can give an NPC an item
     gui->inv->giving = true;
     givingItem = true;
     gui->text->updateTextBox("Select an item to give from your inventory: ->");
@@ -269,11 +268,13 @@ void GameInstance::giveNPCItem(shared_ptr<NPC> npc){
 }
 
 void GameInstance::resetDropFunc(){
+    //stops the player from being able to give an item to npc
     gui->inv->dropFunc = std::bind(&GameInstance::interactDropPlayerInv,this,std::placeholders::_1);
     gui->inv->giving = false;
 }
 
 void GameInstance::continueGive(shared_ptr<Item> item){
+    //called after the player selects an item to give to an NPC
     int count = 0;
     for(shared_ptr<Item> i : player.inventory){
         if(item->hashCode == i->hashCode){
@@ -302,6 +303,7 @@ void GameInstance::continueGive(shared_ptr<Item> item){
 }
 
 void GameInstance::startConvo(shared_ptr<NPC> npc){
+    //starts a conversation with an npc
     if(npc->getCode() < NUM_HUMANS){
         shared_ptr<Human> h = std::dynamic_pointer_cast<Human>(npc);
         chatNPC(npc, h->baseOption);
@@ -309,7 +311,7 @@ void GameInstance::startConvo(shared_ptr<NPC> npc){
 }
 
 void GameInstance::chatNPC(shared_ptr<NPC> npc, DialogueOption<string> d){
-
+    //continues a conversation with an npc, given a dialogue options
     gui->text->updateTextBox(QString::fromStdString(d.reply));
     int count = 0;
     vector<DialogueOption<string>> nextOptions = d.getNextOption();

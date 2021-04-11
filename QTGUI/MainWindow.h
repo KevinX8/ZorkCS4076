@@ -56,14 +56,11 @@ class QTGui::MainWindow : public QMainWindow {
     shared_ptr<RoomItemWidget> room;
     shared_ptr<TextBoxWidget> text;
   public:
-    MainWindow();
     MainWindow(shared_ptr<RoomItemWidget> roomWidget,
     shared_ptr<MapWidget> map,
     shared_ptr<TextBoxWidget> text,
     InventoryWidget* inv
     );
-    void changeMapWidget(shared_ptr<MapWidget> m);
-
 };
 
 #endif

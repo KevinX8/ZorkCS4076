@@ -18,6 +18,7 @@ Coordinate Tools::getKeyCoordinate(int key){
 }
 
 string Tools::intToByteHexString(int i){
+    //converts an into a hex string eg. int 50 -> string "32"
     int second = i & 0b00001111;
     int first = (i & 0b11110000) >> 4;
     stringstream ss;

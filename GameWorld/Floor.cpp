@@ -5,6 +5,7 @@
 using namespace std;
 
 inline void Floor::lockDoor(shared_ptr<Door> d){
+    //locks a door
     d->locked = true;
     if(d->vertical){
         connections[d->doorLocation.y][d->doorLocation.x].right = 3;
@@ -14,6 +15,7 @@ inline void Floor::lockDoor(shared_ptr<Door> d){
 }
 
 inline shared_ptr<Door> Floor::getOuterLockedDoor(int innerRoomIndex) {
+    //gets the door that enters into a locked room
     auto innerDoor = rooms.at(innerRoomIndex).getDoors().begin();
     Room& outerRoom = rooms.at(innerDoor->get()->roomIndex);
     for(shared_ptr<Door> d : outerRoom.getDoors()){
@@ -26,6 +28,7 @@ inline shared_ptr<Door> Floor::getOuterLockedDoor(int innerRoomIndex) {
 
 template<typename T>
 int Floor::byteHexStringToInt(T first,T second) {
+    //converts hex to int. eg. 0A -> 10
     stringstream ss;
     string number = "";
     ss << first;
@@ -39,6 +42,7 @@ int Floor::byteHexStringToInt(T first,T second) {
 }
 
 bool Floor::roomsUnitTest() {
+    //tests that all rooms are connected with doors properly
     for (Room& room : rooms) {
         for (shared_ptr<Door> door : room.getDoors()) {
             bool found = false;
@@ -58,6 +62,7 @@ bool Floor::roomsUnitTest() {
 
 void Floor::floorHexUnitTest() 
 {
+    //tests if floor generation from tokens works properly
     string firstToken = floorToken();
     Floor testFloor = Floor(number,seed,firstToken);
     Floor consistencyTestFloor = Floor(number,seed);
@@ -78,6 +83,7 @@ void Floor::floorHexUnitTest()
 }
 
 Floor::Floor(int number, int seed, bool previouslyGenerated){
+    //constructs a floor object
     this->seed = seed; //for Unit test
     this->number = number;
     srand(seed+number);
@@ -118,6 +124,7 @@ Floor::Floor(int number, int seed, bool previouslyGenerated){
 }
 
 Floor::Floor(int number,int seed, string floorToken) : Floor(number,seed,true) {
+    //method to generate a floor based on a token, current not functioning
     vector<int> hexOut;
     stringstream sstream;
     for (auto it = floorToken.begin(); it != floorToken.end();it+=2) {
@@ -163,6 +170,7 @@ Floor::Floor(int number,int seed, string floorToken) : Floor(number,seed,true) {
 }
 
 string Floor::floorToken() {
+    //string represntataion of floor object used for saving to file
     stringstream sstream;
     stringstream instream;
     string token = "";
@@ -195,12 +203,15 @@ string Floor::floorToken() {
 }
 
 inline bool Floor::cellOutOfBounds(int x, int y) {
+    //returns true if and only if the cell is not inside the floors valid coordinates
     return (x < 0 || x >= Tools::width || y >= height || y < 0);
 }
 
 Coordinate Floor::getNextCell(Coordinate coord){
+    //gets the next cell to connect to a room when generating rooms
     vector<Coordinate> allowedCells;
     vector<Coordinate>::iterator it;
+    //check neighbouring cells
     for(int i = 0; i < 4; i++){
         int x = coord.x + (i-1) * (i+1)%2;
         int y = coord.y + (i-2) * i%2;
@@ -212,9 +223,11 @@ Coordinate Floor::getNextCell(Coordinate coord){
         }
     }
     if(allowedCells.size()>0){
+        
         it=allowedCells.begin() + (int)(rand() % allowedCells.size());
-        return *it;
+        return *it;//return random cell to connect to 
     }else{
+        //no cells to connect to
         Coordinate noValidCell;
         noValidCell.x = -1;
         return noValidCell;
@@ -232,18 +245,21 @@ bool Floor::disconnectedCell(int x, int y){
 }
 
 void Floor::generateRooms(vector<int> unusedCells, int maxRoomSize = 7){
+    //generates the rooms in a floor, where rooms are just a group of adjacent cells.
     vector<int> connectingCells;
     unordered_set<int> currentRoom;
     while(!unusedCells.empty()){
+        //use every cell in the floor to make rooms
         int roomSize = (int)(rand() % (maxRoomSize - 4)) + 4;
         vector<int>::iterator it;
         it = unusedCells.begin() + (int)(rand() % unusedCells.size());
+        //start at a random cell
         connectingCells.push_back(*it);
-        currentRoom.insert(currentRoom.end(), *it);
-        unusedCells.erase(it);
+        currentRoom.insert(currentRoom.end(), *it);//add cell to current room
+        unusedCells.erase(it);//delete cell from unused cells
         for(int i = 0; i < roomSize-1; ++i){
             it = connectingCells.begin() + (int)(rand() % connectingCells.size());
-            Coordinate nextCell = getNextCell(Tools::getKeyCoordinate(*it));
+            Coordinate nextCell = getNextCell(Tools::getKeyCoordinate(*it));//get next cell to connect to
             if(nextCell.x == -1){
                 connectingCells.erase(it);
                 if(connectingCells.empty()){
@@ -252,8 +268,8 @@ void Floor::generateRooms(vector<int> unusedCells, int maxRoomSize = 7){
                 }
             }else{
 
-                connectCells(Tools::getKeyCoordinate(*it), nextCell);
-                if (i>=2) { //find cells in room next to each other and connect them
+                connectCells(Tools::getKeyCoordinate(*it), nextCell);//connect the cells
+                if (i>=2) { //find cells in room next to each other and connect them (ie. delete inner walls in the room)
                     Coordinate tempCell;
                     for (int k = 0; k < 4; k++) {
                         tempCell.x = nextCell.x + (k-1) * (k+1)%2; // -1 0 1 0
@@ -268,13 +284,14 @@ void Floor::generateRooms(vector<int> unusedCells, int maxRoomSize = 7){
                 unusedCells.erase(lower_bound(unusedCells.begin(), unusedCells.end(), Tools::getCoordinateKey(nextCell)));
             }
         }
-        rooms.push_back(Room(currentRoom));
-        connectingCells.clear();   
-        currentRoom.clear();             
+        rooms.push_back(Room(currentRoom));//add room to rooms
+        connectingCells.clear();//reset connecting cells for next room  
+        currentRoom.clear();//reset current room for next room
     }
 }
 
 void Floor::generateDoors(){
+    //connects all the rooms in the floor with doors
     vector<Room>::iterator it;
     vector<int> connectedCells;//cells that are connected excluding cells which have no more cells to connect to
     vector<int> deadCells;//cells that are connected
@@ -284,45 +301,49 @@ void Floor::generateDoors(){
         connectedCells.insert(lower_bound(connectedCells.begin(),connectedCells.end(),cell),cell);
         deadCells.insert(lower_bound(deadCells.begin(),deadCells.end(),cell),cell);
     }
-    int count = rooms.size()-1;
+    int count = rooms.size()-1;//connect every room
     while(count > 0){
         vector<int>::iterator it2;
-        bool cellNotFound = true;
-        Coordinate outerCell, innerCell;
+        bool cellNotFound = true;//represents the next cell which will expand connecting cells
+        Coordinate outerCell, innerCell;//outer cell is the cell which connecting cells expands to
         while(cellNotFound){
             it2 = connectedCells.begin() + (int)(rand() % connectedCells.size());
             int c = rand() % 4;
-            innerCell = Tools::getKeyCoordinate(*it2);
+            innerCell = Tools::getKeyCoordinate(*it2);//the inner cell which will propogate to the next cell to connect to
             for(int i = c; i < c+4 && cellNotFound; i++){
+                //check neighbouring cells of inner cells
                 int j = i%4;
                 outerCell.x = innerCell.x + (j-1) * (j+1)%2;
                 outerCell.y = innerCell.y + (j-2) * j%2;
                 if(!cellOutOfBounds(outerCell.x, outerCell.y) && !binary_search(deadCells.begin(),deadCells.end(),Tools::getCoordinateKey(outerCell))){
                     cellNotFound = false;
+                    //found a cell to propogate to
                 }else{
                     if(i == c +3){
                         //all surrounding cells are either already connected, or else out of bounds.
                         connectedCells.erase(lower_bound(connectedCells.begin(),connectedCells.end(),*it2));
+                        //erase the cell if the cell is inside dead cells as it's not usable for room propagation
                     }
                 }
             }
         }
-        try {
-        Room &innerRoom = getRoom(Tools::getCoordinateKey(innerCell));
-        Room &outerRoom = getRoom(Tools::getCoordinateKey(outerCell));
-        for(int cell : outerRoom.cells){
+        try { //getRoom method throws exception on the rare occasion
+        Room &innerRoom = getRoom(Tools::getCoordinateKey(innerCell)); //room you're currently generating the door from
+        Room &outerRoom = getRoom(Tools::getCoordinateKey(outerCell)); //the room the door will point to
+        for(int cell : outerRoom.cells){ //goes through every cell in the room the door points to
             deadCells.insert(lower_bound(deadCells.begin(),deadCells.end(),cell),cell);
             connectedCells.insert(lower_bound(connectedCells.begin(),connectedCells.end(),cell),cell);
         }
         connectRooms(innerRoom, outerRoom, innerCell, outerCell);
         count--;
-        } catch (GetRoomException &e) {
+        } catch (GetRoomException &e) { //is thrown if getRoom fails, however it should never fail but if it does not return a valid room the result will be discarded and execution will just continue
             continue;
         }
     }    
 }
 
 void Floor::generateNPCs(int floorNumber){
+    //adds NPCs to the floor
     int numberOfNPCs = (rooms.size() / 4);
     numberOfNPCs *= 1 + ((rand()%11)-5)/float(50);
     for(int i = 0; i< numberOfNPCs; i++){
@@ -339,6 +360,7 @@ void Floor::generateNPCs(int floorNumber){
 
 void Floor::generateLockedDoors(){
     //Average number of 1 door rooms per floor is 8.6
+    //locks some of the doors in the room
     vector<Room*> lockedRooms;
     for(Room &r : rooms){
         if(r.getDoors().size() == 1 && (rand() % 20 < 3)){
@@ -349,15 +371,16 @@ void Floor::generateLockedDoors(){
         try{
             shared_ptr<Door> d = getOuterLockedDoor(getRoomIndex(*r));
             lockDoor(d);
-        }catch(LockedDoorException &e){
+        }catch(LockedDoorException &e){ //is thrown if getOuterLockedDoor fails and is thrown upward as it completely breaks room generation (should never occur however)
             throw e;
         }
-
+        //place a key for that locked room in a different room in the floor
         auto keyRoom = (rooms.begin() + (int)(rand() % rooms.size()));
         while(keyRoom->getDoors().size() < 2){
             keyRoom = (rooms.begin() + (int)(rand() % rooms.size()));
         }
         if(keyRoom->getNPCs().size() > 0){
+            //give key to npc
             int likedItem = 0;
             auto likedItemRoom = rooms.begin();
             shared_ptr<NPC> npc = dynamic_pointer_cast<NPC>(*(keyRoom->getNPCs().begin() + (int)(rand() % keyRoom->getNPCs().size())));
@@ -367,15 +390,16 @@ void Floor::generateLockedDoors(){
             while((int)*likedItemRoom == ((int)*keyRoom) || likedItemRoom->getDoors().size() < 2){
                 likedItemRoom = (rooms.begin() + (int)(rand() % rooms.size()));
             }
-            likedItemRoom->addItem(likedItem);
+            likedItemRoom->addItem(likedItem);//add item the npc likes to a random room
         }else{
-            keyRoom->addItem(0);
+            keyRoom->addItem(0);//add key to room
         }
     }
 
 }
 
 void Floor::generateItems(){
+    //adds items to the floor
     int numberOfItems = (rooms.size() / 2);
     numberOfItems *= 1 + ((rand()%11)-5)/50;
     for(int i = 0; i < numberOfItems; i++){
@@ -392,6 +416,7 @@ void Floor::generateItems(){
 }
 
 int Floor::getRoomIndex(Room& r){
+    //gets the index of a room
     vector<Room>::iterator it = rooms.begin();
     int count = 0;
     while(it != rooms.end()){
@@ -406,6 +431,7 @@ int Floor::getRoomIndex(Room& r){
 }
 
 void Floor::generateLadders(bool firstFloor = false){
+    //generates the "objects" that toggle between floors
     auto upRoom = (rooms.begin() + (int)(rand() % rooms.size()));
     upRoom->giveLadder(true);
     upRoom->hasKiosk = true;
@@ -415,7 +441,7 @@ void Floor::generateLadders(bool firstFloor = false){
         it = (rooms.begin() + (int)(rand() % rooms.size()));
         downRoom = it;
     }
-    
+    //down button is generated but not shown to user as game saving is not fully implemented yet
     downRoomIndex = getRoomIndex(*downRoom);
     if(!firstFloor){
         downRoom->giveLadder(false);
@@ -423,6 +449,7 @@ void Floor::generateLadders(bool firstFloor = false){
 }
 
 Room& Floor::getRoom(int cellKey){
+    //gets the room that contains a given cell.
     for(Room &r : rooms){
         if(r.cells.find(cellKey) != r.cells.end()){
             return r;
@@ -432,7 +459,7 @@ Room& Floor::getRoom(int cellKey){
 }
 
 void Floor::connectRooms(Room &r1, Room &r2, Coordinate c1, Coordinate c2){
-    
+    //connects two rooms with a door where c1 represents the doors adjacent coordinate in r1, and c2 does the same with r2.
     Door d;
     if(c1.x == c2.x){
         if(c1.y < c2.y){
@@ -471,6 +498,7 @@ void Floor::connectRooms(Room &r1, Room &r2, Coordinate c1, Coordinate c2){
 }
 
 void Floor::connectCells(Coordinate c1, Coordinate c2){
+    //makes two adjacent cells "connected", ie. they are in the same room
     if(c1.x == c2.x){
         if(c1.y < c2.y){
             connections[c1.y][c1.x].down = 1;

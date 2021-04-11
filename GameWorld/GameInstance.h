@@ -44,7 +44,6 @@ class QTGui::GameInstance {
         ~GameInstance();
         void changeFloor(bool up);
         void changeRoom(shared_ptr<Door> d);
-        void useKey(shared_ptr<Door> d);
         void interactNPC(shared_ptr<NPC> npc);
         void interactRoomItem(int itemCode);
         void interactDropPlayerInv(shared_ptr<Item> item);

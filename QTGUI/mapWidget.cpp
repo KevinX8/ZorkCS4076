@@ -46,6 +46,7 @@ MapWidget::MapWidget(int floorNumber, int startRoomIndex, Floor& floor, Room& r,
 }
 
 void MapWidget::resetButtons(){
+    //sets the buttons forthe rooms the player is in
     npcButtons.clear();
     doorButtons.clear();
     unordered_set<int> openCells = CURRENT.getCells();
@@ -120,6 +121,7 @@ void MapWidget::removeNPC(shared_ptr<NPC> npc){
 }
 
 void MapWidget::drawWalls(QPainter *qp){
+    //draws the background of a floor
     vector<vector<Wall>> connections;
     connections = f.getConnections();
     QPen pen(Qt::black, 2, Qt::SolidLine);

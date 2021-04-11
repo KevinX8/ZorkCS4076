@@ -19,6 +19,7 @@ const unordered_map<short,double> Human::strengthCharismaRatio = {
 };
 
 const unordered_map<short,short> Human::usefulInfoMap = {
+    //Links Human NPCs to other Human NPCs that they know useful information on (their favourite item in this case)
    {0, 1},
    {1, 0},
    {2, 13},
@@ -37,6 +38,7 @@ const unordered_map<short,short> Human::usefulInfoMap = {
 };
 
 const unordered_map<short,short> Human::likeMap = {
+    //Links each Human NPC to their favourite item
    {0, 9},
    {1, 0 + NUM_STD_ITEMS + NUM_WEAPONS + NUM_WEARABLES},
    {2, 10},
@@ -58,12 +60,16 @@ Human::Human(int floorNumber, const short k, bool inventoryEmpty): baseOption(Di
     this->key = k;
     this->hasKey = false;
     this->charisma = (floorNumber + STARTING_ATRRIBUTE_POINTS) * (1-(strengthCharismaRatio.at(key)));
+    //charisma represents how difficult it is to extrat information from an npc. when asking for info,
+    //you compare the npcs charisma to the players charisma to determine result.
     this->strength = (floorNumber + STARTING_ATRRIBUTE_POINTS) * strengthCharismaRatio.at(key);
+    //strength represents how difficult it is to beat an npc in a fight. whenfighting an npc,
+    //you compare the npcs strength to the players strength to determine result.
     this->usefulInfo = nameMap.at(usefulInfoMap.at(key)) + " likes " + Item::itemNameMap.at(likeMap.at(usefulInfoMap.at(key)));
     this->name = nameMap.at(key);
     this->likedItem = likeMap.at(key);
-    if(!inventoryEmpty){
-    }
+
+    //inventoryEmpty variable was used for generating NPCs from a game save file, which hasn't been fully implemented yet
 }
 
 int Human::fight(Player &p){
