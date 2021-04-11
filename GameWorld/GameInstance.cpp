@@ -17,7 +17,7 @@ GameInstance::GameInstance(bool loadGame, int seed) {
         this-> seed = seed;
         this-> player = Player();
         this-> floorNumber = 0;
-        this-> floor = new Floor(0, 200);
+        this-> floor = new Floor(0, seed);
         //floor->floorHexUnitTest();
         File::deleteSaves();
     }
