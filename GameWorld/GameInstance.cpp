@@ -21,6 +21,7 @@ GameInstance::GameInstance(bool loadGame, int seed) {
         //floor->floorHexUnitTest();
         File::deleteSaves();
     }
+    qDebug() << "The seed is:" << seed;
      std::function<void(shared_ptr<Item>)> diRf = std::bind(&GameInstance::interactDropPlayerInv,this,std::placeholders::_1);
     playerInv = new InventoryWidget(player,diRf);
     setGUI();

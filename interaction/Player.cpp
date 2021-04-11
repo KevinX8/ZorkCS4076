@@ -120,7 +120,7 @@ bool Player::equip(shared_ptr<Item> item, int slot){
 2: Luck Modifier
 3: Inventory Space Modifier
 */
-    std::array<int,4> modifiers;
+    std::array<int,4> modifiers = {0,0,0,0};
     switch(slot){
         case(0):{
             if(item->hashCode >= NUM_STD_ITEMS){ //equips a weapon to the activeWeapon slot by generating a weapon based off the item hashcode
