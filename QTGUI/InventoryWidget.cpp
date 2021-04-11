@@ -19,6 +19,9 @@ InventoryWidget::InventoryWidget(Player& player, std::function<void(shared_ptr<I
     changeInvButton = new QPushButton("🎒",this);
     rightInventoryList = new QListWidget(this);
     rightEquipmentList = new QListWidget(this);
+    rightEquipmentList->addItem("Empty Weapon Slot");
+    rightEquipmentList->addItem("Empty Wearable Slot 1");
+    rightEquipmentList->addItem("Empty Wearable Slot 2");
     itemMenu->addAction(drop);
     itemMenu->addAction(close);
     connect(changeInvButton, &QPushButton::released,this,[this](){changeDisplay();});
@@ -97,9 +100,9 @@ void InventoryWidget::unEquip(int type)
 //Don't shift equipment up to avoid shifting all data structures related to it
 {
     switch (type) {
-        case 0: rightInventoryList->addItem(QString::fromStdString(player.activeWeapon->getShortDescription())); break;
-        case 1: rightInventoryList->addItem(QString::fromStdString(player.activeWearable1->getShortDescription())); break;
-        case 2: rightInventoryList->addItem(QString::fromStdString(player.activeWearable2->getShortDescription())); break;
+        case 0: rightInventoryList->addItem(QString::fromStdString(player.activeWeapon->getShortDescription())); rightEquipmentList->insertItem(1,"Empty Weapon Slot"); break;
+        case 1: rightInventoryList->addItem(QString::fromStdString(player.activeWearable1->getShortDescription())); rightEquipmentList->insertItem(2,"Empty Wearable Slot 1"); break;
+        case 2: rightInventoryList->addItem(QString::fromStdString(player.activeWearable2->getShortDescription())); rightEquipmentList->addItem("Empty Wearable Slot 2"); break;
     }
     player.unequip(type);
     delete(rightEquipmentList->takeItem(type));
@@ -174,10 +177,18 @@ void InventoryWidget::equListUpdated()
 {
     for (int i=0; i < rightEquipmentList->count();i++) {
         if (rightEquipmentList->item(i)->isSelected()) {
+            bool valid = false;
+            switch (i) {
+                case 0: valid = !!player.activeWeapon; break;
+                case 1: valid = !!player.activeWearable1; break;
+                case 2: valid = !!player.activeWearable2; break;
+            }
+                itemMenu->clear();
+                if (valid) {
                 auto unEquipAct = new QAction("Unequip",this);
                 connect(unEquipAct,&QAction::triggered,itemMenu,[this,i](){this->unEquip(i);});
-                itemMenu->clear();
                 itemMenu->addAction(unEquipAct);
+                }
                 itemMenu->addAction(close);
                 itemMenu->popup(QCursor::pos());
         }
