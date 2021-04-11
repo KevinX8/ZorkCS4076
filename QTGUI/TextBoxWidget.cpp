@@ -9,6 +9,8 @@ TextBoxWidget::TextBoxWidget(QString text, vector<QString> interactionBoxes)
     funcBox4 = [](){return;};
     //fills the giant textbox in the bottom middle of the screen 
     textBox = unique_ptr<QLabel>(new QLabel(text,this));
+    auto font = QFont("Arial", 15);
+    textBox->setFont(font);
     //sets the text of each interaction button
     button1 = unique_ptr<QPushButton>(new QPushButton(interactionBoxes[0],this));
     button2 = unique_ptr<QPushButton>(new QPushButton(interactionBoxes[1],this));

@@ -25,5 +25,6 @@ MainWindow::MainWindow(shared_ptr<RoomItemWidget> r, shared_ptr<MapWidget> m, sh
     text->setGeometry(TEXTBOX_X,TEXTBOX_Y,TEXTBOX_W,TEXTBOX_H);
     text->textBox->resize(TEXTBOX_W,TEXTBOX_H);
     this->setFixedSize(WINDOW_W,WINDOW_H);
+    //this->showFullScreen();
     //this->setWindowFlag(Qt::FramelessWindowHint);
 }
