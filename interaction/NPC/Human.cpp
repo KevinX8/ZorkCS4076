@@ -128,7 +128,7 @@ int Human::giveItem(int i, Player &p, InventoryWidget* inv){
             hasKey = false;
             return 0;
         }else{
-            float itemValue = (1-strengthCharismaRatio.at(key)) * (p.getLuck() / (this->strength + this->charisma)) * Item::itemRarity.size();
+            float itemValue = (1-strengthCharismaRatio.at(key)) * (p.getLuck() / (this->strength + this->charisma)) * (Item::itemRarity.size()-1) +1;
             vector<short> possibleItems = Item::itemRarity[itemValue];
             vector<short>::iterator it;
             it = possibleItems.begin() + (short)(rand() % possibleItems.size());
