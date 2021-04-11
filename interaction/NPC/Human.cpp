@@ -114,12 +114,13 @@ string Human::spareOrKill(bool spare, Player &p, InventoryWidget* inv){
     }
 }
 
-string Human::giveItem(int i, Player &p){
+int Human::giveItem(int i, Player &p, InventoryWidget* inv){
     if(i == likedItem){
         if(hasKey){
+            inv->updateInventory(p.takeItem(i));
             p.addItem(0);
             hasKey = false;
-            return "I love these. Here's a key I found.";
+            return 0;
         }else{
             float itemValue = (1-strengthCharismaRatio.at(key)) * (p.getLuck() / (this->strength + this->charisma)) * Item::itemRarity.size();
             vector<short> possibleItems = Item::itemRarity[itemValue];
@@ -127,11 +128,11 @@ string Human::giveItem(int i, Player &p){
             it = possibleItems.begin() + (short)(rand() % possibleItems.size());
             p.addItem(*it);
             inventoryItems.push_back(i);
-            p.takeItem(i);
-            return "I love these. Thank you! Here is a token of appreciation.";
+            inv->updateInventory(p.takeItem(i));
+            return 1;
         }
     }else{
-        return "I hate these. You can keep it.";
+        return -1;
     }
 }
 
