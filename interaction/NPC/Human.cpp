@@ -66,17 +66,18 @@ Human::Human(int floorNumber, const short k, bool inventoryEmpty): baseOption(Di
     }
 }
 
-bool Human::fight(Player &p){
+int Human::fight(Player &p){
     strengthItem si;
     si.strength = this->strength + p.getStrength();
     if(rand() % si.strength >= this->strength){
-        return true;
+        return -1;
     }else{
-        si.itemCode = p.takeRandomItem().x;
+        Coordinate c = p.takeRandomItem();
+        si.itemCode = c.x;
         if(si.itemCode >= 0){
             inventoryItems.push_back(si.itemCode);
         }
-        return false;
+        return c.y;
     }
 } 
 

@@ -38,7 +38,7 @@ class Human : public NPC {
         const DialogueOption<string> baseOption;
         Human(int FloorNumber, const short key, bool inventoryEmpty = false);
         ~Human();
-        bool fight(Player &p);
+        int fight(Player &p);
         int askInfo(Player &p);
         DialogueOption<string> converse(DialogueOption<string>, int subOption = -1);
         string spareOrKill(bool spare, Player &p, InventoryWidget* inv);

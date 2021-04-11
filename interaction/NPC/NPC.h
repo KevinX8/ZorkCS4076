@@ -54,7 +54,7 @@ class NPC {
         virtual vector<int> getInventory() = 0;
         virtual string getName() = 0;
         virtual string spareOrKill(bool spare, Player &p, InventoryWidget* inv) = 0;
-        virtual bool fight(Player &p) = 0;
+        virtual int fight(Player &p) = 0;
         virtual int askInfo(Player &p) = 0;
         /*
         static const map<int,float> strengthMap;

@@ -195,7 +195,8 @@ void GameInstance::setNPCButtons(shared_ptr<NPC> npc){
 
 void GameInstance::fightNPC(shared_ptr<NPC> npc){
     bool wasEmpty = (player.inventory.size() == 0);
-    if(npc->fight(player)){
+    int result = npc->fight(player);
+    if(result == -1){
         QString info = QString::fromStdString("You won the fight! Should you spare " + npc->getName() + "?");
         gui->text->updateTextBox(info);
         gui->text->enableButtons(2);
@@ -214,6 +215,7 @@ void GameInstance::fightNPC(shared_ptr<NPC> npc){
         }else{
             info = QString::fromStdString("You lost the fight! ... " + npc->getName() + " stole one of your items!");
             gui->inv->updateStats();
+            gui->inv->updateInventory(result);
 
         }
         gui->text->updateTextBox(info);
